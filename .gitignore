@@ -85,3 +85,6 @@ android/build/
 
 # Misc
 Thumbs.db
+
+# Ignore APKs
+*.apk
