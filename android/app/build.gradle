@@ -107,13 +107,13 @@ android {
     }
 }
 
-dependencies {
-    // The version of react-native is set by the React Native Gradle Plugin
-    implementation("com.facebook.react:react-android")
+repositories { flatDir { dirs 'libs' } }
 
-    if (hermesEnabled.toBoolean()) {
-        implementation("com.facebook.react:hermes-android")
-    } else {
-        implementation jscFlavor
-    }
+dependencies {
+    implementation("com.facebook.react:react-android")
+    if (hermesEnabled.toBoolean()) implementation("com.facebook.react:hermes-android") else implementation jscFlavor
+
+    implementation files('libs/tmap-sdk-3.0.aar')                     // API (TMapView 등)
+    implementation(name: 'vsm-tmap-sdk-v2-android-1.7.45', ext: 'aar')// JNI/런타임
+    implementation 'com.google.android.material:material:1.9.0'
 }

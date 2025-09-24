@@ -1,118 +1,51 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useState } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
+import TMapView from "./src/components/TMapView";
+import { useTMapCommands } from "./src/components/useTMapCommands";
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+export default function App() {
+  const map = useTMapCommands();
+  const [start, setStart] = useState<{lat:number, lon:number} | null>(null);
+  const [end, setEnd] = useState<{lat:number, lon:number} | null>(null);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+    <SafeAreaView style={styles.container}>
+      <TMapView
+        ref={map.ref}
+        style={styles.map}
+        apiKey="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy"
+        centerLat={37.5665}
+        centerLon={126.9780}
+        zoomLevel={15}
+        onMapReady={() => {
+          console.log("✅ Map Ready");
+        }}
+        onPress={(e) => {
+          const { lat, lon } = e.nativeEvent;
+
+          if (!start) {
+            // 첫 번째 클릭 → 출발지
+            setStart({ lat, lon });
+            setEnd(null);
+            map.addMarker(lat, lon, "출발지");
+          } else if (!end) {
+            // 두 번째 클릭 → 도착지 + 경로 표시
+            setEnd({ lat, lon });
+            map.addMarker(lat, lon, "도착지");
+            map.addRoute(start.lat, start.lon, lat, lon);
+          } else {
+            // 세 번째 클릭 → 다시 출발지부터
+            setStart({ lat, lon });
+            setEnd(null);
+            map.addMarker(lat, lon, "출발지");
+          }
+        }}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  container: { flex: 1 },
+  map: { flex: 1 }
 });
-
-export default App;

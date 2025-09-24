@@ -72,3 +72,16 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Logs
+*.log
+
+# Android 추가
+android/app/build/
+android/build/
+
+# VS Code
+.vscode/
+
+# Misc
+Thumbs.db
