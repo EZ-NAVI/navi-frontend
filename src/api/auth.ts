@@ -1,6 +1,6 @@
 // src/api/auth.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { api } from "./client";
+import api from "./client";
 
 export type RegisterPayload = {
   user_type: "child" | "parent" | string;
