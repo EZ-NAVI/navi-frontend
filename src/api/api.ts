@@ -1,8 +1,15 @@
 // src/api/api.ts
 import Config from 'react-native-config';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = (Config.API_BASE_URL || '').replace(/\/$/, '') || 'http://3.37.169.176:8000';
+// ✅ .env의 API_BASE_URL 사용 (하드코딩 제거)
+const BASE_URL = (Config.API_BASE_URL || '').replace(/\/$/, '');
 
+if (!BASE_URL) {
+  console.warn("⚠️ 환경변수(API_BASE_URL)가 설정되지 않았습니다. .env 파일을 확인하세요.");
+}
+
+// 공통 요청 함수
 async function request(path: string, options: RequestInit = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: {
@@ -11,8 +18,10 @@ async function request(path: string, options: RequestInit = {}) {
     },
     ...options,
   });
+
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;
+
   if (!res.ok) {
     const msg =
       data?.detail?.[0]?.msg ||
@@ -31,7 +40,7 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
-    // { access_token, token_type }
+
     if (data?.access_token) {
       await AsyncStorage.setItem("access_token", data.access_token);
       await AsyncStorage.setItem("token_type", data.token_type || "bearer");
@@ -44,6 +53,7 @@ export const api = {
     const token = await AsyncStorage.getItem("access_token");
     const type = (await AsyncStorage.getItem("token_type")) || "bearer";
     if (!token) throw new Error("로그인 토큰이 없습니다.");
+
     return request("/users/me", {
       headers: { Authorization: `${type} ${token}` },
     });
@@ -57,6 +67,7 @@ export const api = {
     });
   },
 
+  // 토큰 초기화
   async clearToken() {
     await AsyncStorage.multiRemove(["access_token", "token_type"]);
   },

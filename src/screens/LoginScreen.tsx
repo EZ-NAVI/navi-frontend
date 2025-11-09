@@ -1,3 +1,4 @@
+// src/screens/LoginScreen.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -88,6 +89,8 @@ export default function LoginScreen() {
 
         {/* 하단 링크 */}
         <View style={styles.footer}>
+          {/* 🔸 아이디 / 비밀번호 찾기 버튼은 후순위로 미룸 */}
+          {/*
           <TouchableOpacity onPress={() => navigation.navigate("FindId")}>
             <Text style={styles.footerText}>아이디 찾기</Text>
           </TouchableOpacity>
@@ -96,6 +99,9 @@ export default function LoginScreen() {
             <Text style={styles.footerText}>비밀번호 찾기</Text>
           </TouchableOpacity>
           <View style={styles.divider} />
+          */}
+
+          {/* 🔹 회원가입만 남기기 */}
           <TouchableOpacity onPress={() => navigation.navigate("SignupType")}>
             <Text style={[styles.footerText, { color: "#000" }]}>
               NAVI는 처음이신가요?
