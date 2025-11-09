@@ -5,5 +5,7 @@
 
     <!-- Value from default config. -->
     <integer name="react_native_dev_server_port">8081</integer>
+    <!-- Value from default config. -->
+    <string name="API_BASE_URL" translatable="false">"http://3.37.169.176:8000"</string>
 
 </resources>

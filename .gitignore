@@ -1,2 +1,9 @@
 node_modules/
 android/app/build/outputs/
+.env
+.env.*
+
+# Android Build Cache
+android/.gradle/
+android/app/build/
+android/app/.cxx/

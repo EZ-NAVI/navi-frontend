@@ -7,14 +7,21 @@ buildscript {
         ndkVersion = "26.1.10909125"
         kotlinVersion = "1.9.24"
     }
+
     repositories {
         google()
         mavenCentral()
+        // ✅ react-native-config 플러그인 로컬 경로 추가 (공식 방식)
+        maven { url "$rootDir/../node_modules/react-native-config/android" }
     }
+
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+
+        // ✅ react-native-config 플러그인 직접 경로 지정 (핵심)
+        classpath files("../node_modules/react-native-config/android/react-native-config.gradle")
     }
 }
 

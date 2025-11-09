@@ -14,5 +14,6 @@ drawable rn_edit_text_material
 integer react_native_dev_server_port
 mipmap ic_launcher
 mipmap ic_launcher_round
+string API_BASE_URL
 string app_name
 style AppTheme

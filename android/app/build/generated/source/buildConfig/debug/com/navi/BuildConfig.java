@@ -10,6 +10,8 @@ public final class BuildConfig {
   public static final int VERSION_CODE = 1;
   public static final String VERSION_NAME = "1.0";
   // Field from default config.
+  public static final String API_BASE_URL = "http://3.37.169.176:8000";
+  // Field from default config.
   public static final boolean IS_HERMES_ENABLED = true;
   // Field from default config.
   public static final boolean IS_NEW_ARCHITECTURE_ENABLED = false;

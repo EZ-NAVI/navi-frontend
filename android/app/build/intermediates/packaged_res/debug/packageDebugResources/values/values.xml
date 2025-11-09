@@ -8,6 +8,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="white">#FFFFFFFF</color>
     <integer name="react_native_dev_server_port">8081</integer>
+    <string name="API_BASE_URL" translatable="false">"http://3.37.169.176:8000"</string>
     <string name="app_name">navi</string>
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         

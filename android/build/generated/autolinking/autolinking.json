@@ -28,6 +28,31 @@
         }
       }
     },
+    "react-native-config": {
+      "root": "C:\\Users\\Win10\\StudioProjects\\navi\\node_modules\\react-native-config",
+      "name": "react-native-config",
+      "platforms": {
+        "ios": {
+          "podspecPath": "C:\\Users\\Win10\\StudioProjects\\navi\\node_modules\\react-native-config\\react-native-config.podspec",
+          "version": "1.5.9",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "C:\\Users\\Win10\\StudioProjects\\navi\\node_modules\\react-native-config\\android",
+          "packageImportPath": "import com.lugg.RNCConfig.RNCConfigPackage;",
+          "packageInstance": "new RNCConfigPackage()",
+          "buildTypes": [],
+          "libraryName": "RNCConfigModule",
+          "componentDescriptors": [],
+          "cmakeListsPath": "C:/Users/Win10/StudioProjects/navi/node_modules/react-native-config/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-gesture-handler": {
       "root": "C:\\Users\\Win10\\StudioProjects\\navi\\node_modules\\react-native-gesture-handler",
       "name": "react-native-gesture-handler",
@@ -62,7 +87,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "C:\\Users\\Win10\\StudioProjects\\navi\\node_modules\\react-native-safe-area-context\\react-native-safe-area-context.podspec",
-          "version": "4.14.1",
+          "version": "4.10.0",
           "configurations": [],
           "scriptPhases": []
         },
