@@ -9,13 +9,12 @@ import {
   ActivityIndicator,
   Keyboard,
   TouchableOpacity,
-  Animated,
   Platform,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import SafetyNoticeModal from '../components/SafetyNoticeModal';
+// 제보 관련 UI는 LocationSearch 화면에서 제거하였습니다.
 import { useRouteData } from "../context/RouteContext";
 
 type Poi = {
@@ -41,10 +40,7 @@ export default function LocationSearchScreen() {
   const [loading, setLoading] = useState(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
 
-  // 제보하기 확장 버튼 상태
-  const [showLongReport, setShowLongReport] = useState(false);
-  const [safetyOpen, setSafetyOpen] = useState(false);
-  const expandAnim = useRef(new Animated.Value(1)).current; // 1 = hidden, 0 = shown (we will animate translateY)
+  // LocationSearch에서는 하단 제보 버튼을 표시하지 않습니다.
 
   const search = async (q: string) => {
     if (!q.trim()) {
@@ -88,14 +84,7 @@ export default function LocationSearchScreen() {
     };
   }, [query]);
 
-  // showLongReport 변경에 따라 애니메이션
-  useEffect(() => {
-    Animated.timing(expandAnim, {
-      toValue: showLongReport ? 0 : 1,
-      duration: 220,
-      useNativeDriver: true,
-    }).start();
-  }, [showLongReport, expandAnim]);
+  // (제거) 제보 버튼 관련 애니메이션은 더 이상 사용하지 않습니다.
 
   const onSelect = (poi: Poi) => {
     Keyboard.dismiss();
@@ -171,51 +160,7 @@ export default function LocationSearchScreen() {
         }
       />
 
-      {/* 작은 플로팅 버튼: 누르면 긴 제보 버튼이 나타남 */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => setShowLongReport((v) => !v)}
-        accessibilityLabel="제보하기 열기"
-      >
-        <MaterialIcons name={showLongReport ? 'close' : 'campaign'} size={22} color="#fff" />
-      </TouchableOpacity>
-
-      {/* 긴 제보 버튼 (애니메이션으로 나타남) */}
-      <Animated.View
-        pointerEvents={showLongReport ? 'auto' : 'none'}
-        style={[
-          styles.longReportWrap,
-          {
-            transform: [
-              {
-                translateY: expandAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 120] }),
-              },
-            ],
-            opacity: expandAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }),
-          },
-        ]}
-      >
-        <TouchableOpacity
-          style={styles.longReportButton}
-          onPress={() => {
-            setSafetyOpen(true);
-            setShowLongReport(false);
-          }}
-          accessibilityRole="button"
-          accessibilityLabel="긴 제보하기 버튼"
-        >
-          <Text style={styles.longReportText}>제보하기</Text>
-        </TouchableOpacity>
-      </Animated.View>
-
-      <SafetyNoticeModal
-        visible={safetyOpen}
-        onClose={() => setSafetyOpen(false)}
-        onConfirm={() => {
-          setSafetyOpen(false);
-          // 실제 연동시 ReportModal 또는 네비게이션으로 연결하세요.
-        }}
-      />
+      {/* LocationSearch 화면에서는 하단 제보(FAB) UI를 제거했습니다. 필요하면 다른 화면에서 제보 기능을 사용하세요. */}
     </View>
   );
 }

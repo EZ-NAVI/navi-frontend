@@ -14,168 +14,211 @@
 12    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 12-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:5:5-78
 12-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:5:22-76
-13    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+13    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Storage / media permissions for image picking -->
 13-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:6:5-80
 13-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:6:22-78
-14    <!--
-15    This manifest file is used only by Gradle to configure debug-only capabilities
-16    for React Native Apps.
-17    -->
-18    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-18-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:16:5-78
-18-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:16:22-75
-19
-20    <permission
-20-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
-21        android:name="com.navi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-21-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
-22        android:protectionLevel="signature" />
-22-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
-23
-24    <uses-permission android:name="com.navi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-24-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
-24-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
-25
-26    <uses-feature
-26-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/e81447f4a6abc1a62ff4bf25fb67dd98/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:7:5-9:35
-27        android:glEsVersion="0x00020000"
-27-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/e81447f4a6abc1a62ff4bf25fb67dd98/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:8:9-41
-28        android:required="true" />
-28-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/e81447f4a6abc1a62ff4bf25fb67dd98/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:9:9-32
-29
-30    <application
-30-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:8:5-36:19
-31        android:name="com.navi.MainApplication"
-31-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:9:9-40
-32        android:allowBackup="false"
-32-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:13:9-36
-33        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-33-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
-34        android:debuggable="true"
-35        android:extractNativeLibs="false"
-36        android:icon="@mipmap/ic_launcher"
-36-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:11:9-43
-37        android:label="@string/app_name"
-37-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:10:9-41
-38        android:roundIcon="@mipmap/ic_launcher_round"
-38-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:12:9-54
-39        android:supportsRtl="true"
-39-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:15:9-35
-40        android:theme="@style/AppTheme"
-40-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:14:9-40
-41        android:usesCleartextTraffic="true" >
-41-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/debug/AndroidManifest.xml:6:9-44
-42        <meta-data
-42-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:18:9-20:71
-43            android:name="com.skt.Tmap.APIKey"
-43-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:19:13-47
-44            android:value="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy" />
-44-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:20:13-69
-45
-46        <activity
-46-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:22:9-35:20
-47            android:name="com.navi.MainActivity"
-47-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:23:13-41
-48            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-48-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:25:13-122
-49            android:exported="true"
-49-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:28:13-36
-50            android:label="@string/app_name"
-50-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:24:13-45
-51            android:launchMode="singleTask"
-51-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:26:13-44
-52            android:windowSoftInputMode="adjustResize" >
-52-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:27:13-55
-53            <intent-filter>
-53-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:30:13-33:29
-54                <action android:name="android.intent.action.MAIN" />
-54-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:31:17-68
-54-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:31:25-66
-55
-56                <category android:name="android.intent.category.LAUNCHER" />
-56-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:32:17-76
-56-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:32:27-74
-57            </intent-filter>
-58        </activity>
-59        <activity
-59-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:19:9-21:40
-60            android:name="com.facebook.react.devsupport.DevSettingsActivity"
-60-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:20:13-77
-61            android:exported="false" />
-61-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:21:13-37
+14    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Android 13+ separate permission for images -->
+14-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:8:5-80
+14-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:8:22-77
+15    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- Camera if you plan to allow taking photos from camera -->
+15-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:10:5-76
+15-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:10:22-73
+16    <uses-permission android:name="android.permission.CAMERA" />
+16-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:12:5-65
+16-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:12:22-62
+17    <!--
+18    This manifest file is used only by Gradle to configure debug-only capabilities
+19    for React Native Apps.
+20    -->
+21    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+21-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:16:5-78
+21-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:16:22-75
+22
+23    <permission
+23-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+24        android:name="com.navi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+24-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+25        android:protectionLevel="signature" />
+25-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+26
+27    <uses-permission android:name="com.navi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+27-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+27-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+28
+29    <uses-feature
+29-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/e81447f4a6abc1a62ff4bf25fb67dd98/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:7:5-9:35
+30        android:glEsVersion="0x00020000"
+30-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/e81447f4a6abc1a62ff4bf25fb67dd98/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:8:9-41
+31        android:required="true" />
+31-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/e81447f4a6abc1a62ff4bf25fb67dd98/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:9:9-32
+32
+33    <application
+33-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:14:5-42:19
+34        android:name="com.navi.MainApplication"
+34-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:15:9-40
+35        android:allowBackup="false"
+35-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:19:9-36
+36        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+36-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/e3a1e4da1a87d5e45cf2c43741dd68b3/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+37        android:debuggable="true"
+38        android:extractNativeLibs="false"
+39        android:icon="@mipmap/ic_launcher"
+39-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:17:9-43
+40        android:label="@string/app_name"
+40-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:16:9-41
+41        android:roundIcon="@mipmap/ic_launcher_round"
+41-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:18:9-54
+42        android:supportsRtl="true"
+42-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:21:9-35
+43        android:theme="@style/AppTheme"
+43-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:20:9-40
+44        android:usesCleartextTraffic="true" >
+44-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/debug/AndroidManifest.xml:6:9-44
+45        <meta-data
+45-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:24:9-26:71
+46            android:name="com.skt.Tmap.APIKey"
+46-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:25:13-47
+47            android:value="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy" />
+47-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:26:13-69
+48
+49        <activity
+49-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:28:9-41:20
+50            android:name="com.navi.MainActivity"
+50-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:29:13-41
+51            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+51-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:31:13-122
+52            android:exported="true"
+52-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:34:13-36
+53            android:label="@string/app_name"
+53-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:30:13-45
+54            android:launchMode="singleTask"
+54-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:32:13-44
+55            android:windowSoftInputMode="adjustResize" >
+55-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:33:13-55
+56            <intent-filter>
+56-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:36:13-39:29
+57                <action android:name="android.intent.action.MAIN" />
+57-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:37:17-68
+57-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:37:25-66
+58
+59                <category android:name="android.intent.category.LAUNCHER" />
+59-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:38:17-76
+59-->/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/android/app/src/main/AndroidManifest.xml:38:27-74
+60            </intent-filter>
+61        </activity>
 62
 63        <provider
-63-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
-64            android:name="androidx.startup.InitializationProvider"
-64-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
-65            android:authorities="com.navi.androidx-startup"
-65-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
-66            android:exported="false" >
-66-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
-67            <meta-data
-67-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
-68                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-68-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
-69                android:value="androidx.startup" />
-69-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
-70            <meta-data
-70-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/ohminseok/.gradle/caches/8.8/transforms/9637e0a0d91690bfcb8b849176c5cce0/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:29:13-31:52
-71                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-71-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/ohminseok/.gradle/caches/8.8/transforms/9637e0a0d91690bfcb8b849176c5cce0/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:30:17-78
-72                android:value="androidx.startup" />
-72-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/ohminseok/.gradle/caches/8.8/transforms/9637e0a0d91690bfcb8b849176c5cce0/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:31:17-49
-73            <meta-data
-73-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:29:13-31:52
-74                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-74-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:30:17-85
-75                android:value="androidx.startup" />
-75-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:31:17-49
-76        </provider>
-77
-78        <receiver
-78-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:34:9-52:20
-79            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-79-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:35:13-76
-80            android:directBootAware="false"
-80-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:36:13-44
-81            android:enabled="true"
-81-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:37:13-35
-82            android:exported="true"
-82-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:38:13-36
-83            android:permission="android.permission.DUMP" >
-83-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:39:13-57
-84            <intent-filter>
-84-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:40:13-42:29
-85                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-85-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:17-91
-85-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:25-88
-86            </intent-filter>
-87            <intent-filter>
-87-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:43:13-45:29
-88                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-88-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:17-85
-88-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:25-82
-89            </intent-filter>
-90            <intent-filter>
-90-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:46:13-48:29
-91                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-91-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:17-88
-91-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:25-85
-92            </intent-filter>
-93            <intent-filter>
-93-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:49:13-51:29
-94                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-94-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:17-95
-94-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:25-92
-95            </intent-filter>
-96        </receiver>
-97
-98        <meta-data
-98-->[com.facebook.soloader:soloader:0.11.0] /Users/ohminseok/.gradle/caches/8.8/transforms/9cd3ff9286b527118c99c83c826e649e/transformed/soloader-0.11.0/AndroidManifest.xml:12:9-14:37
-99            android:name="com.facebook.soloader.enabled"
-99-->[com.facebook.soloader:soloader:0.11.0] /Users/ohminseok/.gradle/caches/8.8/transforms/9cd3ff9286b527118c99c83c826e649e/transformed/soloader-0.11.0/AndroidManifest.xml:13:13-57
-100            android:value="false" />
-100-->[com.facebook.soloader:soloader:0.11.0] /Users/ohminseok/.gradle/caches/8.8/transforms/9cd3ff9286b527118c99c83c826e649e/transformed/soloader-0.11.0/AndroidManifest.xml:14:13-34
-101    </application>
-102
-103</manifest>
+63-->[:react-native-image-picker] /Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:9-16:20
+64            android:name="com.imagepicker.ImagePickerProvider"
+64-->[:react-native-image-picker] /Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:13-63
+65            android:authorities="com.navi.imagepickerprovider"
+65-->[:react-native-image-picker] /Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-71
+66            android:exported="false"
+66-->[:react-native-image-picker] /Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-37
+67            android:grantUriPermissions="true" >
+67-->[:react-native-image-picker] /Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:13-47
+68            <meta-data
+68-->[:react-native-image-picker] /Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:13-15:70
+69                android:name="android.support.FILE_PROVIDER_PATHS"
+69-->[:react-native-image-picker] /Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:17-67
+70                android:resource="@xml/imagepicker_provider_paths" />
+70-->[:react-native-image-picker] /Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:17-67
+71        </provider>
+72
+73        <activity
+73-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:19:9-21:40
+74            android:name="com.facebook.react.devsupport.DevSettingsActivity"
+74-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:20:13-77
+75            android:exported="false" />
+75-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/595573558e67426fe83084fb16a1e219/transformed/react-android-0.75.4-debug/AndroidManifest.xml:21:13-37
+76        <activity
+76-->[com.google.android.gms:play-services-base:17.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/95365f3aab486a5b634122fc78d37666/transformed/play-services-base-17.5.0/AndroidManifest.xml:23:9-26:75
+77            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+77-->[com.google.android.gms:play-services-base:17.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/95365f3aab486a5b634122fc78d37666/transformed/play-services-base-17.5.0/AndroidManifest.xml:24:13-79
+78            android:exported="false"
+78-->[com.google.android.gms:play-services-base:17.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/95365f3aab486a5b634122fc78d37666/transformed/play-services-base-17.5.0/AndroidManifest.xml:25:13-37
+79            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+79-->[com.google.android.gms:play-services-base:17.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/95365f3aab486a5b634122fc78d37666/transformed/play-services-base-17.5.0/AndroidManifest.xml:26:13-72
+80
+81        <meta-data
+81-->[com.google.android.gms:play-services-basement:17.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/1b6d939cc171595c9687b6ee798e8073/transformed/play-services-basement-17.5.0/AndroidManifest.xml:23:9-25:69
+82            android:name="com.google.android.gms.version"
+82-->[com.google.android.gms:play-services-basement:17.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/1b6d939cc171595c9687b6ee798e8073/transformed/play-services-basement-17.5.0/AndroidManifest.xml:24:13-58
+83            android:value="@integer/google_play_services_version" />
+83-->[com.google.android.gms:play-services-basement:17.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/1b6d939cc171595c9687b6ee798e8073/transformed/play-services-basement-17.5.0/AndroidManifest.xml:25:13-66
+84
+85        <provider
+85-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+86            android:name="androidx.startup.InitializationProvider"
+86-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+87            android:authorities="com.navi.androidx-startup"
+87-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+88            android:exported="false" >
+88-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+89            <meta-data
+89-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+90                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+90-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+91                android:value="androidx.startup" />
+91-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/c5b0189930e98944956e0686366385d9/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+92            <meta-data
+92-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/ohminseok/.gradle/caches/8.8/transforms/9637e0a0d91690bfcb8b849176c5cce0/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:29:13-31:52
+93                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+93-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/ohminseok/.gradle/caches/8.8/transforms/9637e0a0d91690bfcb8b849176c5cce0/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:30:17-78
+94                android:value="androidx.startup" />
+94-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/ohminseok/.gradle/caches/8.8/transforms/9637e0a0d91690bfcb8b849176c5cce0/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:31:17-49
+95            <meta-data
+95-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:29:13-31:52
+96                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+96-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:30:17-85
+97                android:value="androidx.startup" />
+97-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:31:17-49
+98        </provider>
+99
+100        <receiver
+100-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:34:9-52:20
+101            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+101-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:35:13-76
+102            android:directBootAware="false"
+102-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:36:13-44
+103            android:enabled="true"
+103-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:37:13-35
+104            android:exported="true"
+104-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:38:13-36
+105            android:permission="android.permission.DUMP" >
+105-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:39:13-57
+106            <intent-filter>
+106-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:40:13-42:29
+107                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+107-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:17-91
+107-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:25-88
+108            </intent-filter>
+109            <intent-filter>
+109-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:43:13-45:29
+110                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+110-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:17-85
+110-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:25-82
+111            </intent-filter>
+112            <intent-filter>
+112-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:46:13-48:29
+113                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+113-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:17-88
+113-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:25-85
+114            </intent-filter>
+115            <intent-filter>
+115-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:49:13-51:29
+116                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+116-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:17-95
+116-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/43c3dd5072a83b666044f1fc438c0e7f/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:25-92
+117            </intent-filter>
+118        </receiver>
+119
+120        <meta-data
+120-->[com.facebook.soloader:soloader:0.11.0] /Users/ohminseok/.gradle/caches/8.8/transforms/9cd3ff9286b527118c99c83c826e649e/transformed/soloader-0.11.0/AndroidManifest.xml:12:9-14:37
+121            android:name="com.facebook.soloader.enabled"
+121-->[com.facebook.soloader:soloader:0.11.0] /Users/ohminseok/.gradle/caches/8.8/transforms/9cd3ff9286b527118c99c83c826e649e/transformed/soloader-0.11.0/AndroidManifest.xml:13:13-57
+122            android:value="false" />
+122-->[com.facebook.soloader:soloader:0.11.0] /Users/ohminseok/.gradle/caches/8.8/transforms/9cd3ff9286b527118c99c83c826e649e/transformed/soloader-0.11.0/AndroidManifest.xml:14:13-34
+123    </application>
+124
+125</manifest>

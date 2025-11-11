@@ -8,6 +8,7 @@ color teal_200
 color teal_700
 color white
 drawable danger
+drawable good_ping
 drawable marker_end
 drawable marker_start
 drawable rn_edit_text_material

@@ -1,58 +1,62 @@
 [
     {
-        "merged": "com.navi.app-debug-46:/mipmap-xhdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-xhdpi/ic_launcher_round.png"
+        "merged": "com.navi.app-debug-48:/drawable_danger.png.flat",
+        "source": "com.navi.app-main-50:/drawable/danger.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-xhdpi/ic_launcher.png"
+        "merged": "com.navi.app-debug-48:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-xxxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-xxxhdpi/ic_launcher_round.png"
+        "merged": "com.navi.app-debug-48:/drawable_good_ping.png.flat",
+        "source": "com.navi.app-main-50:/drawable/good_ping.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/mipmap-hdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-hdpi/ic_launcher_round.png"
+        "merged": "com.navi.app-debug-48:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-xhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-xxxhdpi/ic_launcher.png"
+        "merged": "com.navi.app-debug-48:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-mdpi/ic_launcher.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-hdpi/ic_launcher.png"
+        "merged": "com.navi.app-debug-48:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-xxxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/drawable_rn_edit_text_material.xml.flat",
-        "source": "com.navi.app-main-48:/drawable/rn_edit_text_material.xml"
+        "merged": "com.navi.app-debug-48:/drawable_marker_end.png.flat",
+        "source": "com.navi.app-main-50:/drawable/marker_end.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/drawable_marker_end.png.flat",
-        "source": "com.navi.app-main-48:/drawable/marker_end.png"
+        "merged": "com.navi.app-debug-48:/drawable_rn_edit_text_material.xml.flat",
+        "source": "com.navi.app-main-50:/drawable/rn_edit_text_material.xml"
     },
     {
-        "merged": "com.navi.app-debug-46:/mipmap-xxhdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-xxhdpi/ic_launcher_round.png"
+        "merged": "com.navi.app-debug-48:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-hdpi/ic_launcher.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-mdpi/ic_launcher.png"
+        "merged": "com.navi.app-debug-48:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-mdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/drawable_marker_start.png.flat",
-        "source": "com.navi.app-main-48:/drawable/marker_start.png"
+        "merged": "com.navi.app-debug-48:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-xxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/mipmap-mdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-mdpi/ic_launcher_round.png"
+        "merged": "com.navi.app-debug-48:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-hdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-48:/mipmap-xxhdpi/ic_launcher.png"
+        "merged": "com.navi.app-debug-48:/drawable_marker_start.png.flat",
+        "source": "com.navi.app-main-50:/drawable/marker_start.png"
     },
     {
-        "merged": "com.navi.app-debug-46:/drawable_danger.png.flat",
-        "source": "com.navi.app-main-48:/drawable/danger.png"
+        "merged": "com.navi.app-debug-48:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.navi.app-debug-48:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.navi.app-main-50:/mipmap-xhdpi/ic_launcher.png"
     }
 ]

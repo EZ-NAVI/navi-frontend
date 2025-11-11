@@ -28,6 +28,30 @@
         }
       }
     },
+    "react-native-geolocation-service": {
+      "root": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-geolocation-service",
+      "name": "react-native-geolocation-service",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-geolocation-service/react-native-geolocation-service.podspec",
+          "version": "5.3.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-geolocation-service/android",
+          "packageImportPath": "import com.agontuk.RNFusedLocation.RNFusedLocationPackage;",
+          "packageInstance": "new RNFusedLocationPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-geolocation-service/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-gesture-handler": {
       "root": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-gesture-handler",
       "name": "react-native-gesture-handler",
@@ -49,6 +73,31 @@
             "RNGestureHandlerRootViewComponentDescriptor"
           ],
           "cmakeListsPath": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "react-native-image-picker": {
+      "root": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker",
+      "name": "react-native-image-picker",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/react-native-image-picker.podspec",
+          "version": "5.7.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android",
+          "packageImportPath": "import com.imagepicker.ImagePickerPackage;",
+          "packageInstance": "new ImagePickerPackage()",
+          "buildTypes": [],
+          "libraryName": "RNImagePickerSpec",
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-image-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,

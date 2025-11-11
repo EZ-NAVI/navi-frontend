@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.navi.app-mergeDebugResources-44:/values-w320dp-land-v13/values-w320dp-land-v13.xml",
+            "outputFile": "com.navi.app-mergeDebugResources-46:/values-w320dp-land-v13/values-w320dp-land-v13.xml",
             "map": [
                 {
                     "source": "/Users/ohminseok/.gradle/caches/8.8/transforms/b97a1c4543fdbaf80943514746bb0279/transformed/material-1.12.0/res/values-w320dp-land-v13/values-w320dp-land-v13.xml",
