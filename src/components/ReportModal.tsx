@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -14,15 +14,12 @@ import {
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { PermissionsAndroid } from 'react-native';
-// lazy-require image picker to avoid hard dependency at module load time
-// Also import named launchImageLibrary as a fallback
-// NOTE: avoid static import of react-native-image-picker here. We dynamically require it in pickImage
-// because the module export shape can vary between bundlers and versions. A static import can
-// sometimes lead to initialization errors or app load failures if the native module isn't linked
-// yet. See pickImage() for the dynamic require logic.
 
 import { sendReport, ReportPayload, ReportResponse, getPresignedUrl } from '../api/reports';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DEV_TOKEN } from '../config/dev';
+
+console.log('🔍 [ReportModal] DEV_TOKEN:', DEV_TOKEN?.substring(0, 50) + '...');
 
 type Location = { location_lat: number; location_lng: number };
 
@@ -53,7 +50,6 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const CATEGORIES = [
     { label: "공사장", value: "공사장" },
-    { label: "도로폐쇄", value: "도로폐쇄" },
     { label: "장애물", value: "장애물" },
     { label: "공포", value: "공포" },
     { label: "인도 없음", value: "인도 없음" },
@@ -76,11 +72,8 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
       if (ext.toLowerCase() === 'png') mime = 'image/png';
       else if (ext.toLowerCase() === 'webp') mime = 'image/webp';
 
-      // 개발용 임시 토큰 바꿔!!!!!
+      // 개발용 임시 토큰 사용
       const currentToken = await AsyncStorage.getItem('access_token');
-      const DEV_TOKEN = __DEV__
-        ? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLN1Y2UzFEV0tLTjFXOTJZMVg3WU05NEQiLCJ1c2VyX3R5cGUiOiJwYXJlbnQiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2MzA1NjMzMn0.ojDYW6wd5sOhoAEMH7eOT_OaVZn2XJ4UIcXaTPTpXbE"
-        : null;
       const tokenToUse = currentToken || DEV_TOKEN;
 
       if (!tokenToUse) throw new Error('No auth token available for presign request');
@@ -98,7 +91,16 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
       const localFetch = await fetch(uri);
       const blob = await localFetch.blob();
 
-      const headers = { 'Content-Type': mime };
+      // Build headers. Only include x-amz-acl when the presign response
+      // indicates the server included ACL in the signature or explicitly
+      // returned an ACL hint. Blindly adding x-amz-acl when the presign was
+      // not created with that header causes a 403 (signature mismatch) OR,
+      // if the account blocks public ACLs, S3 will reject with AccessDenied.
+      // Backend updated to generate presigned PUT URLs allowing public ACLs.
+      // Include x-amz-acl unconditionally so objects are uploaded with public-read.
+      // If backend/infra later re-enables BlockPublicAcls, this will return 403.
+      const headers: any = { 'Content-Type': mime, 'x-amz-acl': 'public-read' };
+      console.log('Including x-amz-acl header for upload (unconditional)');
       const putRes = await fetch(uploadUrl, { method: 'PUT', headers, body: blob });
       console.log('upload PUT status:', putRes.status, putRes.statusText);
       if (!putRes.ok) {
@@ -106,7 +108,20 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
         throw new Error(`upload failed: ${putRes.status} ${putRes.statusText} ${txt}`);
       }
 
-      if (!finalUrl) finalUrl = uploadUrl.split('?')[0];
+      if (!finalUrl) {
+        // Do NOT blindly strip the presigned query string and return a non-signed URL;
+        // if the bucket/object is private this will produce a 403 when the client
+        // later tries to GET the file. Prefer returning any server-provided GET URL
+        // (final_url / file_url / object_url). If none is provided, fall back to
+        // returning the original uploadUrl (with query) and warn — note: a PUT
+        // presigned URL may authorize only uploads, not GETs. Best fix: have the
+        // backend return a proper public file_url or a presigned GET URL after the
+        // upload completes.
+        finalUrl = presigned.file_url || presigned.final_url || presigned.object_url || uploadUrl;
+        if (finalUrl === uploadUrl) {
+          console.warn('presign response lacked a final GET URL; using uploadUrl as fallback. The stored URL may be inaccessible for GET (403).');
+        }
+      }
       if (Platform.OS === 'android') {
         // eslint-disable-next-line no-undef
         const ToastAndroid = require('react-native').ToastAndroid;
@@ -408,10 +423,14 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
         return;
       }
 
-      // Send to backend using the expected schema
+      // API 호출하여 제보 생성
+      // 백엔드가 제보 생성 후 자동으로 RabbitMQ → Relay Server → 부모 WebSocket으로 알림 전송
       const res: ReportResponse = await sendReport(payload as any);
+      console.log('✅ [API] 제보 생성 성공:', res);
+      console.log('💡 백엔드가 RabbitMQ를 통해 부모에게 알림을 전송합니다.');
 
       notify('제보 요청이 등록되었습니다');
+
       const submittedPayload = { ...payload, serverId: res?.id };
       onSubmitted && onSubmitted(submittedPayload);
       onClose && onClose();

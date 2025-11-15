@@ -13,7 +13,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import TMapView from "../components/TMapView";
 import { useTMapCommands } from "../components/useTMapCommands";
@@ -21,16 +21,25 @@ import { useRouteData } from "../context/RouteContext";
 import { fetchPreviewRoute } from "../api/routes";
 import SafetyNoticeModal from "../components/SafetyNoticeModal";
 import ReportModal from "../components/ReportModal";
-import { fetchReports, fetchReportById, fetchReportComments, postReportComment } from "../api/reports";
+import { fetchReports, fetchReportById, fetchReportComments, postReportComment, postReportEvaluation, postReportNotThere } from "../api/reports";
 import ClusterReportsScreen from "./ClusterReportsScreen";
 import { Modal, PanResponder, Animated, Dimensions } from 'react-native';
+import { useReportStore } from "../stores/reportStore";
+import { DEV_TOKEN } from "../config/dev";
 
 export default function SafeRouteScreen() {
   const navigation = useNavigation<any>();
   const { start, end } = useRouteData();
   const map = useTMapCommands();
   const [isReady, setIsReady] = useState(false);
+  
+  // reportStore에서 제보 리스트 가져오기 (WebSocket 실시간 갱신 반영)
+  const reportsFromStore = useReportStore((state) => state.reports);
+  const setReportsInStore = useReportStore((state) => state.setReports);
+  
+  // 로컬 상태는 초기 로드 및 마커 표시용으로 유지
   const [reportsData, setReportsData] = useState<any[]>([]);
+  
   // 제보하기 버튼 상태
   const [safetyOpen, setSafetyOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -38,17 +47,109 @@ export default function SafeRouteScreen() {
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  // Track accessibility status of the selected report's image so we can show
+  // a friendly fallback when the URL is missing or returns 403/404.
+  const [selectedImageStatus, setSelectedImageStatus] = useState<'unknown' | 'ok' | 'error' | 'no-url'>('unknown');
+
+  // Helper to check remote image availability using a HEAD request where possible.
+  const checkSelectedImage = async (url?: string | null) => {
+    if (!url) {
+      setSelectedImageStatus('no-url');
+      return;
+    }
+    try {
+      // Use HEAD to avoid downloading the full image. Some servers may not
+      // support HEAD; in that case a GET may still succeed but be heavier.
+      const res = await fetch(url, { method: 'HEAD' });
+      if (res && res.ok) setSelectedImageStatus('ok');
+      else setSelectedImageStatus('error');
+    } catch (e) {
+      // network error or CORS-like issue
+      setSelectedImageStatus('error');
+    }
+  };
   const [newComment, setNewComment] = useState<string>('');
   const [postingComment, setPostingComment] = useState(false);
   const [clusterListOpen, setClusterListOpen] = useState(false);
   const [clusterIdForList, setClusterIdForList] = useState<string | number | null>(null);
   const [clusterNearbyReports, setClusterNearbyReports] = useState<any[] | null>(null);
+  const [evaluating, setEvaluating] = useState(false);
+
+  const applyOptimisticEvaluation = (evalKey: 'good' | 'normal' | 'bad') => {
+    setSelectedReport((prev: any) => {
+      if (!prev) return prev;
+      const current = prev.userEvaluation ?? null;
+      if (current === evalKey) return prev; // no change
+      let bad = prev.badCount ?? 0;
+      let normal = prev.normalCount ?? 0;
+      let good = prev.goodCount ?? 0;
+      let total = prev.totalFeedbacks ?? 0;
+      if (current === 'bad') bad = Math.max(0, bad - 1);
+      if (current === 'normal') normal = Math.max(0, normal - 1);
+      if (current === 'good') good = Math.max(0, good - 1);
+      if (evalKey === 'bad') bad += 1;
+      if (evalKey === 'normal') normal += 1;
+      if (evalKey === 'good') good += 1;
+      const newTotal = current ? total : (total + 1);
+      return { ...prev, userEvaluation: evalKey, badCount: bad, normalCount: normal, goodCount: good, totalFeedbacks: newTotal };
+    });
+  };
+
+  // Log when cluster list modal opens and what clusterId is requested
+  useEffect(() => {
+    if (clusterListOpen) {
+      try { console.log('Opening ClusterReportsScreen: clusterIdForList=', clusterIdForList, 'clusterNearbyReportsCount=', clusterNearbyReports?.length ?? 0); } catch (e) {}
+    }
+  }, [clusterListOpen, clusterIdForList, clusterNearbyReports]);
+
+  // If this screen receives navigation params asking to open the cluster modal,
+  // open it on focus and then clear the param so it doesn't repeatedly open.
+  useEffect(() => {
+    const onFocus = () => {
+      try {
+        const p = (navigation as any).dangerouslyGetState?.() ? (navigation as any).dangerouslyGetState().routes.find((r:any) => r.name === 'SafeRoute')?.params : undefined;
+        // Prefer reading from route params when available (safe fallback)
+        let open = undefined;
+        try { const rparams = (navigation as any).getState && (navigation as any).getState().routes.find((r:any) => r.name === 'SafeRoute')?.params; if (rparams) open = rparams; } catch (e) {}
+        // fallback to route param reading via navigation if available
+        const params = open || (navigation as any).route?.params || {};
+        if (params && params.openClusterModal && (params.openClusterId || params.openClusterId === 0)) {
+          setClusterIdForList(params.openClusterId ?? null);
+          setClusterNearbyReports(null);
+          setClusterListOpen(true);
+          try { navigation.setParams && navigation.setParams({ openClusterModal: false, openClusterId: undefined }); } catch (e) {}
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+    const unsub = navigation.addListener('focus', onFocus);
+    // run once
+    onFocus();
+    return unsub;
+  }, [navigation]);
+
+  // Use a ref to expose the latest detailOpen value inside PanResponder callbacks
+  // because the PanResponder is created once and its closures would otherwise
+  // capture a stale value of detailOpen.
+  const detailOpenRef = useRef<boolean>(detailOpen);
+  useEffect(() => { detailOpenRef.current = detailOpen; }, [detailOpen]);
+  // Also keep a ref for selectedReport so pan callbacks can read the
+  // current selection even if the closure captured an older value.
+  const selectedReportRef = useRef<any | null>(selectedReport);
+  useEffect(() => { selectedReportRef.current = selectedReport; }, [selectedReport]);
 
   // Try to derive cluster id from a report object or by matching coordinates against loaded reportsData
   const resolveClusterId = (report: any): string | null => {
+    try {
+      console.log('resolveClusterId called for report:', report && typeof report === 'object' ? (report.reportId ?? report.id ?? '(no id)') : report);
+    } catch (e) {}
     if (!report) return null;
     const possible = report.clusterId ?? report.cluster_id ?? report.cluster?.id ?? report.cluster?.cluster_id ?? report.cluster_id;
-    if (possible) return String(possible);
+    if (possible) {
+      try { console.log('resolveClusterId: found direct cluster id:', possible); } catch (e) {}
+      return String(possible);
+    }
 
     // try matching by coordinates against reportsData
     const rlat = Number(report.locationLat ?? report.location_lat ?? report.__lat ?? report.lat ?? report.latitude ?? 0);
@@ -75,6 +176,7 @@ export default function SafeRouteScreen() {
     // threshold 100m
     if (best && bestDist <= 100) {
       const pc = best.clusterId ?? best.cluster_id ?? best.cluster?.id ?? best.cluster?.cluster_id ?? best.cluster_id;
+      try { console.log('resolveClusterId: nearest report match', { id: best.reportId ?? best.id, dist: bestDist, candidateCluster: pc }); } catch (e) {}
       if (pc) return String(pc);
     }
 
@@ -84,14 +186,22 @@ export default function SafeRouteScreen() {
   // animated pan for bottom detail modal drag-to-expand
   const screenHeight = Dimensions.get('window').height;
   // collapsed height for the bottom modal (px) — adjust for desired initial size
-  const COLLAPSED_HEIGHT = 300;
+  // make the initial collapsed modal occupy slightly more than half the screen
+  // so the modal appears a bit higher on pin tap
+  const COLLAPSED_HEIGHT = Math.round(screenHeight * 0.55);
   const MAX_HEIGHT = Math.round(screenHeight * 0.9);
   const modalHeight = useRef(new Animated.Value(COLLAPSED_HEIGHT)).current;
 
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_evt, gs) => Math.abs(gs.dy) > 5,
+      // Only enable pan responder when the detail modal is actually open. We
+      // read the value from detailOpenRef.current to avoid stale closure values.
+      onStartShouldSetPanResponder: () => {
+        return Boolean(detailOpenRef.current);
+      },
+      onMoveShouldSetPanResponder: (_evt, gs) => {
+        return Boolean(detailOpenRef.current) && Math.abs(gs.dy) > 5;
+      },
       onPanResponderGrant: () => {
         // nothing special required here for height-based interaction
       },
@@ -102,15 +212,29 @@ export default function SafeRouteScreen() {
       },
       onPanResponderRelease: (_evt, gs) => {
         // decide whether to open full list
+        // Use refs to read the latest state values (avoid stale closure capture)
+        const currentDetailOpen = detailOpenRef.current;
+        const currentSelected = selectedReportRef.current;
+        try { console.log('panRelease: modalHeight value check, vy:', gs.vy, 'detailOpen:', currentDetailOpen, 'selectedReport:', currentSelected ? (currentSelected.reportId ?? currentSelected.id ?? '(has id)') : null); } catch (e) {}
+
         modalHeight.stopAnimation((value: number) => {
           const shouldOpen = value > screenHeight * 0.5 || gs.vy < -0.8;
           if (shouldOpen) {
+            // If selectedReport is missing at this timing, abort opening the cluster list and
+            // snap back; this prevents the '클러스터 정보 없음' alert caused by timing issues.
+            if (!currentSelected) {
+              try { console.warn('panRelease aborted: selectedReport is null'); } catch (e) {}
+              Animated.timing(modalHeight, { toValue: COLLAPSED_HEIGHT, duration: 200, useNativeDriver: false }).start();
+              return;
+            }
             // animate to full height then open cluster list
-            Animated.timing(modalHeight, { toValue: MAX_HEIGHT, duration: 220, useNativeDriver: false }).start(() => {
-              const cid = resolveClusterId(selectedReport);
+              Animated.timing(modalHeight, { toValue: MAX_HEIGHT, duration: 220, useNativeDriver: false }).start(() => {
+              const cid = resolveClusterId(currentSelected);
               if (cid) {
                 setClusterIdForList(String(cid));
                 setClusterNearbyReports(null);
+                // keep ref in sync for immediate reads by pan handlers
+                detailOpenRef.current = false;
                 setDetailOpen(false);
                 setClusterListOpen(true);
                 // reset height for next open
@@ -120,7 +244,7 @@ export default function SafeRouteScreen() {
 
               // Fallback: try to find nearby reports within 100m and show them
               try {
-                const sr = selectedReport as any;
+                const sr = currentSelected as any;
                 const rlat = Number(sr.locationLat ?? sr.location_lat ?? sr.__lat ?? sr.lat ?? sr.latitude ?? 0);
                 const rlon = Number(sr.locationLng ?? sr.location_lng ?? sr.__lon ?? sr.lon ?? sr.longitude ?? 0);
                 if (rlat && rlon && Array.isArray(reportsData) && reportsData.length > 0) {
@@ -143,6 +267,8 @@ export default function SafeRouteScreen() {
                     setClusterNearbyReports(nearby);
                     // use a placeholder cluster id
                     setClusterIdForList('nearby');
+                    // keep ref in sync for immediate reads by pan handlers
+                    detailOpenRef.current = false;
                     setDetailOpen(false);
                     setClusterListOpen(true);
                     modalHeight.setValue(COLLAPSED_HEIGHT);
@@ -217,15 +343,12 @@ export default function SafeRouteScreen() {
   }, [start, end, isReady]);
 
   // 지도가 준비되면 전체 제보를 불러와서 마커로 표시합니다.
+  // 롱 폴링: 30초마다 제보 목록을 갱신합니다.
   useEffect(() => {
     if (!isReady || !map.ref.current) return;
 
     const loadReports = async () => {
       try {
-        // 개발용 임시 토큰 바꿔!!!!!
-        const DEV_TOKEN =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLN1Y2UzFEV0tLTjFXOTJZMVg3WU05NEQiLCJ1c2VyX3R5cGUiOiJwYXJlbnQiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2MzA1NjMzMn0.ojDYW6wd5sOhoAEMH7eOT_OaVZn2XJ4UIcXaTPTpXbE";
-
         // 우선 AsyncStorage에 토큰이 있는지 확인하고, 없으면 개발용 토큰을 사용합니다.
         let tokenToUse: string | null = null;
         try {
@@ -233,13 +356,16 @@ export default function SafeRouteScreen() {
         } catch (e) {
           console.warn('AsyncStorage read failed', e);
         }
-        if (!tokenToUse) tokenToUse = __DEV__ ? DEV_TOKEN : null;
+        if (!tokenToUse) tokenToUse = DEV_TOKEN;
 
         const reports = await fetchReports(tokenToUse ?? undefined);
         console.log("📍 전체 제보 불러옴:", reports);
 
         if (Array.isArray(reports)) {
           setReportsData(reports);
+          // reportStore에도 저장 (WebSocket 실시간 갱신 반영용)
+          setReportsInStore(reports);
+          
           const validReports: any[] = [];
           reports.forEach((r: any) => {
             // 응답 샘플에 따르면 필드명이 camelCase로 제공됩니다.
@@ -284,8 +410,8 @@ export default function SafeRouteScreen() {
             }
           });
 
-          // 첫 번째 유효 제보 위치로 카메라 이동(개발 편의)
-          if (validReports.length > 0) {
+          // 첫 번째 유효 제보 위치로 카메라 이동(개발 편의) - 최초 로딩 시에만
+          if (validReports.length > 0 && !reportsData.length) {
             const first = validReports[0];
             try {
               map.animateTo(first.__lat, first.__lon, 15);
@@ -299,8 +425,29 @@ export default function SafeRouteScreen() {
       }
     };
 
+    // 최초 로딩
     loadReports();
+
+    // 롱 폴링: 30초마다 제보 목록 갱신
+    const pollingInterval = setInterval(() => {
+      console.log('🔄 [Long Polling] 제보 목록 갱신 중...');
+      loadReports();
+    }, 30000); // 30초
+
+    // 클린업: 컴포넌트 언마운트 시 인터벌 정리
+    return () => {
+      clearInterval(pollingInterval);
+      console.log('🛑 [Long Polling] 종료');
+    };
   }, [isReady]);
+
+  // reportStore의 제보 리스트가 변경되면 로컬 상태도 업데이트 (WebSocket 실시간 반영)
+  useEffect(() => {
+    if (reportsFromStore.length > 0) {
+      setReportsData(reportsFromStore);
+      console.log('📡 [SafeRouteScreen] reportStore 업데이트 감지, 제보 수:', reportsFromStore.length);
+    }
+  }, [reportsFromStore]);
 
   // 보고된 제보 리스트에서 항목을 탭하면 지도로 이동
   const onSelectReport = (item: any) => {
@@ -326,6 +473,12 @@ export default function SafeRouteScreen() {
       if (!tokenToUse && __DEV__) tokenToUse = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLOUtDV0o5UjNIUFMyOFI4WDBKVFlTSFAiLCJ1c2VyX3R5cGUiOiJjaGlsZCIsInJvbGUiOiJVU0VSIiwiZXhwIjoxNzYyNzA2MzA2fQ.-SQQv889CeTroepb1PBst2Cb3p3NTBI2bF-Pi992j9Q";
 
       const detail = await fetchReportById(String(reportId), tokenToUse ?? undefined);
+      // Debug: show full detail returned by backend so we can inspect image fields
+      try {
+        console.log('DEBUG /reports/{id} detail:', JSON.stringify(detail));
+      } catch (e) {
+        console.log('DEBUG /reports/{id} detail (non-serializable):', detail);
+      }
       // Try to fetch comments for this report; non-fatal if it fails.
       try {
         const comments = await fetchReportComments(String(reportId), tokenToUse ?? undefined);
@@ -335,7 +488,10 @@ export default function SafeRouteScreen() {
         console.warn('댓글 불러오기 실패', e);
         detail.comments = detail.comments ?? [];
       }
+      // synchronize refs immediately to avoid pan gesture races
+      selectedReportRef.current = detail;
       setSelectedReport(detail);
+      detailOpenRef.current = true;
       setDetailOpen(true);
     } catch (e) {
       console.warn('/reports/{id} 조회 실패', e);
@@ -347,9 +503,11 @@ export default function SafeRouteScreen() {
 
   // 개발 편의: 토큰을 강제로 설정하는 버튼 (dev 전용)
   const setDevToken = async () => {
-    const DEV_TOKEN =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLOE1UQUNKMkFaU043WjdFWjFDN1ZFOEEiLCJ1c2VyX3R5cGUiOiJjaGlsZCIsInJvbGUiOiJVU0VSIiwiZXhwIjoxNzYyODY3NzIxfQ.So1xEoa9TbDutV78yvhZHqzRdoXvFN45hgzk0lGxqGk";
     try {
+      if (!DEV_TOKEN) {
+        console.warn('DEV_TOKEN이 설정되지 않았습니다.');
+        return;
+      }
       await AsyncStorage.setItem('access_token', DEV_TOKEN);
       if (Platform.OS === 'android') {
         // eslint-disable-next-line no-undef
@@ -532,8 +690,8 @@ export default function SafeRouteScreen() {
       )}
 
       {/* 상세 제보 하단 카드 */}
-      <Modal visible={detailOpen} transparent animationType="slide" onRequestClose={() => setDetailOpen(false)}>
-        <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} onPress={() => setDetailOpen(false)}>
+      <Modal visible={detailOpen} transparent animationType="slide" onRequestClose={() => { detailOpenRef.current = false; setDetailOpen(false); }}>
+        <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} onPress={() => { detailOpenRef.current = false; setDetailOpen(false); }}>
           <View style={{ flex: 1, justifyContent: 'flex-end' }}>
             {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
             <Animated.View
@@ -555,7 +713,33 @@ export default function SafeRouteScreen() {
                   shadowColor: 'transparent',
                   shadowOpacity: 0,
                 }}
-                onPress={() => { setDetailOpen(false); }}
+                onPress={() => {
+                  const rid = String(selectedReport?.reportId ?? selectedReport?.id ?? '');
+                  if (!rid) { detailOpenRef.current = false; setDetailOpen(false); return; }
+                  Alert.alert('이제 없어요', '정말 더 이상 존재하지 않나요?', [
+                    { text: '취소', style: 'cancel' },
+                    { text: '확인', onPress: async () => {
+                        try {
+                          try {
+                            console.log('[NotThere] map modal send for reportId=', rid, 'category=', selectedReport?.category ?? selectedReport?.title ?? '제보');
+                          } catch (logErr) {}
+                          let token: string | null = null;
+                          try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                          await postReportNotThere(rid, token ?? undefined);
+                        } catch (e: any) {
+                          console.warn('not-there failed', e);
+                          const errorMsg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '상태 전송에 실패했습니다.';
+                          if (errorMsg.includes('이미') && errorMsg.includes('이제 없어요')) {
+                            Alert.alert('알림', '이미 누른 제보입니다.');
+                          } else {
+                            Alert.alert('처리 실패', errorMsg);
+                          }
+                        }
+                        // 닫기
+                        detailOpenRef.current = false; setDetailOpen(false);
+                      } }
+                  ]);
+                }}
               >
                 <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
               </TouchableOpacity>
@@ -566,9 +750,32 @@ export default function SafeRouteScreen() {
                 <View>
                   <Text style={{ fontSize: 20, fontWeight: '800', marginBottom: 8, color: '#000' }}>{selectedReport.category ?? selectedReport.description ?? '제보'}</Text>
                   <Text style={{ color: '#000', marginBottom: 12 }}>{selectedReport.description ?? selectedReport.content ?? ''}</Text>
-                  {selectedReport.imageUrl ? (
-                    <Image source={{ uri: selectedReport.imageUrl }} style={{ width: '100%', height: 180, borderRadius: 10, marginBottom: 12 }} resizeMode="cover" />
-                  ) : null}
+                  {(() => {
+                    // Normalize common image fields from backend: support camelCase and snake_case
+                    const sr: any = selectedReport as any;
+                    const imageUrl = sr.imageUrl ?? sr.image_url ?? sr.photoUrl ?? sr.photo_url ?? sr.file_url ?? sr.object_url ?? null;
+                    if (!imageUrl) return null;
+
+                    if (selectedImageStatus === 'unknown') {
+                      // check in background if not checked yet
+                      checkSelectedImage(imageUrl);
+                      return <ActivityIndicator style={{ width: '100%', height: 180, marginBottom: 12 }} />;
+                    }
+
+                    if (selectedImageStatus === 'ok') {
+                      return <Image source={{ uri: imageUrl }} style={{ width: '100%', height: 180, borderRadius: 10, marginBottom: 12 }} resizeMode="cover" />;
+                    }
+
+                    // error state: show placeholder and allow retry
+                    return (
+                      <View style={{ width: '100%', height: 180, borderRadius: 10, marginBottom: 12, backgroundColor: '#F2F3F5', alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ color: '#666', marginBottom: 8 }}>이미지를 불러올 수 없습니다.</Text>
+                        <TouchableOpacity onPress={() => checkSelectedImage(imageUrl)} style={{ backgroundColor: '#FFD44C', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
+                          <Text style={{ fontWeight: '700' }}>재시도</Text>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })()}
 
                   <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
                     <View style={{ flex: 1 }}>
@@ -577,17 +784,12 @@ export default function SafeRouteScreen() {
                           with different property names; handle common shapes defensively. */}
                       {(() => {
                         const sr: any = selectedReport as any;
-                        // normalize array-of-comments shapes
-                        let list: string[] = [];
-                        if (Array.isArray(sr.comments) && sr.comments.length > 0) {
-                          // comments items usually have a `content` field that holds the comment text
-                          list = sr.comments.map((c: any) => (typeof c === 'string' ? c : c.content ?? c.text ?? c.comment ?? c.body ?? c.message ?? JSON.stringify(c)));
-                        } else if (Array.isArray(sr.replies) && sr.replies.length > 0) {
-                          list = sr.replies.map((c: any) => (typeof c === 'string' ? c : c.content ?? c.text ?? c.comment ?? c.body ?? c.message ?? JSON.stringify(c)));
-                        } else {
-                          const single = sr.userComment ?? sr.comment ?? sr.description ?? sr.content ?? sr.note ?? sr.message ?? null;
-                          if (single) list = [String(single)];
-                        }
+                        // Only show comments returned from the comments endpoint.
+                        // Do NOT fall back to report content — that caused report text
+                        // to appear where comment list is expected.
+                        const list: string[] = Array.isArray(sr.comments) && sr.comments.length > 0
+                          ? sr.comments.map((c: any) => (typeof c === 'string' ? c : c.content ?? c.text ?? c.comment ?? c.body ?? c.message ?? JSON.stringify(c)))
+                          : [];
 
                         if (list.length === 0) {
                           return <Text style={{ color: '#666', marginBottom: 12 }}>아직 댓글이 없습니다.</Text>;
@@ -598,7 +800,7 @@ export default function SafeRouteScreen() {
                         return (
                           <View style={{ marginBottom: 8 }}>
                             {toShow.map((txt: string, idx: number) => (
-                              <Text key={idx} style={{ color: '#000', marginBottom: 8 }}>{txt}</Text>
+                              <Text key={idx} style={{ color: '#000', marginBottom: 8, fontSize: 14 }}>{txt}</Text>
                             ))}
                             {list.length > 4 ? (
                               <Text style={{ color: '#666', fontSize: 12 }}>외 {list.length - 4}개의 댓글</Text>
@@ -613,23 +815,80 @@ export default function SafeRouteScreen() {
                           <View style={{ alignItems: 'flex-end', marginLeft: 12 }}>
                             {/* 위로 끌어올리면 전체보기(풀스크린)로 전환됩니다. */}
                       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                        {/* 좋음(라벨) → bad 평가 키 */}
                         <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                          <TouchableOpacity style={{ padding: 6 }} onPress={() => { /* 좋아요 처리 예: send feedback */ }}>
+                          <TouchableOpacity
+                            style={{ padding: 6 }}
+                            disabled={evaluating}
+                            onPress={async () => {
+                              if (!selectedReport || evaluating) return;
+                              try {
+                                setEvaluating(true);
+                                let token: string | null = null;
+                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'bad', token ?? undefined);
+                                applyOptimisticEvaluation('bad');
+                              } catch (e) {
+                                console.warn('evaluation failed (좋음->bad)', e);
+                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                              } finally { setEvaluating(false); }
+                            }}
+                          >
                             <Text style={{ fontSize: 28 }}>😊</Text>
                           </TouchableOpacity>
-                          <Text style={{ color: '#000', marginTop: 4 }}>좋음</Text>
+                          <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'bad' ? '700' : '400', color: selectedReport?.userEvaluation === 'bad' ? '#000' : '#666' }}>
+                            좋음 {Number(selectedReport?.badCount ?? 0)}
+                          </Text>
                         </View>
+                        {/* 보통 → normal */}
                         <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                          <TouchableOpacity style={{ padding: 6 }} onPress={() => { }}>
+                          <TouchableOpacity
+                            style={{ padding: 6 }}
+                            disabled={evaluating}
+                            onPress={async () => {
+                              if (!selectedReport || evaluating) return;
+                              try {
+                                setEvaluating(true);
+                                let token: string | null = null;
+                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'normal', token ?? undefined);
+                                applyOptimisticEvaluation('normal');
+                              } catch (e) {
+                                console.warn('evaluation failed (보통->normal)', e);
+                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                              } finally { setEvaluating(false); }
+                            }}
+                          >
                             <Text style={{ fontSize: 28 }}>😐</Text>
                           </TouchableOpacity>
-                          <Text style={{ color: '#000', marginTop: 4 }}>보통</Text>
+                          <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'normal' ? '700' : '400', color: selectedReport?.userEvaluation === 'normal' ? '#000' : '#666' }}>
+                            보통 {Number(selectedReport?.normalCount ?? 0)}
+                          </Text>
                         </View>
+                        {/* 아쉬움 → good */}
                         <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                          <TouchableOpacity style={{ padding: 6 }} onPress={() => { }}>
+                          <TouchableOpacity
+                            style={{ padding: 6 }}
+                            disabled={evaluating}
+                            onPress={async () => {
+                              if (!selectedReport || evaluating) return;
+                              try {
+                                setEvaluating(true);
+                                let token: string | null = null;
+                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'good', token ?? undefined);
+                                applyOptimisticEvaluation('good');
+                              } catch (e) {
+                                console.warn('evaluation failed (아쉬움->good)', e);
+                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                              } finally { setEvaluating(false); }
+                            }}
+                          >
                             <Text style={{ fontSize: 28 }}>☹️</Text>
                           </TouchableOpacity>
-                          <Text style={{ color: '#000', marginTop: 4 }}>아쉬움</Text>
+                          <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'good' ? '700' : '400', color: selectedReport?.userEvaluation === 'good' ? '#000' : '#666' }}>
+                            아쉬움 {Number(selectedReport?.goodCount ?? 0)}
+                          </Text>
                         </View>
                       </View>
 
@@ -647,44 +906,27 @@ export default function SafeRouteScreen() {
         {/* 상세 모달이 열려있을 때 화면 오른쪽 아래에 고정된 '이제 없어요' 버튼 */}
         {/* moved '이제 없어요' button inside modal content */}
         {/* 댓글 입력창: 모달 하단 왼쪽에 고정 */}
-        {detailOpen && selectedReport ? (
-          <View
-            pointerEvents="auto"
-            style={{
-              position: 'absolute',
-              left: 16,
-              right: 16,
-              bottom: Platform.select({ android: 24, ios: 34 }),
-              zIndex: 999,
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 12, padding: 6, borderWidth: 1, borderColor: '#eee', shadowColor: '#000', shadowOpacity: 0.08, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4 }}>
-              <TextInput
-                value={newComment}
-                onChangeText={setNewComment}
-                placeholder="댓글을 입력하세요..."
-                placeholderTextColor="#999"
-                style={{ flex: 1, paddingHorizontal: 8, paddingVertical: Platform.OS === 'ios' ? 10 : 6, maxHeight: 90 }}
-                editable={!postingComment}
-                returnKeyType="send"
-                onSubmitEditing={() => { submitComment(); }}
-              />
-              <TouchableOpacity
-                onPress={submitComment}
-                disabled={postingComment}
-                style={{ marginLeft: 8, backgroundColor: '#FFD44C', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10 }}
-              >
-                {postingComment ? <ActivityIndicator /> : <Text style={{ fontWeight: '700' }}>전송</Text>}
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : null}
+        {/* 댓글 입력창은 ReportDetail 화면(전체 페이지)로 이동했습니다. 핀을 눌렀을 때 뜨는 하단 모달에서는 댓글 입력을 표시하지 않습니다. */}
       </Modal>
 
       {/* 클러스터 전체 리스트 풀스크린 보기 */}
       {clusterListOpen && (
         <Modal visible={clusterListOpen} animationType="slide" onRequestClose={() => setClusterListOpen(false)}>
-          <ClusterReportsScreen clusterId={clusterIdForList ?? ''} nearbyReports={clusterNearbyReports ?? undefined} onClose={() => { setClusterListOpen(false); setClusterNearbyReports(null); }} />
+          <ClusterReportsScreen
+            clusterId={clusterIdForList ?? ''}
+            nearbyReports={clusterNearbyReports ?? undefined}
+            onClose={() => { setClusterListOpen(false); setClusterNearbyReports(null); }}
+            onSelect={(r) => {
+              // close the cluster list and show the selected report on the map
+              try { setClusterListOpen(false); setClusterNearbyReports(null); } catch (e) {}
+              try {
+                // reuse existing handler which fetches detail and opens the bottom modal
+                onMarkerPress(r);
+              } catch (e) {
+                console.warn('Cluster select -> onMarkerPress failed', e);
+              }
+            }}
+          />
         </Modal>
       )}
 

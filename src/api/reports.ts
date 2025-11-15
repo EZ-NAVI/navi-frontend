@@ -151,13 +151,139 @@ export const postReportComment = async (reportId: string, content: string, token
 export const fetchReportsByCluster = async (clusterId: string | number, token?: string) => {
   try {
     const config = token ? { headers: { Authorization: `Bearer ${token}` }, params: { cluster_id: clusterId } } : { params: { cluster_id: clusterId } };
+    // Debug: log the outgoing request details so callers can see what is being sent.
+    try {
+      console.log('API: GET /reports/filter', { baseURL: (client as any).defaults?.baseURL, params: config.params, headers: config.headers ? Object.keys(config.headers) : null });
+    } catch (e) { /* ignore logging failures */ }
     const res = await client.get('/reports/filter', config as any);
+    // Debug: log a compact preview of the response so callers can see what came back
+    try {
+      const preview = (() => {
+        if (!res || typeof res !== 'object') return String(res);
+        const d = res.data;
+        if (Array.isArray(d)) return { status: res.status, items: d.length, sample: d.slice(0, 5) };
+        if (d && Array.isArray(d.results)) return { status: res.status, items: d.results.length, sample: d.results.slice(0, 5) };
+        return { status: res.status, dataType: typeof d, sample: d };
+      })();
+      try { console.log('API: GET /reports/filter response preview:', preview); } catch (e) { /* ignore logging errors */ }
+
+      // Additionally log the columns / keys present on each report item (first N)
+      try {
+        const d = res.data;
+        const list = Array.isArray(d) ? d : (d && Array.isArray(d.results) ? d.results : (d && Array.isArray(d.reports) ? d.reports : (d && Array.isArray(d.data) ? d.data : [])));
+        const sample = Array.isArray(list) ? list.slice(0, 10) : [];
+        const columns = sample.map((it: any) => Object.keys(it || {}).sort());
+        try { console.log('API: GET /reports/filter item columns (first', sample.length, 'items):', columns); } catch (e) {}
+      } catch (e) { /* ignore */ }
+    } catch (e) { /* ignore */ }
+
     if (Array.isArray(res.data)) return res.data;
     if (res.data && Array.isArray(res.data.results)) return res.data.results;
-    // fallback: if API returns object with list field
+    if (res.data && Array.isArray(res.data.reports)) return res.data.reports;
+    if (res.data && Array.isArray(res.data.data)) return res.data.data;
+    // fallback: return raw data
     return res.data;
   } catch (error: any) {
     console.error(`❌ /reports/filter?cluster_id=${clusterId} 조회 실패:`, error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
+ * 제보 평가 전송
+ * Endpoint: POST /reports/{report_id}/evaluate
+ * Body: { evaluation: 'good' | 'normal' | 'bad' }
+ * UI 라벨 매핑 (중요):
+ *   좋음 -> bad
+ *   보통 -> normal
+ *   아쉬움 -> good
+ */
+export const postReportEvaluation = async (reportId: string, evalKey: 'good' | 'normal' | 'bad', token?: string) => {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+    const body = { evaluation: evalKey };
+    try {
+      console.log('API: POST /reports/' + reportId + '/evaluate', body);
+    } catch (e) {}
+    const res = await client.post(`/reports/${encodeURIComponent(reportId)}/evaluate`, body, config as any);
+    try {
+      console.log('API: evaluation success', { status: res.status, eval: evalKey });
+    } catch (e) {}
+    return res.data;
+  } catch (error: any) {
+    console.error(`❌ /reports/${reportId}/evaluate 실패:`, error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
+ * 제보 상태: "이제 없어요" 표시 전송
+ * Endpoint: POST /reports/{report_id}/not-there/
+ * Body: (백엔드 스펙에 따라 비어있거나 {})
+ * 성공 시 반환 데이터를 그대로 리턴. 실패 시 throw.
+ */
+export const postReportNotThere = async (reportId: string, token?: string) => {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+    try { console.log('API: POST /reports/' + reportId + '/not-there/'); } catch (e) {}
+    const res = await client.post(`/reports/${encodeURIComponent(reportId)}/not-there/`, {}, config as any);
+    try { console.log('API: not-there success', { status: res.status }); } catch (e) {}
+    return res.data;
+  } catch (error: any) {
+    console.error(`❌ /reports/${reportId}/not-there/ 실패:`, error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
+ * 제보 검토 (승인/반려)
+ * Endpoint: POST /reports/{report_id}/review
+ * Body: { action: "승인" | "반려" }
+ */
+export const postReportReview = async (reportId: string, action: '승인' | '반려', token?: string) => {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+    console.log(`API: POST /reports/${reportId}/review with action: ${action}`);
+    const res = await client.post(`/reports/${encodeURIComponent(reportId)}/review`, { action }, config as any);
+    console.log('API: review success', { status: res.status, data: res.data });
+    return res.data;
+  } catch (error: any) {
+    console.error(`❌ /reports/${reportId}/review 실패:`, error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
+ * 제보 수정
+ * Endpoint: PATCH /reports/{report_id}
+ * Body: { category?: string, description?: string, image_url?: string, location_lat?: number, location_lng?: number }
+ */
+export const updateReport = async (reportId: string, payload: Partial<ReportPayload>, token?: string) => {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+    console.log(`API: PATCH /reports/${reportId}`, payload);
+    const res = await client.patch(`/reports/${encodeURIComponent(reportId)}`, payload, config as any);
+    console.log('API: update success', { status: res.status, data: res.data });
+    return res.data;
+  } catch (error: any) {
+    console.error(`❌ /reports/${reportId} 수정 실패:`, error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
+ * 제보 삭제
+ * Endpoint: DELETE /reports/{report_id}
+ */
+export const deleteReport = async (reportId: string, token?: string) => {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+    console.log(`API: DELETE /reports/${reportId}`);
+    const res = await client.delete(`/reports/${encodeURIComponent(reportId)}`, config as any);
+    console.log('API: delete success', { status: res.status, data: res.data });
+    return res.data;
+  } catch (error: any) {
+    console.error(`❌ /reports/${reportId} 삭제 실패:`, error.response?.data || error.message);
     throw error;
   }
 };

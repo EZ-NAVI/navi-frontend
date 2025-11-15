@@ -1,6 +1,7 @@
 // src/api/client.ts
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DEV_TOKEN } from "../config/dev";
 
 const client = axios.create({
   baseURL: "http://3.37.169.176:8000", // ✅ 백엔드 베이스 URL
@@ -19,9 +20,8 @@ client.interceptors.request.use(async (config) => {
     // ignore
   }
 
-  if (!token && typeof __DEV__ !== 'undefined' && __DEV__) {
-    // 개발용 임시 토큰 바꿔!!!!!
-    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLN1Y2UzFEV0tLTjFXOTJZMVg3WU05NEQiLCJ1c2VyX3R5cGUiOiJwYXJlbnQiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2MzA1NjMzMn0.ojDYW6wd5sOhoAEMH7eOT_OaVZn2XJ4UIcXaTPTpXbE";
+  if (!token && DEV_TOKEN) {
+    token = DEV_TOKEN;
     try { console.log('Using DEV_TOKEN for Authorization header'); } catch(e){}
   }
 
