@@ -107,6 +107,43 @@ export const fetchReportById = async (reportId: string, token?: string) => {
 };
 
 /**
+ * 특정 제보에 달린 댓글 목록 조회
+ * 백엔드 엔드포인트: GET /reports/{report_id}/comments/
+ * 반환값은 보통 배열이므로 그대로 반환합니다. 실패 시 에러를 throw 합니다.
+ */
+export const fetchReportComments = async (reportId: string, token?: string) => {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+    const res = await client.get(`/reports/${encodeURIComponent(reportId)}/comments/`, config as any);
+    // defensive: if res.data.results exists, return it, else return res.data
+    if (Array.isArray(res.data)) return res.data;
+    if (res.data && Array.isArray(res.data.results)) return res.data.results;
+    return res.data;
+  } catch (error: any) {
+    console.error(`❌ /reports/${reportId}/comments/ 조회 실패:`, error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
+ * 특정 제보에 댓글 추가
+ * POST /reports/{report_id}/comments/
+ * 요청 바디: { content: string }
+ * 반환: 생성된 댓글 객체
+ */
+export const postReportComment = async (reportId: string, content: string, token?: string) => {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+    const body = { content };
+    const res = await client.post(`/reports/${encodeURIComponent(reportId)}/comments/`, body, config as any);
+    return res.data;
+  } catch (error: any) {
+    console.error(`❌ /reports/${reportId}/comments/ POST 실패:`, error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
  * 특정 cluster에 속한 제보 목록 조회
  * @param clusterId 백엔드가 기대하는 cluster 식별자
  * @param token 선택적 개발 토큰

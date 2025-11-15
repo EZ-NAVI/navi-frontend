@@ -6,9 +6,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 type Props = {
   clusterId: string | number;
   onClose: () => void;
+  // If provided, these reports will be shown instead of fetching by clusterId
+  nearbyReports?: any[] | null;
 };
 
-export default function ClusterReportsScreen({ clusterId, onClose }: Props) {
+export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports }: Props) {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,6 +18,11 @@ export default function ClusterReportsScreen({ clusterId, onClose }: Props) {
     const load = async () => {
       setLoading(true);
       try {
+        // If nearbyReports provided, use them directly
+        if (Array.isArray(nearbyReports) && nearbyReports.length > 0) {
+          setItems(nearbyReports);
+          return;
+        }
         // try to use stored token if any (dev fallback handled in API too)
         let token: string | null = null;
         try { token = await AsyncStorage.getItem('access_token'); } catch (e) { /* ignore */ }

@@ -9,6 +9,8 @@ import {
   Image,
   FlatList,
   Pressable,
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from "@react-navigation/native";
@@ -19,7 +21,7 @@ import { useRouteData } from "../context/RouteContext";
 import { fetchPreviewRoute } from "../api/routes";
 import SafetyNoticeModal from "../components/SafetyNoticeModal";
 import ReportModal from "../components/ReportModal";
-import { fetchReports, fetchReportById } from "../api/reports";
+import { fetchReports, fetchReportById, fetchReportComments, postReportComment } from "../api/reports";
 import ClusterReportsScreen from "./ClusterReportsScreen";
 import { Modal, PanResponder, Animated, Dimensions } from 'react-native';
 
@@ -36,8 +38,11 @@ export default function SafeRouteScreen() {
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [newComment, setNewComment] = useState<string>('');
+  const [postingComment, setPostingComment] = useState(false);
   const [clusterListOpen, setClusterListOpen] = useState(false);
   const [clusterIdForList, setClusterIdForList] = useState<string | number | null>(null);
+  const [clusterNearbyReports, setClusterNearbyReports] = useState<any[] | null>(null);
 
   // Try to derive cluster id from a report object or by matching coordinates against loaded reportsData
   const resolveClusterId = (report: any): string | null => {
@@ -103,17 +108,54 @@ export default function SafeRouteScreen() {
             // animate to full height then open cluster list
             Animated.timing(modalHeight, { toValue: MAX_HEIGHT, duration: 220, useNativeDriver: false }).start(() => {
               const cid = resolveClusterId(selectedReport);
-              if (!cid) {
-                Alert.alert('클러스터 정보 없음', '이 제보에 대한 클러스터 ID가 없습니다.');
-                // revert
-                Animated.timing(modalHeight, { toValue: COLLAPSED_HEIGHT, duration: 200, useNativeDriver: false }).start();
+              if (cid) {
+                setClusterIdForList(String(cid));
+                setClusterNearbyReports(null);
+                setDetailOpen(false);
+                setClusterListOpen(true);
+                // reset height for next open
+                modalHeight.setValue(COLLAPSED_HEIGHT);
                 return;
               }
-              setClusterIdForList(String(cid));
-              setDetailOpen(false);
-              setClusterListOpen(true);
-              // reset height for next open
-              modalHeight.setValue(COLLAPSED_HEIGHT);
+
+              // Fallback: try to find nearby reports within 100m and show them
+              try {
+                const sr = selectedReport as any;
+                const rlat = Number(sr.locationLat ?? sr.location_lat ?? sr.__lat ?? sr.lat ?? sr.latitude ?? 0);
+                const rlon = Number(sr.locationLng ?? sr.location_lng ?? sr.__lon ?? sr.lon ?? sr.longitude ?? 0);
+                if (rlat && rlon && Array.isArray(reportsData) && reportsData.length > 0) {
+                  const toRad = (deg: number) => (deg * Math.PI) / 180;
+                  const earthRadius = 6371000;
+                  const nearby: any[] = [];
+                  for (const r of reportsData) {
+                    const lat2 = Number(r.locationLat ?? r.location_lat ?? r.__lat ?? r.lat ?? r.latitude ?? 0);
+                    const lon2 = Number(r.locationLng ?? r.location_lng ?? r.__lon ?? r.lon ?? r.longitude ?? 0);
+                    if (!lat2 || !lon2) continue;
+                    const dLat = toRad(lat2 - rlat);
+                    const dLon = toRad(lon2 - rlon);
+                    const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(rlat)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    const d = earthRadius * c;
+                    if (d <= 100) nearby.push(r);
+                  }
+
+                  if (nearby.length > 0) {
+                    setClusterNearbyReports(nearby);
+                    // use a placeholder cluster id
+                    setClusterIdForList('nearby');
+                    setDetailOpen(false);
+                    setClusterListOpen(true);
+                    modalHeight.setValue(COLLAPSED_HEIGHT);
+                    return;
+                  }
+                }
+              } catch (e) {
+                console.warn('nearby fallback failed', e);
+              }
+
+              // if still nothing, inform user and revert height
+              Alert.alert('클러스터 정보 없음', '이 제보에 대한 클러스터 ID가 없습니다.');
+              Animated.timing(modalHeight, { toValue: COLLAPSED_HEIGHT, duration: 200, useNativeDriver: false }).start();
             });
           } else {
             // snap back to collapsed
@@ -182,7 +224,7 @@ export default function SafeRouteScreen() {
       try {
         // 개발용 임시 토큰 바꿔!!!!!
         const DEV_TOKEN =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLOE1UQUNKMkFaU043WjdFWjFDN1ZFOEEiLCJ1c2VyX3R5cGUiOiJjaGlsZCIsInJvbGUiOiJVU0VSIiwiZXhwIjoxNzYyODg2ODkxfQ.tbWxbZ5ZuB0w1pTgFIBSAtL0Z5ZIzqAJ-qQPgXbD7ZA";
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLN1Y2UzFEV0tLTjFXOTJZMVg3WU05NEQiLCJ1c2VyX3R5cGUiOiJwYXJlbnQiLCJyb2xlIjoiVVNFUiIsImV4cCI6MTc2MzA1NjMzMn0.ojDYW6wd5sOhoAEMH7eOT_OaVZn2XJ4UIcXaTPTpXbE";
 
         // 우선 AsyncStorage에 토큰이 있는지 확인하고, 없으면 개발용 토큰을 사용합니다.
         let tokenToUse: string | null = null;
@@ -284,6 +326,15 @@ export default function SafeRouteScreen() {
       if (!tokenToUse && __DEV__) tokenToUse = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLOUtDV0o5UjNIUFMyOFI4WDBKVFlTSFAiLCJ1c2VyX3R5cGUiOiJjaGlsZCIsInJvbGUiOiJVU0VSIiwiZXhwIjoxNzYyNzA2MzA2fQ.-SQQv889CeTroepb1PBst2Cb3p3NTBI2bF-Pi992j9Q";
 
       const detail = await fetchReportById(String(reportId), tokenToUse ?? undefined);
+      // Try to fetch comments for this report; non-fatal if it fails.
+      try {
+        const comments = await fetchReportComments(String(reportId), tokenToUse ?? undefined);
+        // attach comments in normalized shape
+        detail.comments = Array.isArray(comments) ? comments : (comments ? [comments] : []);
+      } catch (e) {
+        console.warn('댓글 불러오기 실패', e);
+        detail.comments = detail.comments ?? [];
+      }
       setSelectedReport(detail);
       setDetailOpen(true);
     } catch (e) {
@@ -328,6 +379,50 @@ export default function SafeRouteScreen() {
     } catch (e) {
       console.warn('showToken failed', e);
       Alert.alert('토큰 읽기 실패', String(e));
+    }
+  };
+
+  const showToast = (msg: string) => {
+    if (Platform.OS === 'android') {
+      // eslint-disable-next-line no-undef
+      const ToastAndroid = require('react-native').ToastAndroid;
+      ToastAndroid.show(msg, ToastAndroid.SHORT);
+    } else {
+      Alert.alert('', msg);
+    }
+  };
+
+  const submitComment = async () => {
+    if (!selectedReport) return;
+    const text = (newComment || '').trim();
+    if (!text) {
+      showToast('댓글 내용을 입력해 주세요.');
+      return;
+    }
+    setPostingComment(true);
+    try {
+      let tokenToUse: string | null = null;
+      try { tokenToUse = await AsyncStorage.getItem('access_token'); } catch (e) { /* ignore */ }
+      if (!tokenToUse && __DEV__) tokenToUse = null; // dev token not required for comments by default
+      const created = await postReportComment(String(selectedReport.reportId ?? selectedReport.id), text, tokenToUse ?? undefined);
+      // append to local comment list
+      const next = { ...selectedReport } as any;
+      next.comments = Array.isArray(next.comments) ? [...next.comments] : [];
+      next.comments.unshift(created);
+      setSelectedReport(next);
+      setNewComment('');
+      showToast('댓글이 추가되었습니다.');
+    } catch (e:any) {
+      console.warn('댓글 전송 실패', e);
+      const serverBody = e?.response?.data;
+      if (serverBody) {
+        const maybeMsg = typeof serverBody === 'string' ? serverBody : (serverBody.message || serverBody.error || JSON.stringify(serverBody));
+        Alert.alert('댓글 추가 실패', String(maybeMsg).slice(0,200));
+      } else {
+        Alert.alert('댓글 추가 실패', String(e?.message || '서버 오류'));
+      }
+    } finally {
+      setPostingComment(false);
     }
   };
 
@@ -445,6 +540,26 @@ export default function SafeRouteScreen() {
               {...panResponder.panHandlers}
               style={[{ backgroundColor: '#fff', borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 16 }, { height: modalHeight }]}
             >
+              {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  right: 16,
+                  top: 16,
+                  backgroundColor: '#FFD44C',
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderRadius: 18,
+                  zIndex: 1000,
+                  elevation: 0,
+                  shadowColor: 'transparent',
+                  shadowOpacity: 0,
+                }}
+                onPress={() => { setDetailOpen(false); }}
+              >
+                <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
+              </TouchableOpacity>
+
               {loadingDetail ? (
                 <Text style={{ color: '#000' }}>불러오는 중...</Text>
               ) : selectedReport ? (
@@ -465,9 +580,10 @@ export default function SafeRouteScreen() {
                         // normalize array-of-comments shapes
                         let list: string[] = [];
                         if (Array.isArray(sr.comments) && sr.comments.length > 0) {
-                          list = sr.comments.map((c: any) => (typeof c === 'string' ? c : c.text ?? c.comment ?? c.body ?? c.message ?? JSON.stringify(c)));
+                          // comments items usually have a `content` field that holds the comment text
+                          list = sr.comments.map((c: any) => (typeof c === 'string' ? c : c.content ?? c.text ?? c.comment ?? c.body ?? c.message ?? JSON.stringify(c)));
                         } else if (Array.isArray(sr.replies) && sr.replies.length > 0) {
-                          list = sr.replies.map((c: any) => (typeof c === 'string' ? c : c.text ?? c.comment ?? c.body ?? c.message ?? JSON.stringify(c)));
+                          list = sr.replies.map((c: any) => (typeof c === 'string' ? c : c.content ?? c.text ?? c.comment ?? c.body ?? c.message ?? JSON.stringify(c)));
                         } else {
                           const single = sr.userComment ?? sr.comment ?? sr.description ?? sr.content ?? sr.note ?? sr.message ?? null;
                           if (single) list = [String(single)];
@@ -477,10 +593,21 @@ export default function SafeRouteScreen() {
                           return <Text style={{ color: '#666', marginBottom: 12 }}>아직 댓글이 없습니다.</Text>;
                         }
 
-                        return list.map((txt: string, idx: number) => (
-                          <Text key={idx} style={{ color: '#000', marginBottom: 8 }}>{txt}</Text>
-                        ));
+                        // Show up to 4 comments only
+                        const toShow = list.slice(0, 3);
+                        return (
+                          <View style={{ marginBottom: 8 }}>
+                            {toShow.map((txt: string, idx: number) => (
+                              <Text key={idx} style={{ color: '#000', marginBottom: 8 }}>{txt}</Text>
+                            ))}
+                            {list.length > 4 ? (
+                              <Text style={{ color: '#666', fontSize: 12 }}>외 {list.length - 4}개의 댓글</Text>
+                            ) : null}
+                          </View>
+                        );
                       })()}
+                    
+                      {/* 댓글 입력 UI는 하단 좌측 고정으로 이동함 */}
                     </View>
 
                           <View style={{ alignItems: 'flex-end', marginLeft: 12 }}>
@@ -518,30 +645,46 @@ export default function SafeRouteScreen() {
           </View>
         </Pressable>
         {/* 상세 모달이 열려있을 때 화면 오른쪽 아래에 고정된 '이제 없어요' 버튼 */}
+        {/* moved '이제 없어요' button inside modal content */}
+        {/* 댓글 입력창: 모달 하단 왼쪽에 고정 */}
         {detailOpen && selectedReport ? (
-          <TouchableOpacity
+          <View
+            pointerEvents="auto"
             style={{
               position: 'absolute',
+              left: 16,
               right: 16,
               bottom: Platform.select({ android: 24, ios: 34 }),
-              backgroundColor: '#FFD44C',
-              paddingHorizontal: 18,
-              paddingVertical: 12,
-              borderRadius: 20,
-              elevation: 6,
               zIndex: 999,
             }}
-            onPress={() => { setDetailOpen(false); }}
           >
-            <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
-          </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 12, padding: 6, borderWidth: 1, borderColor: '#eee', shadowColor: '#000', shadowOpacity: 0.08, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4 }}>
+              <TextInput
+                value={newComment}
+                onChangeText={setNewComment}
+                placeholder="댓글을 입력하세요..."
+                placeholderTextColor="#999"
+                style={{ flex: 1, paddingHorizontal: 8, paddingVertical: Platform.OS === 'ios' ? 10 : 6, maxHeight: 90 }}
+                editable={!postingComment}
+                returnKeyType="send"
+                onSubmitEditing={() => { submitComment(); }}
+              />
+              <TouchableOpacity
+                onPress={submitComment}
+                disabled={postingComment}
+                style={{ marginLeft: 8, backgroundColor: '#FFD44C', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10 }}
+              >
+                {postingComment ? <ActivityIndicator /> : <Text style={{ fontWeight: '700' }}>전송</Text>}
+              </TouchableOpacity>
+            </View>
+          </View>
         ) : null}
       </Modal>
 
       {/* 클러스터 전체 리스트 풀스크린 보기 */}
       {clusterListOpen && (
         <Modal visible={clusterListOpen} animationType="slide" onRequestClose={() => setClusterListOpen(false)}>
-          <ClusterReportsScreen clusterId={clusterIdForList ?? ''} onClose={() => setClusterListOpen(false)} />
+          <ClusterReportsScreen clusterId={clusterIdForList ?? ''} nearbyReports={clusterNearbyReports ?? undefined} onClose={() => { setClusterListOpen(false); setClusterNearbyReports(null); }} />
         </Modal>
       )}
 
