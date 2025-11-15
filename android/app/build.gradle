@@ -3,30 +3,18 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
 
-/**
- * React Native Android 설정 블록
- */
 react {
-    /* Autolinking (자동 링크) */
     autolinkLibrariesWithApp()
 }
 
-/**
- * Proguard (릴리즈 빌드용 난독화)
- */
 def enableProguardInReleaseBuilds = false
-
-/**
- * JavaScriptCore (JSC) 엔진 설정
- */
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
+    namespace "com.navi"
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
-
-    namespace "com.navi"
 
     defaultConfig {
         applicationId "com.navi"
@@ -34,6 +22,11 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        // 백그라운드 위치 권한 필요시 자동 추가 (Android 10 이상)
+        manifestPlaceholders = [
+                useLegacyStorage: false
+        ]
     }
 
     signingConfigs {
@@ -46,54 +39,53 @@ android {
     }
 
     buildTypes {
-        debug {
-            signingConfig signingConfigs.debug
-        }
+        debug { signingConfig signingConfigs.debug }
         release {
-            // ⚠️ 실제 배포 시에는 release용 keystore 필요
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+
+    /**
+     * Kotlin + Java 경로 포함시키기
+     */
+    sourceSets {
+        main {
+            java.srcDirs = [
+                    'src/main/java',
+                    'src/main/kotlin'
+            ]
+        }
+    }
 }
 
-/**
- * 로컬 AAR 및 라이브러리 참조
- */
 repositories {
     flatDir {
         dirs 'libs'
     }
 }
 
-/**
- * 의존성 설정
- */
 dependencies {
     implementation("com.facebook.react:react-android")
+
     if (hermesEnabled.toBoolean())
         implementation("com.facebook.react:hermes-android")
     else
         implementation jscFlavor
 
-    // ✅ TMap SDK (지도 관련)
+    // ⭐ FusedLocationProviderClient (GPS)
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+
+    // ⭐ TMap SDK (AAR)
     implementation files('libs/tmap-sdk-3.0.aar')
     implementation(name: 'vsm-tmap-sdk-v2-android-1.7.45', ext: 'aar')
 
-    // ✅ UI 관련 라이브러리
     implementation 'com.google.android.material:material:1.9.0'
 }
 
-/**
- * ✅ React Native Vector Icons 설정
- */
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
-/**
- * ✅ New Architecture 완전 비활성화
- * (React Native 0.82 이상에서 CMake Codegen 비활성화)
- */
 project.ext.react = [
         newArchEnabled: false
 ]

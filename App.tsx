@@ -16,8 +16,11 @@ import SignupFormScreen from "./src/screens/SignupFormScreen";
 import FindIdScreen from "./src/screens/FindIdScreen";
 import FindPasswordScreen from "./src/screens/FindPasswordScreen";
 
-// ✅ 로그인 후 이동할 메인 지도 화면
+// ✅ 지도 화면
 import SafeRouteScreen from "./src/screens/SafeRouteScreen";
+
+// ✅ 🔥 출발지/도착지 검색 화면 추가
+import LocationSearchScreen from "./src/screens/LocationSearchScreen";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -27,6 +30,9 @@ export type RootStackParamList = {
   FindId: undefined;
   FindPassword: undefined;
   SafeRoute: undefined;
+
+  // 🔥 추가됨
+  LocationSearch: { type: "start" | "end" };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -58,11 +64,17 @@ export default function App() {
           <Stack.Screen name="SignupConsent" component={SignupConsentScreen} />
           <Stack.Screen name="SignupForm" component={SignupFormScreen} />
 
-          {/* 아이디 / 비밀번호 찾기 */}
+          {/* 아이디/비밀번호 찾기 */}
           <Stack.Screen name="FindId" component={FindIdScreen} />
           <Stack.Screen name="FindPassword" component={FindPasswordScreen} />
 
-          {/* 로그인 성공 시 → 지도 화면 */}
+          {/* 🔥 출발/도착지 검색 화면 추가 */}
+          <Stack.Screen
+            name="LocationSearch"
+            component={LocationSearchScreen}
+          />
+
+          {/* 지도 화면 */}
           <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
         </Stack.Navigator>
       </NavigationContainer>

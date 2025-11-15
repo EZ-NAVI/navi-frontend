@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.navi.app-mergeDebugResources-44:/values-pt/values-pt.xml",
+            "outputFile": "com.navi.app-mergeDebugResources-46:/values-pt/values-pt.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Win10\\.gradle\\caches\\8.13\\transforms\\458f79029d6ae0180102a0a018ed1964\\transformed\\react-android-0.75.4-debug\\res\\values-pt\\values-pt.xml",

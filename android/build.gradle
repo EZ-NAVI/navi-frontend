@@ -6,12 +6,14 @@ buildscript {
         targetSdkVersion = 34
         ndkVersion = "26.1.10909125"
         kotlinVersion = "1.9.24"
+
+        // 🔥 Google Play Services 버전 강제 통일
+        playServicesLocationVersion = "21.0.1"
     }
 
     repositories {
         google()
         mavenCentral()
-        // ✅ react-native-config 플러그인 로컬 경로 추가 (공식 방식)
         maven { url "$rootDir/../node_modules/react-native-config/android" }
     }
 
@@ -19,13 +21,21 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-
-        // ✅ react-native-config 플러그인 직접 경로 지정 (핵심)
         classpath files("../node_modules/react-native-config/android/react-native-config.gradle")
     }
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+/**
+ * 🔥 모든 서브모듈에서 Google Play Services Location 버전 강제 적용
+ * (Gradle 8에서도 안전하게 작동)
+ */
+configurations.all {
+    resolutionStrategy {
+        force "com.google.android.gms:play-services-location:${playServicesLocationVersion}"
+    }
+}
 
 allprojects {
     repositories {

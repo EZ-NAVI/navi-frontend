@@ -12,7 +12,7 @@ export default function SignupConsentScreen() {
     personal: false,
     location: false,
     fcm: false,
-    guardian: false, // 어린이용 추가 항목
+    guardian: false,
   });
 
   const toggle = (key: keyof typeof consents) =>
@@ -24,19 +24,18 @@ export default function SignupConsentScreen() {
     : ["personal", "location", "fcm", "guardian"];
 
   const allAgreed = requiredKeys.every((k) => consents[k as keyof typeof consents]);
-  const setAll = (value: boolean) => {
+
+  const setAll = () => {
     const newState: any = {};
-    requiredKeys.forEach((key) => (newState[key] = value));
+    requiredKeys.forEach((key) => (newState[key] = true));
     setConsents(newState);
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* 상단: 돌아가기 + NAVI 로고 */}
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+
+        {/* 상단 */}
         <View style={styles.topRow}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="chevron-back" size={26} color="#333" />
@@ -44,15 +43,34 @@ export default function SignupConsentScreen() {
           <Text style={styles.logoText}>NAVI</Text>
         </View>
 
-        {/* 개인정보 수집 및 이용 */}
+        {/* 개인정보 수집 */}
         <View style={styles.box}>
           <Text style={styles.boxTitle}>[필수] 개인정보 수집 및 이용 동의</Text>
+
           <Text style={styles.boxDesc}>
-            {isParent
-              ? "보호자 이름, 연락처, 이메일, 아동 이름, 생년월일 등은 아동 회원가입 및 보호자-자녀 매칭, 법정대리인 확인을 위해 수집됩니다."
-              : "이름, 연락처, 이메일 등은 서비스 제공을 위해 수집됩니다."}
-            {"\n"}(보유기간: 회원 탈퇴 시까지, 관련 법령에 따라 최대 3년 보관)
+            회원 가입 및 서비스 제공을 위해 다음 정보를 수집합니다.{"\n\n"}
+            {isParent ? (
+              <>
+                 - 이름{"\n"}
+                 - 연락처(전화번호){"\n"}
+                 - 이메일{"\n"}
+                 - 생년월일{"\n"}
+                 - 계정 비밀번호{"\n"}
+                 - 디바이스 FCM 토큰{"\n\n"}
+              </>
+            ) : (
+              <>
+                - 이름{"\n"}
+                - 연락처(전화번호){"\n"}
+                - 이메일{"\n"}
+                - 생년월일{"\n"}
+                - 계정 비밀번호{"\n"}
+                - 디바이스 FCM 토큰{"\n\n"}
+              </>
+            )}
+            (보유기간: 회원 탈퇴 시 즉시 삭제, 관련 법령에 따라 최대 3년 보관)
           </Text>
+
           <TouchableOpacity
             style={[styles.check, consents.personal && styles.checkOn]}
             onPress={() => toggle("personal")}
@@ -63,15 +81,18 @@ export default function SignupConsentScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 위치 정보 수집 */}
+        {/* 위치 정보 */}
         <View style={styles.box}>
           <Text style={styles.boxTitle}>[필수] 위치 정보 수집 및 이용 동의</Text>
+
           <Text style={styles.boxDesc}>
             {isParent
-              ? "아동의 위치를 기반으로 안전경로 추천 기능 제공을 위해 위치 정보를 수집합니다."
-              : "안전한 이동 경로 안내를 위해 위치 정보를 수집합니다."}
-            {"\n"}(보유기간: 회원 탈퇴 시까지, 관련 법령에 따라 최대 3년 보관)
+              ? "안전한 이동 경로 안내 및 위험 지역 알림 기능 제공을 위해 위치 정보를 수집합니다."
+              : "안전한 이동 경로 안내 및 위험 지역 알림 기능 제공을 위해 위치 정보를 수집합니다."}
+            {"\n"}
+            {"\n"}(보유기간: 회원 탈퇴 시 즉시 삭제, 관련 법령에 따라 최대 3년 보관)
           </Text>
+
           <TouchableOpacity
             style={[styles.check, consents.location && styles.checkOn]}
             onPress={() => toggle("location")}
@@ -82,15 +103,18 @@ export default function SignupConsentScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 푸시 토큰 수집 */}
+        {/* FCM */}
         <View style={styles.box}>
           <Text style={styles.boxTitle}>[필수] 푸시 토큰(FCM) 수집 및 이용 동의</Text>
+
           <Text style={styles.boxDesc}>
             {isParent
-              ? "보호자-자녀 간 알림 및 푸시 메시지 수신을 위해 디바이스 푸시 토큰을 수집합니다."
-              : "서비스 알림 제공을 위해 디바이스 푸시 토큰을 수집합니다."}
-            {"\n"}(보유기간: 회원 탈퇴 시까지, 관련 법령에 따라 최대 3년 보관)
+              ? "서비스 안내 및 알림 제공을 위해 디바이스의 FCM 토큰을 수집합니다."
+              : "서비스 안내 및 알림 제공을 위해 디바이스의 FCM 토큰을 수집합니다."}
+            {"\n"}
+            {"\n"}(보유기간: 회원 탈퇴 시 즉시 삭제, 관련 법령에 따라 최대 3년 보관)
           </Text>
+
           <TouchableOpacity
             style={[styles.check, consents.fcm && styles.checkOn]}
             onPress={() => toggle("fcm")}
@@ -101,14 +125,17 @@ export default function SignupConsentScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 어린이 전용: 법정대리인 동의 */}
+        {/* 법정대리인 동의 */}
         {!isParent && (
           <View style={styles.box}>
             <Text style={styles.boxTitle}>[필수] 법정대리인 동의</Text>
+
             <Text style={styles.boxDesc}>
-              만 14세 미만 사용자는 회원가입 시 반드시 법정대리인의 동의가 필요합니다.
-              보호자 정보(이름, 연락처)를 입력하여 동의 절차를 진행합니다.
+              만 14세 미만 사용자는 회원가입 시 반드시 법정대리인의 동의가 필요합니다.{"\n\n"}
+              ※ 허위로 법정대리인 동의를 제출하는 경우 서비스 이용이 제한될 수 있습니다.{"\n"}
+              ※ 법정대리인 동의의 효력은 관련 법령에 따라 최대 3년간 인정됩니다.
             </Text>
+
             <TouchableOpacity
               style={[styles.check, consents.guardian && styles.checkOn]}
               onPress={() => toggle("guardian")}
@@ -120,20 +147,18 @@ export default function SignupConsentScreen() {
           </View>
         )}
 
-        {/* 전체 동의 / 다음 버튼 */}
+        {/* 전체 동의 */}
         <TouchableOpacity
-          style={[
-            styles.allAgreeBtn,
-            allAgreed && { backgroundColor: "#DDD" },
-          ]}
-          onPress={() => setAll(true)}
+          style={[styles.allAgreeBtn, allAgreed && { backgroundColor: "#DDD" }]}
           disabled={allAgreed}
+          onPress={setAll}
         >
           <Text style={styles.allAgreeText}>
             {allAgreed ? "✔ 모든 항목에 동의 완료" : "전체 항목 모두 동의하기"}
           </Text>
         </TouchableOpacity>
 
+        {/* 다음 */}
         <TouchableOpacity
           style={[styles.nextBtn, !allAgreed && { opacity: 0.4 }]}
           disabled={!allAgreed}
@@ -141,6 +166,7 @@ export default function SignupConsentScreen() {
         >
           <Text style={styles.nextBtnText}>다음</Text>
         </TouchableOpacity>
+
       </ScrollView>
     </View>
   );
@@ -149,21 +175,8 @@ export default function SignupConsentScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   scroll: { paddingHorizontal: 22, paddingVertical: 40 },
-
-  topRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 40,
-  },
-
-  logoText: {
-    fontSize: 28,
-    fontWeight: "900",
-    color: "#FFDE59",
-    letterSpacing: 2,
-  },
-
+  topRow: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 40 },
+  logoText: { fontSize: 28, fontWeight: "900", color: "#FFDE59", letterSpacing: 2 },
   box: {
     borderWidth: 1,
     borderColor: "#E6E8EA",
@@ -185,7 +198,6 @@ const styles = StyleSheet.create({
   },
   checkOn: { backgroundColor: "#FFF8D6", borderColor: "#FFDE59" },
   checkText: { fontSize: 13, color: "#333" },
-
   allAgreeBtn: {
     height: 50,
     borderRadius: 12,
@@ -195,7 +207,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   allAgreeText: { fontSize: 16, fontWeight: "700", color: "#000" },
-
   nextBtn: {
     height: 50,
     borderRadius: 12,
