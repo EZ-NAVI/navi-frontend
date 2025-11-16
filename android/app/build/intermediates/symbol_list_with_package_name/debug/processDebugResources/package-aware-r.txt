@@ -3148,6 +3148,7 @@ drawable ripple_effect
 drawable rn_edit_text_material
 drawable rns_rounder_top_corners_shape
 drawable route_arrow
+drawable splash
 drawable start
 drawable test_level_drawable
 drawable test_marker
@@ -3798,6 +3799,7 @@ layout dev_loading_view
 layout fps_view
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
+layout launch_screen
 layout layout_callout
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
@@ -4118,6 +4120,7 @@ style Animation_Material3_SideSheetDialog_Left
 style Animation_Material3_SideSheetDialog_Right
 style Animation_MaterialComponents_BottomSheetDialog
 style AppTheme
+style AppTheme_Launcher
 style Base_AlertDialog_AppCompat
 style Base_AlertDialog_AppCompat_Light
 style Base_Animation_AppCompat_Dialog

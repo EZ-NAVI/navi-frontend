@@ -11,9 +11,12 @@ drawable danger
 drawable marker_end
 drawable marker_start
 drawable rn_edit_text_material
+drawable splash
 integer react_native_dev_server_port
+layout launch_screen
 mipmap ic_launcher
 mipmap ic_launcher_round
 string API_BASE_URL
 string app_name
 style AppTheme
+style AppTheme.Launcher
