@@ -29,3 +29,9 @@ export async function login(email: string, password: string) {
 export async function logout() {
   await AsyncStorage.removeItem("access_token");
 }
+
+// 현재 인증된 사용자의 정보를 가져옵니다. (GET /users/me)
+export async function getMe() {
+  const { data } = await api.get('/users/me');
+  return data; // Expecting { user_type: 'child' | 'parent', ... }
+}

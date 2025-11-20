@@ -116,6 +116,11 @@ dependencies {
     implementation files('libs/tmap-sdk-3.0.aar')                     // API (TMapView 등)
     implementation(name: 'vsm-tmap-sdk-v2-android-1.7.45', ext: 'aar')// JNI/런타임
     implementation 'com.google.android.material:material:1.9.0'
+    
+    // Firebase (Kotlin 1.9.24와 호환되는 버전 - Analytics 제거)
+    implementation platform('com.google.firebase:firebase-bom:32.8.1')
+    // Firebase Messaging만 사용 (Analytics 제거)
 }
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+apply plugin: 'com.google.gms.google-services'

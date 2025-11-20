@@ -9,6 +9,12 @@
     <color name="white">#FFFFFFFF</color>
     <integer name="react_native_dev_server_port">8081</integer>
     <string name="app_name">navi</string>
+    <string name="gcm_defaultSenderId" translatable="false">481773292885</string>
+    <string name="google_api_key" translatable="false">AIzaSyDjAXekplTSJZc4OgupqoRlFPiwmjmtXWM</string>
+    <string name="google_app_id" translatable="false">1:481773292885:android:73c0257ed4da33e06233dc</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDjAXekplTSJZc4OgupqoRlFPiwmjmtXWM</string>
+    <string name="google_storage_bucket" translatable="false">navi-alert-69fa8.firebasestorage.app</string>
+    <string name="project_id" translatable="false">navi-alert-69fa8</string>
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>

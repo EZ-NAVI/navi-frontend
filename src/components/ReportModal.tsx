@@ -16,6 +16,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { PermissionsAndroid } from 'react-native';
 
 import { sendReport, ReportPayload, ReportResponse, getPresignedUrl } from '../api/reports';
+import { getMe } from '../api/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DEV_TOKEN } from '../config/dev';
 
@@ -429,7 +430,23 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
       console.log('✅ [API] 제보 생성 성공:', res);
       console.log('💡 백엔드가 RabbitMQ를 통해 부모에게 알림을 전송합니다.');
 
-      notify('제보 요청이 등록되었습니다');
+  // 부모 계정에서 제보한 경우에는 '제보가 등록되었습니다'가 더 자연스러우므로
+  // 기본적으로 등록 완료 메시지를 간결하게 표시합니다.
+      // 역할에 따라 알림 문구를 다르게 표시
+      try {
+        const me = await getMe();
+        const userType = (me && me.user_type) ? String(me.user_type).toLowerCase() : '';
+        if (userType === 'parent') {
+          notify('제보가 등록되었습니다');
+        } else {
+          // child 또는 알 수 없는 경우(기본)
+          notify('제보 요청이 등록되었습니다');
+        }
+      } catch (e) {
+        // 실패 시 기본 메시지
+        console.warn('getMe 실패:', e);
+        notify('제보 요청이 등록되었습니다');
+      }
 
       const submittedPayload = { ...payload, serverId: res?.id };
       onSubmitted && onSubmitted(submittedPayload);

@@ -1,10 +1,10 @@
 // src/api/client.ts
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DEV_TOKEN } from "../config/dev";
+import { DEV_TOKEN, API_BASE_URL } from "../config/dev";
 
 const client = axios.create({
-  baseURL: "http://3.37.169.176:8000", // ✅ 백엔드 베이스 URL
+  baseURL: API_BASE_URL, // ✅ 백엔드 베이스 URL (config에서 관리)
   headers: {
     "Content-Type": "application/json",
   },

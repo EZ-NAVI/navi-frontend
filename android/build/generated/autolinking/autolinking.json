@@ -28,6 +28,63 @@
         }
       }
     },
+    "@react-native-firebase/app": {
+      "root": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/@react-native-firebase/app",
+      "name": "@react-native-firebase/app",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/@react-native-firebase/app/RNFBApp.podspec",
+          "version": "23.5.0",
+          "configurations": [],
+          "scriptPhases": [
+            {
+              "name": "[RNFB] Core Configuration",
+              "path": "./ios_config.sh",
+              "execution_position": "after_compile",
+              "input_files": [
+                "$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)"
+              ]
+            }
+          ]
+        },
+        "android": {
+          "sourceDir": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/@react-native-firebase/app/android",
+          "packageImportPath": "import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;",
+          "packageInstance": "new ReactNativeFirebaseAppPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "@react-native-firebase/messaging": {
+      "root": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/@react-native-firebase/messaging",
+      "name": "@react-native-firebase/messaging",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/@react-native-firebase/messaging/RNFBMessaging.podspec",
+          "version": "23.5.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/@react-native-firebase/messaging/android",
+          "packageImportPath": "import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;",
+          "packageInstance": "new ReactNativeFirebaseMessagingPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-geolocation-service": {
       "root": "/Users/ohminseok/Desktop/barrierfree_navi/navi-frontend/node_modules/react-native-geolocation-service",
       "name": "react-native-geolocation-service",

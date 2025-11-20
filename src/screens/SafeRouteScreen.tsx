@@ -32,6 +32,24 @@ export default function SafeRouteScreen() {
   const { start, end } = useRouteData();
   const map = useTMapCommands();
   const [isReady, setIsReady] = useState(false);
+  // Persisted toggle to hide/show development-only UI (default: hidden)
+  const [showDevUI, setShowDevUI] = useState<boolean>(false);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const v = await AsyncStorage.getItem('show_dev_ui');
+        if (!mounted) return;
+        // only show when explicitly set to 'true'
+        setShowDevUI(v === 'true');
+        console.log('[SafeRoute] show_dev_ui loaded:', v);
+      } catch (e) {
+        console.warn('show_dev_ui read failed', e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
   
   // reportStore에서 제보 리스트 가져오기 (WebSocket 실시간 갱신 반영)
   const reportsFromStore = useReportStore((state) => state.reports);
@@ -628,7 +646,7 @@ export default function SafeRouteScreen() {
         }}
       />
 
-      {__DEV__ && (
+      {__DEV__ && showDevUI && (
         <View style={{ position: 'absolute', right: 16, top: Platform.select({ android: 60, ios: 80 }), flexDirection: 'column', gap: 8 }}>
           <TouchableOpacity
             style={extraStyles.devBtn}
@@ -649,6 +667,16 @@ export default function SafeRouteScreen() {
 
       {/* 화면 하단에 항상 보이는 긴 제보 버튼 (맵 위에 고정) */}
       <View style={extraStyles.longReportWrap} pointerEvents="box-none">
+        {/* 개발 디버그: DevSettings 이동 원형 버튼 (임시) */}
+        {__DEV__ && showDevUI && (
+          <TouchableOpacity
+            style={extraStyles.debugCircle}
+            onPress={() => navigation.navigate('DevSettings')}
+            accessibilityLabel="dev-settings-test"
+          >
+            <Text style={extraStyles.debugCircleText}>test</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={extraStyles.longReportButton}
           onPress={() => {
@@ -1047,6 +1075,31 @@ const extraStyles = StyleSheet.create({
     right: 16,
     bottom: Platform.select({ android: 24, ios: 34 }),
     alignItems: 'stretch',
+  },
+  debugCircle: {
+    position: 'absolute',
+    right: 24,
+    // place above the long report button
+    bottom: Platform.select({ android: 110, ios: 120 }),
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#FF3B30',
+    borderWidth: 2,
+    borderColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 10,
+    zIndex: 9999,
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  debugCircleText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '700',
   },
   longReportButton: {
     backgroundColor: '#E9C74E',

@@ -61,6 +61,8 @@ import SafeRouteScreen from "./src/screens/SafeRouteScreen";
 import LocationSearchScreen from "./src/screens/LocationSearchScreen";
 import ReportDetailScreen from "./src/screens/ReportDetailScreen";
 import ReportEditScreen from "./src/screens/ReportEditScreen";
+import DevSettingsScreen from "./src/screens/DevSettingsScreen";
+import DebugNotificationScreen from "./src/screens/DebugNotificationScreen";
 import { RouteProvider } from "./src/context/RouteContext";
 import { WebSocketProvider, WebSocketContext } from "./src/context/WebSocketContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -69,8 +71,10 @@ import ReportApprovalModal from "./src/components/ReportApprovalModal";
 import ReportEditModal from "./src/components/ReportEditModal";
 import { useReportApprovalModal } from "./src/stores/reportApprovalModalStore";
 import { useReportEditModal } from "./src/stores/reportEditModalStore";
-import { postReportReview } from "./src/api/reports";
-import { Alert } from "react-native";
+import { postReportReview, fetchReportById } from "./src/api/reports";
+import { Alert, Platform } from "react-native";
+import messaging from '@react-native-firebase/messaging';
+import navigationRef from './src/navigationRef';
 
 const Stack = createStackNavigator();
 
@@ -218,6 +222,61 @@ export default function App() {
     loadUserId();
   }, []);
 
+  // FCM 푸시 알림: 백그라운드/종료 상태에서 알림 클릭 처리만 담당
+  React.useEffect(() => {
+    // 앱이 백그라운드에 있다가 알림을 클릭해 열린 경우
+    const unsubscribeOnOpened = messaging().onNotificationOpenedApp(async (remoteMessage) => {
+      console.log('FCM notification opened app:', remoteMessage);
+      const reportId = remoteMessage?.data?.reportId ?? remoteMessage?.data?.report_id;
+      if (!reportId) return;
+
+      try {
+        // try to fetch report detail and show approval modal
+        const token = await AsyncStorage.getItem('access_token');
+        const report = await fetchReportById(String(reportId), token || undefined);
+        // open the approval modal via zustand store
+        try { useReportApprovalModal.getState().showModal(report); return; } catch (e) { console.warn('showModal error', e); }
+      } catch (e) {
+        console.warn('fetchReportById error, falling back to navigation', e);
+      }
+
+      // fallback: navigate to ReportDetail screen
+      if (navigationRef?.isReady()) {
+        try { navigationRef.navigate('ReportDetail', { reportId }); } catch (e) { console.warn('navigate error', e); }
+      }
+    });
+
+    // 앱이 완전히 종료된 상태에서 알림을 탭해 시작된 경우 처리
+    (async () => {
+      try {
+        const initialMessage = await messaging().getInitialNotification();
+        if (initialMessage) {
+          console.log('FCM initial notification:', initialMessage);
+          const reportId = initialMessage?.data?.reportId ?? initialMessage?.data?.report_id;
+          if (!reportId) return;
+
+          try {
+            const token = await AsyncStorage.getItem('access_token');
+            const report = await fetchReportById(String(reportId), token || undefined);
+            try { useReportApprovalModal.getState().showModal(report); return; } catch (e) { console.warn('showModal initial error', e); }
+          } catch (e) {
+            console.warn('getInitialNotification fetch error, falling back to navigation', e);
+          }
+
+          if (navigationRef?.isReady()) {
+            try { navigationRef.navigate('ReportDetail', { reportId }); } catch (e) { console.warn('navigate initial error', e); }
+          }
+        }
+      } catch (e) {
+        console.warn('getInitialNotification error', e);
+      }
+    })();
+
+    return () => {
+      try { unsubscribeOnOpened(); } catch (e) {}
+    };
+  }, []);
+
   // 로딩 중에는 빈 화면 표시 (또는 로딩 인디케이터)
   if (isLoading) {
     return null; // 또는 <LoadingScreen />
@@ -225,12 +284,15 @@ export default function App() {
 
   // 네비게이션 구조
   const navigation = (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
         <Stack.Screen name="LocationSearch" component={LocationSearchScreen} />
         <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
         <Stack.Screen name="ReportEdit" component={ReportEditScreen} />
+        {/* 개발용 설정 및 디버그 화면 */}
+        <Stack.Screen name="DevSettings" component={DevSettingsScreen} />
+        <Stack.Screen name="DebugNotification" component={DebugNotificationScreen} />
       </Stack.Navigator>
       {/* 네비게이션 내부에 모달 배치 */}
       <NavigationContent />
