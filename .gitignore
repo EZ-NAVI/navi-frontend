@@ -1,0 +1,5 @@
+node_modules/
+android/app/build/outputs/
+#.local env file (do not commit secrets)
+.env
+google-services.json
