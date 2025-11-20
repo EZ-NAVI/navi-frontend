@@ -51,7 +51,8 @@ com.navi.app-debug-49 C:\Users\Win10\StudioProjects\navi\android\app\src\debug\r
 com.navi.app-main-50 C:\Users\Win10\StudioProjects\navi\android\app\src\main\res
 com.navi.app-debug-51 C:\Users\Win10\StudioProjects\navi\node_modules\@react-native-async-storage\async-storage\android\build\intermediates\packaged_res\debug\packageDebugResources
 com.navi.app-debug-52 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-config\android\build\intermediates\packaged_res\debug\packageDebugResources
-com.navi.app-debug-53 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-gesture-handler\android\build\intermediates\packaged_res\debug\packageDebugResources
-com.navi.app-debug-54 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-safe-area-context\android\build\intermediates\packaged_res\debug\packageDebugResources
-com.navi.app-debug-55 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-screens\android\build\intermediates\packaged_res\debug\packageDebugResources
-com.navi.app-debug-56 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-vector-icons\android\build\intermediates\packaged_res\debug\packageDebugResources
+com.navi.app-debug-53 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-geolocation-service\android\build\intermediates\packaged_res\debug\packageDebugResources
+com.navi.app-debug-54 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-gesture-handler\android\build\intermediates\packaged_res\debug\packageDebugResources
+com.navi.app-debug-55 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-safe-area-context\android\build\intermediates\packaged_res\debug\packageDebugResources
+com.navi.app-debug-56 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-screens\android\build\intermediates\packaged_res\debug\packageDebugResources
+com.navi.app-debug-57 C:\Users\Win10\StudioProjects\navi\node_modules\react-native-vector-icons\android\build\intermediates\packaged_res\debug\packageDebugResources

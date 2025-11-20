@@ -53,6 +53,30 @@
         }
       }
     },
+    "react-native-geolocation-service": {
+      "root": "C:\\Users\\Win10\\StudioProjects\\navi\\node_modules\\react-native-geolocation-service",
+      "name": "react-native-geolocation-service",
+      "platforms": {
+        "ios": {
+          "podspecPath": "C:\\Users\\Win10\\StudioProjects\\navi\\node_modules\\react-native-geolocation-service\\react-native-geolocation-service.podspec",
+          "version": "5.3.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "C:\\Users\\Win10\\StudioProjects\\navi\\node_modules\\react-native-geolocation-service\\android",
+          "packageImportPath": "import com.agontuk.RNFusedLocation.RNFusedLocationPackage;",
+          "packageInstance": "new RNFusedLocationPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "C:/Users/Win10/StudioProjects/navi/node_modules/react-native-geolocation-service/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-gesture-handler": {
       "root": "C:\\Users\\Win10\\StudioProjects\\navi\\node_modules\\react-native-gesture-handler",
       "name": "react-native-gesture-handler",

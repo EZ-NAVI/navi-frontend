@@ -1,11 +1,14 @@
 // src/api/evaluateRoute.ts
-import axios from "axios";
+import client from "./client";
 import Config from "react-native-config";
 
 export const evaluateRoute = async (routeId: string, score: number) => {
-  const url = `${Config.API_URL}/routes/${routeId}/evaluate`;
+  const url = `/routes/${routeId}/evaluate`;
 
-  return axios.post(url, {
-    evaluation: score,
+  console.log("📤 평가 요청 URL:", `${Config.API_BASE_URL}${url}`);
+
+  // client 사용 → interceptors에 의해 토큰 자동 첨부됨!
+  return client.post(url, {
+    evaluation: Number(score),
   });
 };

@@ -13,7 +13,6 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.events.RCTEventEmitter
 import com.navi.R
-import com.skt.tmap.TMapData
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
@@ -23,6 +22,9 @@ import com.skt.tmap.poi.TMapPOIItem
 class TMapViewManager : SimpleViewManager<TMapView>() {
 
     override fun getName() = "SKTTMapView"
+
+    // ⭐ 내 위치 마커를 기억해둘 필드 (한 번만 생성)
+    private var myLocationMarker: TMapMarkerItem? = null
 
     override fun createViewInstance(ctx: ThemedReactContext): TMapView {
         val view = TMapView(ctx)
@@ -72,7 +74,8 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                 poiList: ArrayList<TMapPOIItem>,
                 point: TMapPoint,
                 pointf: PointF
-            ) {}
+            ) {
+            }
 
             override fun onPressUp(
                 markerList: ArrayList<TMapMarkerItem>,
@@ -98,11 +101,18 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
 
     /* ==== Commands ==== */
     override fun getCommandsMap(): MutableMap<String, Int> =
-        MapBuilder.of("animateTo", 1, "addMarker", 2, "addRoute", 3, "addPolyline", 4)
+        MapBuilder.of(
+            "animateTo", 1,
+            "addMarker", 2,
+            "addRoute", 3,      // (지금은 안 쓰지만 남겨둠)
+            "addPolyline", 4,
+            "addOrMoveMarker", 5
+        )
 
     override fun receiveCommand(view: TMapView, commandId: Int, args: ReadableArray?) {
         when (commandId) {
-            // animateTo(lat, lon, zoom)
+
+            /* animateTo(lat, lon, zoom) */
             1 -> {
                 if (args == null || args.size() < 3) return
                 val lat = args.getDouble(0)
@@ -112,7 +122,7 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                 view.setZoomLevel(zoom)
             }
 
-            // addMarker(lat, lon, title)
+            /* 출발/도착 마커 */
             2 -> {
                 if (args == null || args.size() < 3) return
                 val lat = args.getDouble(0)
@@ -130,15 +140,49 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                     } else {
                         R.drawable.marker_end
                     }
-                    val originalBitmap = BitmapFactory.decodeResource(view.resources, iconResId)
-                    val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 150, 150, true)
-                    setIcon(scaledBitmap)
+                    val bmp = BitmapFactory.decodeResource(view.resources, iconResId)
+                    val scaled = Bitmap.createScaledBitmap(bmp, 150, 150, true)
+                    setIcon(scaled)
                 }
+
                 view.addTMapMarkerItem(marker)
                 view.setCenterPoint(lon, lat)
             }
 
-            // addPolyline(points)
+            /* ⭐ 내 위치 마커 (항상 1개 유지: 객체를 재사용해서 위치만 변경) */
+            5 -> {
+                if (args == null || args.size() < 3) return
+                val lat = args.getDouble(0)
+                val lon = args.getDouble(1)
+                val id = args.getString(2) ?: "my-location"
+
+                Log.d("TMapViewManager", "📍 addOrMoveMarker 호출: id=$id, lat=$lat, lon=$lon")
+
+                val point = TMapPoint(lat, lon)
+
+                if (myLocationMarker == null) {
+                    // 처음 호출될 때만 마커 생성
+                    myLocationMarker = TMapMarkerItem().apply {
+                        this.id = id
+                        setTMapPoint(point)
+                        setName("내 위치")
+
+                        val icon = BitmapFactory.decodeResource(view.resources, R.drawable.marker_me)
+                        val scaled = Bitmap.createScaledBitmap(icon, 130, 130, true)
+                        setIcon(scaled)
+                    }
+
+                    view.addTMapMarkerItem(myLocationMarker)
+                } else {
+                    // 이후에는 위치만 업데이트
+                    myLocationMarker?.setTMapPoint(point)
+                }
+
+                // 다시 그리기
+                view.invalidate()
+            }
+
+            /* Polyline */
             4 -> {
                 if (args == null || args.size() == 0) return
                 try {
@@ -157,7 +201,6 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                     }
 
                     view.addTMapPolyLine(polyLine)
-                    Log.d("TMapViewManager", "🚶 Added pedestrian polyline (${coords!!.size()} points)")
                 } catch (e: Exception) {
                     Log.e("TMapViewManager", "❌ addPolyline error: ${e.message}")
                 }
@@ -165,10 +208,8 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
         }
     }
 
-    // ✅ 여기에 정확히 있어야 함 (클래스 내부)
     @ReactMethod
     fun setCenter(view: TMapView, lat: Double, lon: Double) {
         view.setCenterPoint(lon, lat)
-        Log.d("TMapViewManager", "📍 setCenter called from JS → ($lat, $lon)")
     }
 }

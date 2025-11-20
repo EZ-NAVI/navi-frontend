@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 // react-native-config
 import com.lugg.RNCConfig.RNCConfigPackage;
+// react-native-geolocation-service
+import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 // react-native-gesture-handler
 import com.swmansion.gesturehandler.RNGestureHandlerPackage;
 // react-native-safe-area-context
@@ -69,6 +71,7 @@ public class PackageList {
       new MainReactPackage(mConfig),
       new AsyncStoragePackage(),
       new RNCConfigPackage(),
+      new RNFusedLocationPackage(),
       new RNGestureHandlerPackage(),
       new SafeAreaContextPackage(),
       new RNScreensPackage(),

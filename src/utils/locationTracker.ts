@@ -1,8 +1,8 @@
 // src/utils/locationTracker.ts
-import Geolocation from "react-native-geolocation-service";
 import { PermissionsAndroid, Platform } from "react-native";
+import Geolocation from "react-native-geolocation-service";
 
-let watchId: number | null = null;
+let intervalId: NodeJS.Timeout | null = null;
 
 export async function requestLocationPermission() {
   if (Platform.OS === "android") {
@@ -20,33 +20,59 @@ export async function requestLocationPermission() {
   return true;
 }
 
-export const startTracking = async (setPositions: (pos: any) => void) => {
+export const startTracking = async (setPositions: (pos: any[]) => void) => {
   const ok = await requestLocationPermission();
   if (!ok) return;
 
-  watchId = Geolocation.watchPosition(
-    (position) => {
-      setPositions((prev: any[]) => [
-        ...prev,
-        {
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-          timestamp: position.timestamp,
-        },
-      ]);
-    },
-    (err) => console.warn("GPS Error:", err),
-    {
-      enableHighAccuracy: true,
-      distanceFilter: 1,
-      interval: 2000,
-      fastestInterval: 1000,
-    }
-  );
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+
+  console.log("🛰 GPS 추적 시작");
+
+  intervalId = setInterval(() => {
+    Geolocation.getCurrentPosition(
+      (position: any) => {
+        const { latitude, longitude } = position.coords;
+        console.log("📍 위치 업데이트:", latitude, longitude);
+
+        setPositions((prev: any[]) => {
+          const last = prev[prev.length - 1];
+
+          // ⭐ 이전 좌표와 동일하면 저장하지 않음 (GPS 튐 방지)
+          if (last && last.lat === latitude && last.lon === longitude) {
+            return prev;
+          }
+
+          return [
+            ...prev,
+            {
+              lat: latitude,
+              lon: longitude,
+              timestamp: position.timestamp,
+            },
+          ];
+        });
+      },
+      (err: any) => {
+        console.warn("GPS Error:", err);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+        forceRequestLocation: true,   // ⭐ 계속 최신 위치 요청
+        showLocationDialog: true
+      }
+    );
+  }, 1200);
 };
 
 export const stopTracking = () => {
-  if (watchId !== null) {
-    Geolocation.clearWatch(watchId);
+  console.log("🛑 GPS 추적 종료");
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
   }
 };

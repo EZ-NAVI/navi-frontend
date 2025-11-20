@@ -4,16 +4,15 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9eaf7950-1208-4f06-910f-7d26a020d847" name="Changes" comment="feat: 선택한 경로 서버 전송 및 경로 평가 기능 추가">
-      <change afterPath="$PROJECT_DIR$/android/app/src/main/res/layout/launch_screen.xml" afterDir="false" />
+    <list default="true" id="9eaf7950-1208-4f06-910f-7d26a020d847" name="Changes" comment="feat: 로딩 시 화면 기능 추가">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/android/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/android/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/generated/res/resValues/debug/values/gradleResValues.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/generated/res/resValues/debug/values/gradleResValues.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/apk_ide_redirect_file/debug/createDebugApkListingFileRedirect/redirect.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/apk_ide_redirect_file/debug/createDebugApkListingFileRedirect/redirect.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/generated/autolinking/src/main/java/com/facebook/react/PackageList.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/generated/autolinking/src/main/java/com/facebook/react/PackageList.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources/R.jar" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources/R.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeLibDexDebug/1/classes.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeLibDexDebug/1/classes.dex" afterDir="false" />
@@ -23,37 +22,60 @@
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeLibDexDebug/3/classes.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeLibDexDebug/3/classes.dex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeLibDexDebug/9/classes.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeLibDexDebug/9/classes.dex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/14/classes.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/14/classes.dex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/5/classes.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/dex/debug/mergeProjectDexDebug/5/classes.dex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/dex_archive_input_jar_hashes/debug/dexBuilderDebug/out" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/dex_archive_input_jar_hashes/debug/dexBuilderDebug/out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/external_file_lib_dex_archives/debug/desugarDebugFileDependencies/0_tmap-sdk-3.0-runtime.jar" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/external_file_lib_dex_archives/debug/desugarDebugFileDependencies/0_tmap-sdk-3.0-runtime.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/mergeDebugResources/compile-file-map.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/mergeDebugResources/compile-file-map.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/mergeDebugResources/merged.dir/values/values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/mergeDebugResources/merged.dir/values/values.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/mergeDebugResources/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/mergeDebugResources/merger.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir/values/values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir/values/values.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/packageDebugResources/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/incremental/debug/packageDebugResources/merger.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/incremental/mergeDebugAssets/merger.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/incremental/mergeDebugAssets/merger.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/incremental/packageDebug/tmp/debug/dex-renamer-state.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/incremental/packageDebug/tmp/debug/dex-renamer-state.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/incremental/packageDebug/tmp/debug/zip-cache/androidResources" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/incremental/packageDebug/tmp/debug/zip-cache/androidResources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/facebook/react/PackageList.class" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/facebook/react/PackageList.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/manifest_merge_blame_file/debug/processDebugMainManifest/manifest-merger-blame-debug-report.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/manifest_merge_blame_file/debug/processDebugMainManifest/manifest-merger-blame-debug-report.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/merged_res/debug/mergeDebugResources/values_values.arsc.flat" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/merged_res/debug/mergeDebugResources/values_values.arsc.flat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/merged_res_blame_folder/debug/mergeDebugResources/out/multi-v2/mergeDebugResources.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/merged_res_blame_folder/debug/mergeDebugResources/out/multi-v2/mergeDebugResources.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/merged_res_blame_folder/debug/mergeDebugResources/out/multi-v2/values.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/merged_res_blame_folder/debug/mergeDebugResources/out/multi-v2/values.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/merged_res_blame_folder/debug/mergeDebugResources/out/single/mergeDebugResources.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/merged_res_blame_folder/debug/mergeDebugResources/out/single/mergeDebugResources.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/packaged_manifests/debug/processDebugManifestForPackage/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/packaged_manifests/debug/processDebugManifestForPackage/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/packaged_res/debug/packageDebugResources/values/values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/packaged_res/debug/packageDebugResources/values/values.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/processed_res/debug/processDebugResources/out/resources-debug.ap_" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/processed_res/debug/processDebugResources/out/resources-debug.ap_" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/facebook/react/PackageList.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/facebook/react/PackageList.dex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/navi/MainApplication$reactNativeHost$1.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/navi/MainApplication$reactNativeHost$1.dex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/navi/MainApplication.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/navi/MainApplication.dex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/navi/map/TMapViewManager$addEventEmitters$2.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/navi/map/TMapViewManager$addEventEmitters$2.dex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/navi/map/TMapViewManager.dex" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/navi/map/TMapViewManager.dex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/runtime_symbol_list/debug/processDebugResources/R.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/runtime_symbol_list/debug/processDebugResources/R.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/source_set_path_map/debug/mapDebugSourceSetPaths/file-map.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/source_set_path_map/debug/mapDebugSourceSetPaths/file-map.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/stable_resource_ids_file/debug/processDebugResources/stableIds.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/stable_resource_ids_file/debug/processDebugResources/stableIds.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/intermediates/symbol_list_with_package_name/debug/processDebugResources/package-aware-r.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/intermediates/symbol_list_with_package_name/debug/processDebugResources/package-aware-r.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream.len" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream.len" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.len" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.len" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab_i" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab_i" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/last-build.bin" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/cacheable/last-build.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/local-state/build-history.bin" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/kotlin/compileDebugKotlin/local-state/build-history.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/tmp/kotlin-classes/debug/com/navi/MainApplication$reactNativeHost$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/tmp/kotlin-classes/debug/com/navi/MainApplication$reactNativeHost$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/tmp/kotlin-classes/debug/com/navi/MainApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/tmp/kotlin-classes/debug/com/navi/MainApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/tmp/kotlin-classes/debug/com/navi/map/TMapViewManager$addEventEmitters$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/tmp/kotlin-classes/debug/com/navi/map/TMapViewManager$addEventEmitters$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build/tmp/kotlin-classes/debug/com/navi/map/TMapViewManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build/tmp/kotlin-classes/debug/com/navi/map/TMapViewManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/navi/MainApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/navi/MainApplication.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/navi/map/TMapViewManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/navi/map/TMapViewManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build/generated/autolinking/autolinking.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/build/generated/autolinking/autolinking.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build/generated/autolinking/package-lock.json.sha" beforeDir="false" afterPath="$PROJECT_DIR$/android/build/generated/autolinking/package-lock.json.sha" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build/generated/autolinking/package.json.sha" beforeDir="false" afterPath="$PROJECT_DIR$/android/build/generated/autolinking/package.json.sha" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/android/build/reports/problems/problems-report.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/evaluateRoute.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/evaluateRoute.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/useTMapCommands.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/useTMapCommands.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/SafeRouteScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/SafeRouteScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/locationTracker.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/locationTracker.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,8 +88,20 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;LSA31&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/EZ-NAVI/navi-frontend.git&quot;,
+    &quot;accountId&quot;: &quot;11fecfec-21d5-4666-bd80-371931c98c1d&quot;
+  }
+}</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -87,6 +121,7 @@
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;feat/login-signup&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Win10/StudioProjects/navi&quot;,
@@ -131,7 +166,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761475810305</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="feat: 로딩 시 화면 기능 추가">
+      <option name="closed" value="true" />
+      <created>1763309488326</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1763309488326</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -162,6 +205,7 @@
     <MESSAGE value="feat: 경로 검색 UI" />
     <MESSAGE value="feat: API 연동" />
     <MESSAGE value="feat: 선택한 경로 서버 전송 및 경로 평가 기능 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 선택한 경로 서버 전송 및 경로 평가 기능 추가" />
+    <MESSAGE value="feat: 로딩 시 화면 기능 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 로딩 시 화면 기능 추가" />
   </component>
 </project>

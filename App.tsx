@@ -4,6 +4,9 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RouteProvider } from "./src/context/RouteContext";
 
+import { LogBox } from "react-native";      // ⭐ 추가
+LogBox.ignoreAllLogs(true);                 // ⭐ 모든 경고/오류 화면 표시 OFF
+
 // ✅ 로그인 관련
 import LoginScreen from "./src/screens/LoginScreen";
 

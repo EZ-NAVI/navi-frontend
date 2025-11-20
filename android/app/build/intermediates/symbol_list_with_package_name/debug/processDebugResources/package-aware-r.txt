@@ -3075,6 +3075,7 @@ drawable m3_tabs_line_indicator
 drawable m3_tabs_rounded_line_indicator
 drawable m3_tabs_transparent_background
 drawable marker_end
+drawable marker_me
 drawable marker_start
 drawable material_cursor_drawable
 drawable material_ic_calendar_black_24dp

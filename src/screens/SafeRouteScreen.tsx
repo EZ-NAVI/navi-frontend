@@ -1,19 +1,19 @@
+// SafeRouteScreen.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Ionicons";
+
 import TMapView from "../components/TMapView";
 import { useTMapCommands } from "../components/useTMapCommands";
 import { useRouteData } from "../context/RouteContext";
-import { fetchPreviewRoute } from "../api/routes";
 
-// GPS 추적 관련
+import { fetchPreviewRoute, saveRoute } from "../api/routes";
+import { evaluateRoute } from "../api/evaluateRoute";
+
 import { startTracking, stopTracking } from "../utils/locationTracker";
 import { haversine } from "../utils/haversine";
 
-// ⭐ 평가 모달
 import RouteRatingModal from "../components/RouteRatingModal";
-import { evaluateRoute } from "../api/evaluateRoute";
 
 export default function SafeRouteScreen() {
   const navigation = useNavigation<any>();
@@ -22,29 +22,28 @@ export default function SafeRouteScreen() {
 
   const [isReady, setIsReady] = useState(false);
   const didInit = useRef(false);
-
   const [autoReload, setAutoReload] = useState(true);
 
-  // ⭐ 모달 on/off
-  const [showRating, setShowRating] = useState(false);
-
-  // ⭐ 서버에서 받은 route_id 저장
   const [routeId, setRouteId] = useState<string | null>(null);
 
-  // ⭐ 실제 사용자 GPS 이동 기록
   const [userPositions, setUserPositions] = useState<any[]>([]);
+  const reachedRef = useRef(false);
 
-  // ⭐ 경로 polyline 저장
-  const [routePath, setRoutePath] = useState<any[]>([]);
+  const [showRating, setShowRating] = useState(false);
+
+  const [currentPosition, setCurrentPosition] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
+
+  const routePathRef = useRef<any[]>([]);
 
   useEffect(() => {
     const t = setTimeout(() => setAutoReload(false), 100);
     return () => clearTimeout(t);
   }, []);
 
-  /** -------------------------------
-   * 1) 지도 최초 로딩
-   -------------------------------- */
+  /* 1) 첫 지도 로딩 */
   useEffect(() => {
     if (!isReady || !map.ref.current) return;
     if (didInit.current) return;
@@ -56,20 +55,17 @@ export default function SafeRouteScreen() {
     if (start && end) fetchRouteAndDraw();
   }, [isReady]);
 
-  /** -------------------------------
-   * 2) 출발/도착 변경 시 경로 다시 로딩
-   -------------------------------- */
+  /* 2) 출발/도착 변경 시 */
   useEffect(() => {
     if (!isReady || !map.ref.current) return;
+
     if (start) map.addMarker(start.lat, start.lon, "출발지");
     if (end) map.addMarker(end.lat, end.lon, "도착지");
 
     if (start && end) fetchRouteAndDraw();
   }, [start, end]);
 
-  /** -------------------------------
-   * 3) 서버 API로 경로 받아오기
-   -------------------------------- */
+  /* 3) preview route */
   const fetchRouteAndDraw = async () => {
     if (!start || !end) return;
 
@@ -86,63 +82,118 @@ export default function SafeRouteScreen() {
         return;
       }
 
-      // 서버 route_id 저장
-      setRouteId(route.route_id);
+      setRouteId(null);
 
       const coords = route.path.map((p: any) => ({
         lat: p.lat,
         lon: p.lon,
       }));
 
-      setRoutePath(coords);
+      routePathRef.current = coords;
+
       map.addPolyline(coords);
 
-      // 중앙으로 이동
       const mid = coords[Math.floor(coords.length / 2)];
       map.animateTo(mid.lat, mid.lon, 15);
 
-      // ⭐ GPS 추적 시작
+      reachedRef.current = false;
       startTracking(setUserPositions);
     } catch (err) {
-      console.log("❌ 경로 로딩 실패:", err);
+      console.log("❌ preview 실패:", err);
     }
   };
 
-  /** -------------------------------
-   * 4) GPS 변화 감지 → 목적지 20m 이내 도착하면 모달 표시
-   -------------------------------- */
+  /* 4) GPS 변화 + 도착 감지 */
   useEffect(() => {
+    if (userPositions.length === 0) return;
+
+    const latest = userPositions[userPositions.length - 1];
+    setCurrentPosition({ lat: latest.lat, lon: latest.lon });
+
     if (!end) return;
-    if (!routeId) return;
 
-    if (userPositions.length < 3) return;
+    const distToDest = haversine(latest.lat, latest.lon, end.lat, end.lon);
+    console.log(`🧭 목적지까지 거리: ${distToDest.toFixed(1)}m`);
 
-    const last = userPositions[userPositions.length - 1];
+    if (reachedRef.current) return;
 
-    const dist = haversine(last.lat, last.lon, end.lat, end.lon);
-
-    if (dist < 20) {
+    if (distToDest <= 40) {
       console.log("🎉 목적지 도착!");
-
+      reachedRef.current = true;
       stopTracking();
-      setShowRating(true); // ⭐ 자동으로 모달 열기
+      saveRouteToServer();
     }
   }, [userPositions]);
 
-  /** -------------------------------
-   * 5) 평가 제출
-   -------------------------------- */
-  const handleSubmitRating = (rating: number) => {
-    if (!routeId) return;
+  /* ⭐ 내 위치 마커 기능 완전 제거 — 아래 두 useEffect 삭제됨 */
 
-    evaluateRoute(routeId, rating)
+  /* 6) 서버에 route 저장 */
+  const saveRouteToServer = async () => {
+    if (!start || !end || userPositions.length < 2) {
+      console.log("⚠ route 저장 불가");
+      return;
+    }
+
+    type PathPoint = { lat: number; lon: number; timestamp: number };
+    const path_data: PathPoint[] = [];
+
+    for (let i = 0; i < userPositions.length; i++) {
+      const p = userPositions[i];
+      const ts =
+        typeof p.timestamp === "number" && Number.isFinite(p.timestamp)
+          ? p.timestamp
+          : Date.now();
+
+      const point: PathPoint = { lat: p.lat, lon: p.lon, timestamp: ts };
+
+      const last = path_data[path_data.length - 1];
+      if (last && last.lat === point.lat && last.lon === point.lon) continue;
+
+      path_data.push(point);
+    }
+
+    if (path_data.length < 2) {
+      console.log("⚠ path_data 부족");
+      return;
+    }
+
+    const startTime = path_data[0].timestamp;
+    const endTime = path_data[path_data.length - 1].timestamp;
+    let durationSec = Math.floor((endTime - startTime) / 1000);
+    if (!Number.isFinite(durationSec) || durationSec < 0) durationSec = 0;
+
+    const payload = {
+      origin_lat: start.lat,
+      origin_lng: start.lon,
+      dest_lat: end.lat,
+      dest_lng: end.lon,
+      duration: durationSec,
+      path_data,
+    };
+
+    try {
+      const res = await saveRoute(payload);
+      setRouteId(res.routeId);
+      setShowRating(true);
+    } catch (err) {
+      console.log("❌ 경로 저장 실패:", err);
+    }
+  };
+
+  /* 7) 평가 제출 */
+  const handleSubmitRating = (rating: number) => {
+    if (!routeId) {
+      console.log("❌ routeId 없음 → 평가 불가");
+      return;
+    }
+
+    evaluateRoute(routeId, Number(rating))
       .then(() => console.log("⭐ 평가 저장 성공"))
       .catch(() => console.log("❌ 평가 저장 실패"));
   };
 
   return (
     <View style={styles.container}>
-      {/* ⭐ 평가 모달 */}
       <RouteRatingModal
         visible={showRating}
         onClose={() => setShowRating(false)}
@@ -156,12 +207,11 @@ export default function SafeRouteScreen() {
           apiKey="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy"
           zoomLevel={15}
           centerLat={37.5665}
-          centerLon={126.9780}
+          centerLon={126.978}
           onMapReady={() => setTimeout(() => setIsReady(true), 80)}
         />
       )}
 
-      {/* 상단 UI 그대로 유지 */}
       <View style={styles.topSection}>
         <Text style={styles.logo}>NAVI</Text>
 
@@ -175,7 +225,6 @@ export default function SafeRouteScreen() {
             <Text style={styles.circle}>●</Text>
             <Text style={styles.label}> 출발지 :</Text>
             <Text style={styles.value}>{start?.name}</Text>
-            {!start && <Icon name="search-outline" size={18} color="#555" />}
           </TouchableOpacity>
 
           <View style={styles.line} />
@@ -189,7 +238,6 @@ export default function SafeRouteScreen() {
             <Text style={styles.circle}>●</Text>
             <Text style={styles.label}> 도착지 :</Text>
             <Text style={styles.value}>{end?.name}</Text>
-            {!end && <Icon name="search-outline" size={18} color="#555" />}
           </TouchableOpacity>
         </View>
       </View>
@@ -200,8 +248,6 @@ export default function SafeRouteScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   map: { flex: 1 },
-
-  // === 상단 UI ===
   topSection: {
     position: "absolute",
     top: 0,
