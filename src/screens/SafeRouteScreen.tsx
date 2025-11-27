@@ -1107,16 +1107,16 @@ export default function SafeRouteScreen() {
                           const role = getCurrentUserRole();
                           if (role === 'parent') {
                             return (
-                              <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                                <Text style={{ fontSize: 28 }}>😊</Text>
+                              <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
+                                <Image source={require('../asset/emoji_good.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
                                 <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'bad' ? '700' : '400', color: selectedReport?.userEvaluation === 'bad' ? '#000' : '#666' }}>
                                   좋음 {Number(selectedReport?.badCount ?? 0)}
                                 </Text>
                               </View>
                             );
                           }
-                          return (
-                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                            return (
+                              <View style={{ alignItems: 'center', marginLeft: 2, marginRight: 6 }}>
                               <TouchableOpacity
                                 style={{ padding: 6 }}
                                 disabled={evaluating}
@@ -1134,7 +1134,7 @@ export default function SafeRouteScreen() {
                                   } finally { setEvaluating(false); }
                                 }}
                               >
-                                <Text style={{ fontSize: 28 }}>😊</Text>
+                                <Image source={require('../asset/emoji_good.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
                               </TouchableOpacity>
                               <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'bad' ? '700' : '400', color: selectedReport?.userEvaluation === 'bad' ? '#000' : '#666' }}>
                                 좋음 {Number(selectedReport?.badCount ?? 0)}
@@ -1147,8 +1147,8 @@ export default function SafeRouteScreen() {
                           const role = getCurrentUserRole();
                           if (role === 'parent') {
                             return (
-                              <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                                <Text style={{ fontSize: 28 }}>😐</Text>
+                              <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
+                                <Image source={require('../asset/emoji_soso.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
                                 <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'normal' ? '700' : '400', color: selectedReport?.userEvaluation === 'normal' ? '#000' : '#666' }}>
                                   보통 {Number(selectedReport?.normalCount ?? 0)}
                                 </Text>
@@ -1156,7 +1156,7 @@ export default function SafeRouteScreen() {
                             );
                           }
                           return (
-                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                            <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
                               <TouchableOpacity
                                 style={{ padding: 6 }}
                                 disabled={evaluating}
@@ -1174,7 +1174,7 @@ export default function SafeRouteScreen() {
                                   } finally { setEvaluating(false); }
                                 }}
                               >
-                                <Text style={{ fontSize: 28 }}>😐</Text>
+                                <Image source={require('../asset/emoji_soso.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
                               </TouchableOpacity>
                               <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'normal' ? '700' : '400', color: selectedReport?.userEvaluation === 'normal' ? '#000' : '#666' }}>
                                 보통 {Number(selectedReport?.normalCount ?? 0)}
@@ -1187,8 +1187,8 @@ export default function SafeRouteScreen() {
                           const role = getCurrentUserRole();
                           if (role === 'parent') {
                             return (
-                              <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                                <Text style={{ fontSize: 28 }}>☹️</Text>
+                              <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
+                                <Image source={require('../asset/emoji_bad.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
                                 <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'good' ? '700' : '400', color: selectedReport?.userEvaluation === 'good' ? '#000' : '#666' }}>
                                   아쉬움 {Number(selectedReport?.goodCount ?? 0)}
                                 </Text>
@@ -1196,7 +1196,7 @@ export default function SafeRouteScreen() {
                             );
                           }
                           return (
-                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                            <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
                               <TouchableOpacity
                                 style={{ padding: 6 }}
                                 disabled={evaluating}
@@ -1214,7 +1214,7 @@ export default function SafeRouteScreen() {
                                   } finally { setEvaluating(false); }
                                 }}
                               >
-                                <Text style={{ fontSize: 28 }}>☹️</Text>
+                                <Image source={require('../asset/emoji_bad.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
                               </TouchableOpacity>
                               <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'good' ? '700' : '400', color: selectedReport?.userEvaluation === 'good' ? '#000' : '#666' }}>
                                 아쉬움 {Number(selectedReport?.goodCount ?? 0)}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useAppAlertStore } from '../stores/appAlertStore';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { fetchReportById, fetchReportComments, postReportComment, postReportEvaluation, postReportNotThere } from '../api/reports';
+import { fetchReportById, fetchReportComments, postReportComment, postReportEvaluation, postReportNotThere, deleteReportComment } from '../api/reports';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextInput } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -145,124 +145,188 @@ export default function ReportDetailScreen() {
             <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
           ) : null}
 
-          <View style={{ marginTop: 12 }}>
-            <Text style={{ fontWeight: '700', marginBottom: 8 }}>댓글</Text>
+          {/* Header row: 댓글 title on the left, emoji evaluation UI on the right (under image) */}
+          <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontWeight: '700', color: '#000' }}>댓글</Text>
+            <View style={{ paddingRight: 0 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        {(() => {
+                  const role = getCurrentUserRole();
+                  const renderInteractive = role !== 'parent';
+                  if (!renderInteractive) {
+                    return (
+                      <>
+                          <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
+                          <Image source={require('../asset/emoji_good.png')} style={{ width: 22, height: 22 }} resizeMode="contain" />
+                          <Text style={{ fontSize: 11, marginTop: 0, fontWeight: report?.userEvaluation === 'bad' ? '700' : '400', color: report?.userEvaluation === 'bad' ? '#000' : '#666' }}>좋음 {Number(report?.badCount ?? 0)}</Text>
+                        </View>
+                        <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
+                          <Image source={require('../asset/emoji_soso.png')} style={{ width: 22, height: 22 }} resizeMode="contain" />
+                          <Text style={{ fontSize: 11, marginTop: 0, fontWeight: report?.userEvaluation === 'normal' ? '700' : '400', color: report?.userEvaluation === 'normal' ? '#000' : '#666' }}>보통 {Number(report?.normalCount ?? 0)}</Text>
+                        </View>
+                        <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
+                          <Image source={require('../asset/emoji_bad.png')} style={{ width: 22, height: 22 }} resizeMode="contain" />
+                          <Text style={{ fontSize: 11, marginTop: 0, fontWeight: report?.userEvaluation === 'good' ? '700' : '400', color: report?.userEvaluation === 'good' ? '#000' : '#666' }}>아쉬움 {Number(report?.goodCount ?? 0)}</Text>
+                        </View>
+                      </>
+                    );
+                  }
+                  return (
+                    <>
+                      <TouchableOpacity
+                        style={{ alignItems: 'center', marginLeft: 2, marginRight: 6 }}
+                        disabled={evaluating}
+                        onPress={async () => {
+                          if (!reportId || evaluating) return;
+                          try {
+                            setEvaluating(true);
+                            let token: string | null = null;
+                            try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                            await postReportEvaluation(String(reportId), 'bad', token ?? undefined);
+                            applyOptimisticEvaluation('bad');
+                          } catch (e) {
+                            console.warn('report evaluation failed (좋음->bad)', e);
+                            Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                          } finally { setEvaluating(false); }
+                        }}
+                      >
+                        <Image source={require('../asset/emoji_good.png')} style={{ width: 22, height: 22 }} resizeMode="contain" />
+                        <Text style={{ fontSize: 11, marginTop: 0, fontWeight: report?.userEvaluation === 'bad' ? '700' : '400', color: report?.userEvaluation === 'bad' ? '#000' : '#666' }}>좋음 {Number(report?.badCount ?? 0)}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ alignItems: 'center', marginHorizontal: 2 }}
+                        disabled={evaluating}
+                        onPress={async () => {
+                          if (!reportId || evaluating) return;
+                          try {
+                            setEvaluating(true);
+                            let token: string | null = null;
+                            try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                            await postReportEvaluation(String(reportId), 'normal', token ?? undefined);
+                            applyOptimisticEvaluation('normal');
+                          } catch (e) {
+                            console.warn('report evaluation failed (보통->normal)', e);
+                            Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                          } finally { setEvaluating(false); }
+                        }}
+                      >
+                        <Image source={require('../asset/emoji_soso.png')} style={{ width: 22, height: 22 }} resizeMode="contain" />
+                        <Text style={{ fontSize: 11, marginTop: 0, fontWeight: report?.userEvaluation === 'normal' ? '700' : '400', color: report?.userEvaluation === 'normal' ? '#000' : '#666' }}>보통 {Number(report?.normalCount ?? 0)}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ alignItems: 'center', marginHorizontal: 2 }}
+                        disabled={evaluating}
+                        onPress={async () => {
+                          if (!reportId || evaluating) return;
+                          try {
+                            setEvaluating(true);
+                            let token: string | null = null;
+                            try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                            await postReportEvaluation(String(reportId), 'good', token ?? undefined);
+                            applyOptimisticEvaluation('good');
+                          } catch (e) {
+                            console.warn('report evaluation failed (아쉬움->good)', e);
+                            Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                          } finally { setEvaluating(false); }
+                        }}
+                      >
+                        <Image source={require('../asset/emoji_bad.png')} style={{ width: 22, height: 22 }} resizeMode="contain" />
+                        <Text style={{ fontSize: 11, marginTop: 0, fontWeight: report?.userEvaluation === 'good' ? '700' : '400', color: report?.userEvaluation === 'good' ? '#000' : '#666' }}>아쉬움 {Number(report?.goodCount ?? 0)}</Text>
+                      </TouchableOpacity>
+                    </>
+                  );
+                })()}
+              </View>
+            </View>
+          </View>
+          <View>
             {comments.length === 0 ? (
               <Text style={{ color: '#666' }}>아직 댓글이 없습니다.</Text>
             ) : (
-              <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                <View style={{ flex: 1, paddingRight: 12 }}>
-                  {comments.map((c: any, idx: number) => {
-                    const text = typeof c === 'string' ? c : c.content ?? c.text ?? c.comment ?? JSON.stringify(c);
-                    const rawDate = c.createdAt ?? c.created_at ?? c.created_at_raw ?? '';
-                    let dateOnly = '';
-                    try {
-                      if (rawDate) {
-                        const d = new Date(rawDate);
-                        if (!isNaN(d.getTime())) dateOnly = d.toLocaleDateString();
-                        else dateOnly = String(rawDate).split('T')[0] || String(rawDate);
-                      }
-                    } catch (e) { dateOnly = String(rawDate || ''); }
-                    return (
-                      <View key={idx} style={{ marginBottom: 12 }}>
-                        <Text style={styles.commentText}>{text}</Text>
-                        <Text style={{ color: '#666', fontSize: 12, marginTop: 6 }}>{dateOnly}</Text>
+              comments.map((c: any, idx: number) => {
+                  const resolveCommentId = (cm: any) => {
+                    if (!cm) return '';
+                    return String(cm.id ?? cm.comment_id ?? cm.id_str ?? cm.commentId ?? cm.commentID ?? cm._id ?? '');
+                  };
+                  const text = typeof c === 'string' ? c : c.content ?? c.text ?? c.comment ?? c.body ?? JSON.stringify(c);
+                  const rawDate = c.createdAt ?? c.created_at ?? c.created_at_raw ?? '';
+                  let dateOnly = '';
+                  try {
+                    if (rawDate) {
+                      const d = new Date(rawDate);
+                      if (!isNaN(d.getTime())) dateOnly = d.toLocaleDateString();
+                      else dateOnly = String(rawDate).split('T')[0] || String(rawDate);
+                    }
+                  } catch (e) { dateOnly = String(rawDate || ''); }
+                  return (
+                    <View key={idx} style={{ marginBottom: 12 }}>
+                      <Text style={styles.commentText}>{text}</Text>
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
+                        <Text style={{ color: '#666', fontSize: 12 }}>{dateOnly}</Text>
+                        {getCurrentUserRole && getCurrentUserRole() === 'child' ? (
+                          <TouchableOpacity
+                            onPress={() => {
+                              // show app-styled confirmation modal before deleting
+                              useAppAlertStore.getState().show({
+                                title: '댓글 삭제',
+                                body: '정말 댓글을 삭제하시겠습니까?',
+                                ctaText: '삭제',
+                                cancelText: '취소',
+                                onConfirm: async () => {
+                                  try {
+                                    const commentId = resolveCommentId(c);
+                                    if (!commentId) {
+                                      console.warn('delete comment aborted: comment id not found on object', c);
+                                      Alert.alert('삭제 실패', '삭제할 댓글 ID를 찾을 수 없습니다.');
+                                      return;
+                                    }
+                                    console.log('Attempting to delete comment with id=', commentId, 'for report=', reportId);
+                                    let token: string | null = null;
+                                    try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                    await deleteReportComment(String(reportId), commentId, token ?? undefined);
+                                    // remove from local state
+                                    setComments((prev) => Array.isArray(prev) ? prev.filter((x) => {
+                                      const idX = resolveCommentId(x);
+                                      return idX !== commentId;
+                                    }) : []);
+                                  } catch (err: any) {
+                                    console.warn('delete comment failed', err);
+                                    const status = err?.response?.status;
+                                    const detail = err?.response?.data?.detail || err?.response?.data?.message;
+                                    if (status === 403) {
+                                      try {
+                                        useAppAlertStore.getState().show({
+                                          title: '삭제 불가',
+                                          body: detail || '본인이 작성한 댓글만 삭제할 수 있습니다.',
+                                          ctaText: '확인',
+                                        });
+                                      } catch (e) {
+                                        Alert.alert('삭제 불가', String(detail || '본인이 작성한 댓글만 삭제할 수 있습니다.'));
+                                      }
+                                    } else {
+                                      try {
+                                        useAppAlertStore.getState().show({
+                                          title: '삭제 실패',
+                                          body: '댓글 삭제에 실패했습니다.',
+                                          ctaText: '확인',
+                                        });
+                                      } catch (e) {
+                                        Alert.alert('삭제 실패', '댓글 삭제에 실패했습니다.');
+                                      }
+                                    }
+                                  }
+                                }
+                              });
+                            }}
+                          >
+                            <Text style={{ color: '#666', fontSize: 13 }}>삭제</Text>
+                          </TouchableOpacity>
+                        ) : null}
                       </View>
-                    );
-                  })}
-                </View>
-                <View style={{ alignItems: 'flex-end', marginLeft: 12, justifyContent: 'space-between', alignSelf: 'flex-start', marginTop: 4 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {(() => {
-                      const role = getCurrentUserRole();
-                      const renderInteractive = role !== 'parent';
-                      if (!renderInteractive) {
-                        return (
-                          <>
-                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                              <Text style={{ fontSize: 28 }}>😊</Text>
-                              <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'bad' ? '700' : '400', color: report?.userEvaluation === 'bad' ? '#000' : '#666' }}>좋음 {Number(report?.badCount ?? 0)}</Text>
-                            </View>
-                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                              <Text style={{ fontSize: 28 }}>😐</Text>
-                              <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'normal' ? '700' : '400', color: report?.userEvaluation === 'normal' ? '#000' : '#666' }}>보통 {Number(report?.normalCount ?? 0)}</Text>
-                            </View>
-                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                              <Text style={{ fontSize: 28 }}>☹️</Text>
-                              <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'good' ? '700' : '400', color: report?.userEvaluation === 'good' ? '#000' : '#666' }}>아쉬움 {Number(report?.goodCount ?? 0)}</Text>
-                            </View>
-                          </>
-                        );
-                      }
-                      return (
-                        <>
-                          <TouchableOpacity
-                            style={{ alignItems: 'center', marginLeft: 6 }}
-                            disabled={evaluating}
-                            onPress={async () => {
-                              if (!reportId || evaluating) return;
-                              try {
-                                setEvaluating(true);
-                                let token: string | null = null;
-                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                                await postReportEvaluation(String(reportId), 'bad', token ?? undefined);
-                                applyOptimisticEvaluation('bad');
-                              } catch (e) {
-                                console.warn('report evaluation failed (좋음->bad)', e);
-                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
-                              } finally { setEvaluating(false); }
-                            }}
-                          >
-                            <Text style={{ fontSize: 28 }}>😊</Text>
-                            <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'bad' ? '700' : '400', color: report?.userEvaluation === 'bad' ? '#000' : '#666' }}>좋음 {Number(report?.badCount ?? 0)}</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={{ alignItems: 'center', marginLeft: 6 }}
-                            disabled={evaluating}
-                            onPress={async () => {
-                              if (!reportId || evaluating) return;
-                              try {
-                                setEvaluating(true);
-                                let token: string | null = null;
-                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                                await postReportEvaluation(String(reportId), 'normal', token ?? undefined);
-                                applyOptimisticEvaluation('normal');
-                              } catch (e) {
-                                console.warn('report evaluation failed (보통->normal)', e);
-                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
-                              } finally { setEvaluating(false); }
-                            }}
-                          >
-                            <Text style={{ fontSize: 28 }}>😐</Text>
-                            <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'normal' ? '700' : '400', color: report?.userEvaluation === 'normal' ? '#000' : '#666' }}>보통 {Number(report?.normalCount ?? 0)}</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={{ alignItems: 'center', marginLeft: 6 }}
-                            disabled={evaluating}
-                            onPress={async () => {
-                              if (!reportId || evaluating) return;
-                              try {
-                                setEvaluating(true);
-                                let token: string | null = null;
-                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                                await postReportEvaluation(String(reportId), 'good', token ?? undefined);
-                                applyOptimisticEvaluation('good');
-                              } catch (e) {
-                                console.warn('report evaluation failed (아쉬움->good)', e);
-                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
-                              } finally { setEvaluating(false); }
-                            }}
-                          >
-                            <Text style={{ fontSize: 28 }}>☹️</Text>
-                            <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'good' ? '700' : '400', color: report?.userEvaluation === 'good' ? '#000' : '#666' }}>아쉬움 {Number(report?.goodCount ?? 0)}</Text>
-                          </TouchableOpacity>
-                        </>
-                      );
-                    })()}
-                  </View>
-                </View>
-              </View>
-            )}
+                    </View>
+                  );
+                })
+              )}
           </View>
         </ScrollView>
         {(() => {
