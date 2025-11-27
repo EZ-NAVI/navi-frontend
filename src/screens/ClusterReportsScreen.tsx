@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { useAppAlertStore } from '../stores/appAlertStore';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { fetchReportsByCluster, fetchReportComments, postReportEvaluation, fetchReportById, postReportNotThere } from '../api/reports';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCurrentUserRole } from '../lib/authState';
 import { useReportStore } from '../stores/reportStore';
 
 type Props = {
@@ -200,13 +202,14 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
               onPress={() => {
                 const rid = String(item.reportId ?? item.id ?? '');
                 if (!rid) return;
-                Alert.alert('이제 없어요', '정말 더 이상 존재하지 않나요?', [
-                  { text: '취소', style: 'cancel' },
-                  { text: '확인', onPress: async () => {
+                useAppAlertStore.getState().show({
+                  title: '이제 없어요',
+                  body: '정말 더 이상 존재하지 않나요?',
+                  ctaText: '확인',
+                  cancelText: '취소',
+                  onConfirm: async () => {
                     try {
-                      try {
-                        console.log('[NotThere] cluster screen send for reportId=', rid, 'category=', item.category ?? item.title ?? '제보');
-                      } catch (logErr) {}
+                      try { console.log('[NotThere] cluster screen send for reportId=', rid, 'category=', item.category ?? item.title ?? '제보'); } catch (logErr) {}
                       let token: string | null = null;
                       try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
                       await postReportNotThere(rid, token ?? undefined);
@@ -219,8 +222,8 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                         Alert.alert('처리 실패', errorMsg);
                       }
                     }
-                  } }
-                ]);
+                  }
+                });
               }}
             >
               <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
@@ -260,6 +263,15 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                   const rid = String(item.reportId ?? item.id ?? '');
                   const selected = (item.userEvaluation ?? null) === 'bad';
                   const count = Number(item.badCount ?? 0);
+                  const role = getCurrentUserRole();
+                  if (role === 'parent') {
+                    return (
+                      <View style={[styles.emojiBtn, { opacity: 1 }]}> 
+                        <Text style={styles.emoji}>😊</Text>
+                        <Text style={[styles.emojiLabel, selected && styles.emojiLabelSelected]}>좋음 {count}</Text>
+                      </View>
+                    );
+                  }
                   return (
                     <TouchableOpacity style={styles.emojiBtn} disabled={!!evaluatingIds[rid]} onPress={() => submitEvaluation(rid, 'bad')}>
                       <Text style={styles.emoji}>😊</Text>
@@ -272,6 +284,15 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                   const rid = String(item.reportId ?? item.id ?? '');
                   const selected = (item.userEvaluation ?? null) === 'normal';
                   const count = Number(item.normalCount ?? 0);
+                  const role = getCurrentUserRole();
+                  if (role === 'parent') {
+                    return (
+                      <View style={[styles.emojiBtn, { opacity: 1 }]}> 
+                        <Text style={styles.emoji}>😐</Text>
+                        <Text style={[styles.emojiLabel, selected && styles.emojiLabelSelected]}>보통 {count}</Text>
+                      </View>
+                    );
+                  }
                   return (
                     <TouchableOpacity style={styles.emojiBtn} disabled={!!evaluatingIds[rid]} onPress={() => submitEvaluation(rid, 'normal')}>
                       <Text style={styles.emoji}>😐</Text>
@@ -284,6 +305,15 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                   const rid = String(item.reportId ?? item.id ?? '');
                   const selected = (item.userEvaluation ?? null) === 'good';
                   const count = Number(item.goodCount ?? 0);
+                  const role = getCurrentUserRole();
+                  if (role === 'parent') {
+                    return (
+                      <View style={[styles.emojiBtn, { opacity: 1 }]}> 
+                        <Text style={styles.emoji}>☹️</Text>
+                        <Text style={[styles.emojiLabel, selected && styles.emojiLabelSelected]}>아쉬움 {count}</Text>
+                      </View>
+                    );
+                  }
                   return (
                     <TouchableOpacity style={styles.emojiBtn} disabled={!!evaluatingIds[rid]} onPress={() => submitEvaluation(rid, 'good')}>
                       <Text style={styles.emoji}>☹️</Text>

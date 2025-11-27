@@ -23,25 +23,29 @@ let parentToken =
 let childToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLOE1UQUNKMkFaU043WjdFWjFDN1ZFOEEiLCJ1c2VyX3R5cGUiOiJjaGlsZCIsInJvbGUiOiJVU0VSIiwiZXhwIjoxNzYzMzg3MDIyfQ.NlOboZdG8mIuDaeuUIEi0rFuZbCA-ufYgE8eiPs4RKI";
 
-// 현재 기기가 에뮬레이터인지 확인
-const isEmulator = (): boolean => {
-  if (Platform.OS === "android") {
-    const { Brand, Model } = Platform.constants as any;
-    return (
-      Brand === "google" ||
-      Model?.toLowerCase().includes("sdk") ||
-      Model?.toLowerCase().includes("emulator")
-    );
-  } else if (Platform.OS === "ios") {
-    return (Platform.constants as any).simulator === true;
-  }
-  return false;
-};
+// (에뮬레이터 감지 로직 제거)
 
-// DEV_TOKEN은 에뮬레이터 여부에 따라 parentToken/childToken을 선택
+// DEV_TOKEN 결정 로직 변경:
+// - 더 이상 에뮬레이터/실기기 판별로 역할을 자동으로 선택하지 않습니다.
+// - 런타임에서 로그인 성공 시 `setDevRole()`로 역할을 설정하고, 그에 따라
+//   parentToken/childToken 중 하나를 반환합니다. 역할이 설정되지 않으면 null을 반환합니다.
+type DevRole = 'parent' | 'child' | null;
+let devRole: DevRole = null;
+
+export function setDevRole(role: DevRole) {
+  devRole = role;
+}
+
+export function getDevRole(): DevRole {
+  return devRole;
+}
+
+// DEV_TOKEN은 런타임으로 정해진 역할(devRole)에 따라 반환됩니다.
 function computeDevToken(): string | null {
   if (!__DEV__) return null;
-  return isEmulator() ? parentToken : childToken;
+  if (devRole === 'parent') return parentToken || null;
+  if (devRole === 'child') return childToken || null;
+  return null;
 }
 
 // 런타임에서 parent/child 토큰을 업데이트하는 함수들
@@ -54,11 +58,8 @@ export function setChildToken(token: string | null) {
 }
 
 // DEV_USER_ID는 런타임에 변경 가능하도록 관리
-let devUserId: string | null = __DEV__
-  ? isEmulator()
-    ? "01K7V6S1DWKKN1W92Y1X7YM94D"
-    : "01K8MTACJ2AZSN7Z7EZ1C7VE8A"
-  : null;
+// 개발 시 기본 userId는 null로 둡니다. 런타임에 `setDevUserId`로 설정하세요.
+let devUserId: string | null = null;
 
 export function setDevUserId(id: string | null) {
   devUserId = id;
@@ -69,7 +70,7 @@ export function setDevUserId(id: string | null) {
 // Export a live binding for DEV_USER_ID for backwards compatibility
 export let DEV_USER_ID: string | null = devUserId;
 
-console.log(`[DEV_TOKEN] 기기 타입: ${isEmulator() ? "에뮬레이터(부모)" : "실기기(자녀)"}`);
+console.log(`[DEV_TOKEN] 런타임 역할(devRole): ${devRole}`);
 console.log(`[DEV_TOKEN] 사용 userId: ${devUserId}`);
 console.log(`[DEV_TOKEN] 사용 토큰: ${computeDevToken() ? computeDevToken()!.substring(0, 50) + "..." : "null"}`);
 

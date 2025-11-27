@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { useAppAlertStore } from '../stores/appAlertStore';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { fetchReportById, fetchReportComments, postReportComment, postReportEvaluation, postReportNotThere } from '../api/reports';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextInput } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { getCurrentUserRole } from '../lib/authState';
 
 export default function ReportDetailScreen() {
   const route = useRoute<any>();
@@ -110,27 +112,28 @@ export default function ReportDetailScreen() {
               onPress={() => {
                 const fromCluster = (route.params as any)?.fromCluster;
                 const clusterId = (route.params as any)?.clusterId;
-                Alert.alert('이제 없어요', '정말 더 이상 존재하지 않나요?', [
-                  { text: '취소', style: 'cancel' },
-                  { text: '확인', onPress: async () => {
-                      try {
-                        try {
-                          console.log('[NotThere] detail screen send for reportId=', String(reportId), 'category=', report?.category ?? report?.title ?? '제보');
-                        } catch (logErr) {}
-                        let token: string | null = null;
-                        try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                        await postReportNotThere(String(reportId), token ?? undefined);
-                      } catch (e: any) {
-                        console.warn('not-there failed', e);
-                        const errorMsg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '상태 전송에 실패했습니다.';
-                        if (errorMsg.includes('이미') && errorMsg.includes('이제 없어요')) {
-                          Alert.alert('알림', '이미 누른 제보입니다.');
-                        } else {
-                          Alert.alert('처리 실패', errorMsg);
-                        }
+                useAppAlertStore.getState().show({
+                  title: '이제 없어요',
+                  body: '정말 더 이상 존재하지 않나요?',
+                  ctaText: '확인',
+                  cancelText: '취소',
+                  onConfirm: async () => {
+                    try {
+                      try { console.log('[NotThere] detail screen send for reportId=', String(reportId), 'category=', report?.category ?? report?.title ?? '제보'); } catch (logErr) {}
+                      let token: string | null = null;
+                      try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                      await postReportNotThere(String(reportId), token ?? undefined);
+                    } catch (e: any) {
+                      console.warn('not-there failed', e);
+                      const errorMsg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '상태 전송에 실패했습니다.';
+                      if (errorMsg.includes('이미') && errorMsg.includes('이제 없어요')) {
+                        Alert.alert('알림', '이미 누른 제보입니다.');
+                      } else {
+                        Alert.alert('처리 실패', errorMsg);
                       }
-                  } }
-                ]);
+                    }
+                  }
+                });
               }}
             >
               <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
@@ -170,119 +173,152 @@ export default function ReportDetailScreen() {
                 </View>
                 <View style={{ alignItems: 'flex-end', marginLeft: 12, justifyContent: 'space-between', alignSelf: 'flex-start', marginTop: 4 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity
-                      style={{ alignItems: 'center', marginLeft: 6 }}
-                      disabled={evaluating}
-                      onPress={async () => {
-                        if (!reportId || evaluating) return;
-                        try {
-                          setEvaluating(true);
-                          let token: string | null = null;
-                          try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                          await postReportEvaluation(String(reportId), 'bad', token ?? undefined);
-                          applyOptimisticEvaluation('bad');
-                        } catch (e) {
-                          console.warn('report evaluation failed (좋음->bad)', e);
-                          Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
-                        } finally { setEvaluating(false); }
-                      }}
-                    >
-                      <Text style={{ fontSize: 28 }}>😊</Text>
-                      <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'bad' ? '700' : '400', color: report?.userEvaluation === 'bad' ? '#000' : '#666' }}>좋음 {Number(report?.badCount ?? 0)}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{ alignItems: 'center', marginLeft: 6 }}
-                      disabled={evaluating}
-                      onPress={async () => {
-                        if (!reportId || evaluating) return;
-                        try {
-                          setEvaluating(true);
-                          let token: string | null = null;
-                          try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                          await postReportEvaluation(String(reportId), 'normal', token ?? undefined);
-                          applyOptimisticEvaluation('normal');
-                        } catch (e) {
-                          console.warn('report evaluation failed (보통->normal)', e);
-                          Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
-                        } finally { setEvaluating(false); }
-                      }}
-                    >
-                      <Text style={{ fontSize: 28 }}>😐</Text>
-                      <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'normal' ? '700' : '400', color: report?.userEvaluation === 'normal' ? '#000' : '#666' }}>보통 {Number(report?.normalCount ?? 0)}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{ alignItems: 'center', marginLeft: 6 }}
-                      disabled={evaluating}
-                      onPress={async () => {
-                        if (!reportId || evaluating) return;
-                        try {
-                          setEvaluating(true);
-                          let token: string | null = null;
-                          try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                          await postReportEvaluation(String(reportId), 'good', token ?? undefined);
-                          applyOptimisticEvaluation('good');
-                        } catch (e) {
-                          console.warn('report evaluation failed (아쉬움->good)', e);
-                          Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
-                        } finally { setEvaluating(false); }
-                      }}
-                    >
-                      <Text style={{ fontSize: 28 }}>☹️</Text>
-                      <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'good' ? '700' : '400', color: report?.userEvaluation === 'good' ? '#000' : '#666' }}>아쉬움 {Number(report?.goodCount ?? 0)}</Text>
-                    </TouchableOpacity>
+                    {(() => {
+                      const role = getCurrentUserRole();
+                      const renderInteractive = role !== 'parent';
+                      if (!renderInteractive) {
+                        return (
+                          <>
+                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                              <Text style={{ fontSize: 28 }}>😊</Text>
+                              <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'bad' ? '700' : '400', color: report?.userEvaluation === 'bad' ? '#000' : '#666' }}>좋음 {Number(report?.badCount ?? 0)}</Text>
+                            </View>
+                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                              <Text style={{ fontSize: 28 }}>😐</Text>
+                              <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'normal' ? '700' : '400', color: report?.userEvaluation === 'normal' ? '#000' : '#666' }}>보통 {Number(report?.normalCount ?? 0)}</Text>
+                            </View>
+                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                              <Text style={{ fontSize: 28 }}>☹️</Text>
+                              <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'good' ? '700' : '400', color: report?.userEvaluation === 'good' ? '#000' : '#666' }}>아쉬움 {Number(report?.goodCount ?? 0)}</Text>
+                            </View>
+                          </>
+                        );
+                      }
+                      return (
+                        <>
+                          <TouchableOpacity
+                            style={{ alignItems: 'center', marginLeft: 6 }}
+                            disabled={evaluating}
+                            onPress={async () => {
+                              if (!reportId || evaluating) return;
+                              try {
+                                setEvaluating(true);
+                                let token: string | null = null;
+                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                await postReportEvaluation(String(reportId), 'bad', token ?? undefined);
+                                applyOptimisticEvaluation('bad');
+                              } catch (e) {
+                                console.warn('report evaluation failed (좋음->bad)', e);
+                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                              } finally { setEvaluating(false); }
+                            }}
+                          >
+                            <Text style={{ fontSize: 28 }}>😊</Text>
+                            <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'bad' ? '700' : '400', color: report?.userEvaluation === 'bad' ? '#000' : '#666' }}>좋음 {Number(report?.badCount ?? 0)}</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={{ alignItems: 'center', marginLeft: 6 }}
+                            disabled={evaluating}
+                            onPress={async () => {
+                              if (!reportId || evaluating) return;
+                              try {
+                                setEvaluating(true);
+                                let token: string | null = null;
+                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                await postReportEvaluation(String(reportId), 'normal', token ?? undefined);
+                                applyOptimisticEvaluation('normal');
+                              } catch (e) {
+                                console.warn('report evaluation failed (보통->normal)', e);
+                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                              } finally { setEvaluating(false); }
+                            }}
+                          >
+                            <Text style={{ fontSize: 28 }}>😐</Text>
+                            <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'normal' ? '700' : '400', color: report?.userEvaluation === 'normal' ? '#000' : '#666' }}>보통 {Number(report?.normalCount ?? 0)}</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={{ alignItems: 'center', marginLeft: 6 }}
+                            disabled={evaluating}
+                            onPress={async () => {
+                              if (!reportId || evaluating) return;
+                              try {
+                                setEvaluating(true);
+                                let token: string | null = null;
+                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                await postReportEvaluation(String(reportId), 'good', token ?? undefined);
+                                applyOptimisticEvaluation('good');
+                              } catch (e) {
+                                console.warn('report evaluation failed (아쉬움->good)', e);
+                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                              } finally { setEvaluating(false); }
+                            }}
+                          >
+                            <Text style={{ fontSize: 28 }}>☹️</Text>
+                            <Text style={{ fontSize: 12, marginTop: 4, fontWeight: report?.userEvaluation === 'good' ? '700' : '400', color: report?.userEvaluation === 'good' ? '#000' : '#666' }}>아쉬움 {Number(report?.goodCount ?? 0)}</Text>
+                          </TouchableOpacity>
+                        </>
+                      );
+                    })()}
                   </View>
                 </View>
               </View>
             )}
           </View>
         </ScrollView>
-        <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: 12, borderTopWidth: 1, borderTopColor: '#eee', backgroundColor: '#fff' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TextInput
-              value={newComment}
-              onChangeText={setNewComment}
-              placeholder="댓글을 입력하세요..."
-              placeholderTextColor="#999"
-              style={{ flex: 1, borderWidth: 1, borderColor: '#eee', borderRadius: 24, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }}
-              editable={!posting}
-              returnKeyType="send"
-              onSubmitEditing={async () => {
-                if (!newComment.trim()) return;
-                try {
-                  setPosting(true);
-                  let token: string | null = null;
-                  try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                  const created = await postReportComment(String(reportId), newComment.trim(), token ?? undefined);
-                  setComments((s) => Array.isArray(s) ? [created, ...s] : [created]);
-                  setNewComment('');
-                } catch (e) {
-                  console.warn('post comment failed', e);
-                  Alert.alert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
-                } finally { setPosting(false); }
-              }}
-            />
-            <TouchableOpacity
-              onPress={async () => {
-                if (!newComment.trim()) return Alert.alert('댓글 입력', '댓글 내용을 입력해주세요.');
-                try {
-                  setPosting(true);
-                  let token: string | null = null;
-                  try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                  const created = await postReportComment(String(reportId), newComment.trim(), token ?? undefined);
-                  setComments((s) => Array.isArray(s) ? [created, ...s] : [created]);
-                  setNewComment('');
-                } catch (e) {
-                  console.warn('post comment failed', e);
-                  Alert.alert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
-                } finally { setPosting(false); }
-              }}
-              style={{ backgroundColor: '#FFD44C', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20 }}
-              disabled={posting}
-            >
-              {posting ? <ActivityIndicator /> : <Text style={{ fontWeight: '700' }}>전송</Text>}
-            </TouchableOpacity>
-          </View>
-        </View>
+        {(() => {
+          const role = getCurrentUserRole();
+          // Parents cannot post comments — hide the input area entirely.
+          if (role === 'parent') return null;
+          return (
+            <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: 12, borderTopWidth: 1, borderTopColor: '#eee', backgroundColor: '#fff' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TextInput
+                  value={newComment}
+                  onChangeText={setNewComment}
+                  placeholder="댓글을 입력하세요..."
+                  placeholderTextColor="#999"
+                  style={{ flex: 1, borderWidth: 1, borderColor: '#eee', borderRadius: 24, paddingHorizontal: 14, paddingVertical: 8, marginRight: 8 }}
+                  editable={!posting}
+                  returnKeyType="send"
+                  onSubmitEditing={async () => {
+                    if (!newComment.trim()) return;
+                    try {
+                      setPosting(true);
+                      let token: string | null = null;
+                      try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                      const created = await postReportComment(String(reportId), newComment.trim(), token ?? undefined);
+                      setComments((s) => Array.isArray(s) ? [created, ...s] : [created]);
+                      setNewComment('');
+                    } catch (e) {
+                      console.warn('post comment failed', e);
+                      Alert.alert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
+                    } finally { setPosting(false); }
+                  }}
+                />
+                <TouchableOpacity
+                  onPress={async () => {
+                    if (!newComment.trim()) return Alert.alert('댓글 입력', '댓글 내용을 입력해주세요.');
+                    try {
+                      setPosting(true);
+                      let token: string | null = null;
+                      try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                      const created = await postReportComment(String(reportId), newComment.trim(), token ?? undefined);
+                      setComments((s) => Array.isArray(s) ? [created, ...s] : [created]);
+                      setNewComment('');
+                    } catch (e) {
+                      console.warn('post comment failed', e);
+                      Alert.alert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
+                    } finally { setPosting(false); }
+                  }}
+                  style={{ backgroundColor: '#FFD44C', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20 }}
+                  disabled={posting}
+                >
+                  {posting ? <ActivityIndicator /> : <Text style={{ fontWeight: '700' }}>전송</Text>}
+                </TouchableOpacity>
+              </View>
+            </View>
+          );
+        })()}
       </KeyboardAvoidingView>
     </View>
   );

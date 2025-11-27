@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
 
 import * as React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { StatusBar } from 'react-native';
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator, StackNavigationProp } from "@react-navigation/stack";
 import SafeRouteScreen from "./src/screens/SafeRouteScreen";
@@ -70,15 +71,20 @@ import SignupFormScreen from "./src/screens/SignupFormScreen";
 import { RouteProvider } from "./src/context/RouteContext";
 import { WebSocketProvider, WebSocketContext } from "./src/context/WebSocketContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { on as onEvent } from './src/lib/emitter';
 import { DEV_USER_ID } from "./src/config/dev";
 import ReportApprovalModal from "./src/components/ReportApprovalModal";
 import ReportEditModal from "./src/components/ReportEditModal";
 import { useReportApprovalModal } from "./src/stores/reportApprovalModalStore";
 import { useReportEditModal } from "./src/stores/reportEditModalStore";
 import { postReportReview, fetchReportById } from "./src/api/reports";
-import { Alert, Platform } from "react-native";
+import { getMe } from './src/api/auth';
+import { Alert, Platform, LogBox } from "react-native";
+import AppAlertModal from './src/components/AppAlertModal';
+import { useAppAlertStore } from './src/stores/appAlertStore';
 import messaging from '@react-native-firebase/messaging';
 import navigationRef from './src/navigationRef';
+import { getCurrentUserRole } from './src/lib/authState';
 
 const Stack = createStackNavigator();
 
@@ -103,7 +109,11 @@ function AppWithModal({ children }: { children: React.ReactNode }) {
       await postReportReview(reportId, '승인', token || undefined);
       
       console.log('✅ [API] 승인 완료 - 서버가 report.reviewed 이벤트 전송함');
-      Alert.alert('✅ 승인 완료', '제보가 승인되었습니다.');
+      try {
+        useAppAlertStore.getState().show({ title: '✅ 승인 완료', body: '제보가 승인되었습니다.', ctaText: '확인' });
+      } catch (e) {
+        Alert.alert('✅ 승인 완료', '제보가 승인되었습니다.');
+      }
       hideModal();
     } catch (error: any) {
       console.error('❌ [API] 승인 실패:', error);
@@ -129,7 +139,11 @@ function AppWithModal({ children }: { children: React.ReactNode }) {
       await postReportReview(reportId, '반려', token || undefined);
       
       console.log('❌ [API] 반려 완료 - 서버가 report.reviewed 이벤트 전송함 (자녀에게 수정 모달 표시)');
-      Alert.alert('❌ 반려 완료', '제보가 반려되었습니다.\n자녀가 수정할 수 있습니다.');
+      try {
+        useAppAlertStore.getState().show({ title: '❌ 반려 완료', body: '제보가 반려되었습니다.\n자녀가 수정할 수 있습니다.', ctaText: '확인' });
+      } catch (e) {
+        Alert.alert('❌ 반려 완료', '제보가 반려되었습니다.\n자녀가 수정할 수 있습니다.');
+      }
       hideModal();
     } catch (error: any) {
       console.error('❌ [API] 반려 실패:', error);
@@ -193,6 +207,17 @@ function NavigationContent() {
 }
 
 export default function App() {
+  // Suppress noisy react-native-firebase namespaced-deprecation warnings during development.
+  // These warnings are emitted by the RNFirebase migration shim; they are harmless
+  // but noisy. Prefer migrating to the modular API per https://rnfirebase.io/migrating-to-v22
+  // for a permanent fix. For now, ignore that specific warning pattern.
+  try {
+    LogBox.ignoreLogs([
+      'This method is deprecated (as well as all React Native Firebase namespaced API)'
+    ]);
+  } catch (e) {
+    // ignore
+  }
   const [userId, setUserId] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -204,10 +229,33 @@ export default function App() {
         // const user = authStore.getState().user;
         // setUserId(user?.id || null);
         
-        // 앱 시작 시 저장된 user_id만 사용(자동 DEV_USER_ID 주입 제거)
+        // 앱 시작 시에는 단순히 저장된 user_id가 있어도 즉시 WebSocket을 연결하지 않도록
+        // access_token(로그인 여부)을 함께 확인합니다.
         const storedUserId = await AsyncStorage.getItem('user_id');
-        console.log('[App] 사용할 userId:', storedUserId);
-        setUserId(storedUserId);
+        const accessToken = await AsyncStorage.getItem('access_token');
+        if (accessToken) {
+          // access_token이 존재하면 서버에 검증 요청을 보내 실제 로그인 상태인지 확인합니다.
+          try {
+            const me = await getMe();
+            const resolvedId = me?.userId ?? me?.id ?? storedUserId ?? null;
+            console.log('[App] GET /users/me 확인됨. userId:', resolvedId);
+            if (resolvedId) {
+              setUserId(String(resolvedId));
+            } else {
+              console.log('[App] GET /users/me 응답에 userId가 없음 — 로그인 상태로 간주하지 않습니다.');
+              await AsyncStorage.multiRemove(['access_token', 'token_type', 'user_id']);
+              setUserId(null);
+            }
+          } catch (e) {
+            console.warn('[App] GET /users/me 실패 — 저장된 토큰이 유효하지 않거나 네트워크 문제입니다.', e);
+            // 토큰이 유효하지 않다면 정리하고 WebSocket 연결을 방지
+            try { await AsyncStorage.multiRemove(['access_token', 'token_type', 'user_id']); } catch (er) {}
+            setUserId(null);
+          }
+        } else {
+          console.log('[App] access_token 없음 — WebSocket 연결을 지연합니다. storedUserId=', storedUserId);
+          setUserId(null);
+        }
       } catch (error) {
         console.error('[App] userId 로드 실패:', error);
         setUserId(null);
@@ -217,6 +265,21 @@ export default function App() {
     };
 
     loadUserId();
+
+    // Subscribe to runtime userId changes (e.g., immediately after login)
+    const unsubscribe = onEvent('user:changed', (newId: any) => {
+      try {
+        const id = newId ? String(newId) : null;
+        console.log('[App] user:changed event received, newId=', id);
+        setUserId(id);
+      } catch (e) {
+        console.warn('[App] user:changed handler error', e);
+      }
+    });
+
+    return () => {
+      try { unsubscribe(); } catch (e) {}
+    };
   }, []);
 
   // FCM 푸시 알림: 백그라운드/종료 상태에서 알림 클릭 처리만 담당
@@ -228,18 +291,36 @@ export default function App() {
       if (!reportId) return;
 
       try {
-        // try to fetch report detail and show approval modal
         const token = await AsyncStorage.getItem('access_token');
         const report = await fetchReportById(String(reportId), token || undefined);
-        // open the approval modal via zustand store
-        try { useReportApprovalModal.getState().showModal(report); return; } catch (e) { console.warn('showModal error', e); }
+
+        // Role 기반 처리: 부모면 승인 모달, 자녀면 수정 모달(반려인 경우) 또는 상세화면으로 이동
+        const role = getCurrentUserRole(); // 'parent' | 'child' | null
+        if (role === 'parent') {
+          try { useReportApprovalModal.getState().showModal(report); return; } catch (e) { console.warn('showModal error', e); }
+        }
+
+        if (role === 'child') {
+          // 자녀는 반려된 경우 수정 모달을, 그 외에는 상세 화면으로 이동
+          const status = report?.status ?? report?.report_status ?? null;
+          if (status === 'REJECTED') {
+            try { useReportEditModal.getState().showModal(report); return; } catch (e) { console.warn('showEditModal error', e); }
+          }
+          // otherwise navigate to detail
+          if (navigationRef?.isReady()) {
+            try { navigationRef.navigate('ReportDetail', { reportId }); return; } catch (e) { console.warn('navigate error', e); }
+          }
+        }
+
+        // role이 없거나 알 수 없는 경우: 안전하게 상세 화면으로 이동
+        if (navigationRef?.isReady()) {
+          try { navigationRef.navigate('ReportDetail', { reportId }); } catch (e) { console.warn('navigate error', e); }
+        }
       } catch (e) {
         console.warn('fetchReportById error, falling back to navigation', e);
-      }
-
-      // fallback: navigate to ReportDetail screen
-      if (navigationRef?.isReady()) {
-        try { navigationRef.navigate('ReportDetail', { reportId }); } catch (e) { console.warn('navigate error', e); }
+        if (navigationRef?.isReady()) {
+          try { navigationRef.navigate('ReportDetail', { reportId }); } catch (err) { console.warn('navigate error', err); }
+        }
       }
     });
 
@@ -255,7 +336,23 @@ export default function App() {
           try {
             const token = await AsyncStorage.getItem('access_token');
             const report = await fetchReportById(String(reportId), token || undefined);
-            try { useReportApprovalModal.getState().showModal(report); return; } catch (e) { console.warn('showModal initial error', e); }
+            try {
+              const role = getCurrentUserRole();
+              if (role === 'parent') {
+                useReportApprovalModal.getState().showModal(report);
+                return;
+              }
+              if (role === 'child') {
+                const status = report?.status ?? report?.report_status ?? null;
+                if (status === 'REJECTED') {
+                  useReportEditModal.getState().showModal(report);
+                  return;
+                }
+                if (navigationRef?.isReady()) { navigationRef.navigate('ReportDetail', { reportId }); return; }
+              }
+              // fallback
+              try { useReportApprovalModal.getState().showModal(report); return; } catch (e) { console.warn('showModal initial error', e); }
+            } catch (e) { console.warn('initial notification role handling error', e); }
           } catch (e) {
             console.warn('getInitialNotification fetch error, falling back to navigation', e);
           }
@@ -305,8 +402,11 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      {/* Ensure the Android status bar is white with dark icons for better contrast */}
+      <StatusBar backgroundColor="#FFFFFF" barStyle={Platform.OS === 'android' ? 'dark-content' : 'dark-content'} />
       <RouteProvider>
         {/* userId가 있을 때만 WebSocketProvider로 감싸기 */}
+        <AppAlertModal />
         {userId ? (
           <WebSocketProvider userId={userId}>
             <AppWithModal>

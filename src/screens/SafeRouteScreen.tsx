@@ -22,7 +22,10 @@ import { useRouteData } from "../context/RouteContext";
 import { fetchPreviewRoute, saveRoute } from "../api/routes";
 import SafetyNoticeModal from "../components/SafetyNoticeModal";
 import ReportModal from "../components/ReportModal";
-import { fetchReports, fetchReportById, fetchReportComments, postReportComment, postReportEvaluation, postReportNotThere } from "../api/reports";
+import { fetchReports, fetchReportById, fetchReportComments, postReportComment, postReportEvaluation, postReportNotThere, fetchReportsByCluster } from "../api/reports";
+import { getMe } from '../api/auth';
+import { getCurrentUserRole } from '../lib/authState';
+import { useAppAlertStore } from '../stores/appAlertStore';
 import ClusterReportsScreen from "./ClusterReportsScreen";
 import { Modal, PanResponder, Animated, Dimensions } from 'react-native';
 import { useReportStore } from "../stores/reportStore";
@@ -68,6 +71,7 @@ export default function SafeRouteScreen() {
   // 제보하기 버튼 상태
   const [safetyOpen, setSafetyOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [unmatchedOpen, setUnmatchedOpen] = useState(false);
   const [reportLocation, setReportLocation] = useState<any | undefined>(undefined);
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -456,24 +460,105 @@ export default function SafeRouteScreen() {
           // 디버그 로그: 불러온 유효 제보
           console.log(`🔎 유효 제보 수: ${validReports.length}`, validReports.map((p) => ({ id: p.reportId ?? p.id, lat: p.__lat, lon: p.__lon })));
 
+          // ===== 마커 추가 =====
+          // 간단한 보완: 각 클러스터의 aggregated `total_count`를 얻기 위해
+          // `/reports/filter?cluster_id=...` 를 호출해 클러스터별 카운트를 가져옵니다.
+          // (간단 버전: 실패한 요청은 0으로 간주)
+          const clusterCounts: Record<string, number> = {};
+          try {
+            const clusterIds = new Set<string>();
+            validReports.forEach((r: any) => {
+              const cid = r.clusterId ?? r.cluster_id ?? (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ?? null;
+              if (cid) clusterIds.add(String(cid));
+            });
+
+            if (clusterIds.size > 0) {
+              // 병렬로 요청하되 모든 요청이 실패해도 흐름을 멈추지 않습니다.
+              await Promise.all(Array.from(clusterIds).map(async (cid) => {
+                try {
+                  const clusterResp: any = await fetchReportsByCluster(cid, tokenToUse ?? undefined);
+                  let cnt = 0;
+                  if (clusterResp && typeof clusterResp === 'object') {
+                    if (typeof clusterResp.total_count === 'number') cnt = clusterResp.total_count;
+                    else if (typeof clusterResp.totalCount === 'number') cnt = clusterResp.totalCount;
+                    else if (Array.isArray(clusterResp)) cnt = clusterResp.length;
+                    else if (Array.isArray(clusterResp.reports)) cnt = clusterResp.reports.length;
+                    else if (Array.isArray(clusterResp.results)) cnt = clusterResp.results.length;
+                    else if (Array.isArray(clusterResp.data)) cnt = clusterResp.data.length;
+                  }
+                  clusterCounts[String(cid)] = Number(cnt) || 0;
+                  try { console.log('[SafeRoute] cluster total_count', cid, clusterCounts[String(cid)]); } catch (e) {}
+                } catch (e) {
+                  console.warn('[SafeRoute] fetchReportsByCluster failed for', cid, e);
+                  clusterCounts[String(cid)] = 0;
+                }
+              }));
+            }
+          } catch (e) {
+            console.warn('[SafeRoute] cluster count aggregation failed', e);
+          }
+
           // 마커 추가
           // 준비된 로컬 에셋을 resolve해서 네이티브로 전달
-          let assetUri: string | undefined;
+          let defaultAssetUri: string | undefined;
+          let badPingUri: string | undefined;
+          let sosoPingUri: string | undefined;
+          let goodPingUri: string | undefined;
           try {
-            // 프로젝트 내 src/asset/good_ping.png 을 require로 불러와 에셋 URI를 얻습니다.
-            const resolved = Image.resolveAssetSource(require("../asset/good_ping.png"));
-            assetUri = resolved?.uri;
-            console.log("🔧 resolved asset uri:", assetUri);
+            const resolvedDefault = Image.resolveAssetSource(require("../asset/good_ping.png"));
+            defaultAssetUri = resolvedDefault?.uri;
           } catch (e) {
-            console.warn("에셋 resolve 실패, drawable name 사용 예정:", e);
+            console.warn("에셋 resolve 실패 (default good_ping):", e);
+          }
+          try {
+            const resolvedBad = Image.resolveAssetSource(require("../asset/bad_ping.png"));
+            badPingUri = resolvedBad?.uri;
+          } catch (e) {
+            console.warn("에셋 resolve 실패 (bad_ping):", e);
+          }
+          try {
+            const resolvedSoso = Image.resolveAssetSource(require("../asset/soso_ping.png"));
+            sosoPingUri = resolvedSoso?.uri;
+          } catch (e) {
+            console.warn("에셋 resolve 실패 (soso_ping):", e);
+          }
+          try {
+            const resolvedGood = Image.resolveAssetSource(require("../asset/good_ping.png"));
+            goodPingUri = resolvedGood?.uri;
+          } catch (e) {
+            console.warn("에셋 resolve 실패 (good_ping):", e);
           }
 
           validReports.forEach((r: any) => {
             const title = r.category ?? r.description ?? "제보";
             try {
-              console.log("➕ 마커 추가 시도:", r.__lat, r.__lon, title);
-              if (assetUri && (map as any).addMarkerWithIcon) {
-                (map as any).addMarkerWithIcon(r.__lat, r.__lon, title, assetUri);
+              // Prefer cluster-level aggregated count if we fetched it above
+              const cid = r.clusterId ?? r.cluster_id ?? (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ?? null;
+              let usedCountSource = 'item';
+              let rawCount: any = 0;
+              if (cid && typeof clusterCounts[String(cid)] !== 'undefined') {
+                rawCount = clusterCounts[String(cid)];
+                usedCountSource = 'cluster';
+              } else {
+                // fallback: try multiple possible locations/names for an aggregated count on the item
+                rawCount = r.total_count ?? r.totalCount ?? r.count ?? r.cluster_count ?? (r.cluster && (r.cluster.total_count ?? r.cluster.totalCount ?? r.cluster.count)) ?? 0;
+                usedCountSource = 'item';
+              }
+
+              const cnt = Number(rawCount) || 0;
+              // If count is zero, log the full object once for debugging so we can see available keys
+              if (cnt === 0) {
+                try { console.debug('SafeRoute: report item (no count):', JSON.stringify(r)); } catch (e) { console.debug('SafeRoute: report item (no count, non-serializable)', r); }
+              }
+              let iconUri: string | undefined;
+              if (cnt >= 5) iconUri = badPingUri ?? defaultAssetUri;
+              else if (cnt >= 3) iconUri = sosoPingUri ?? defaultAssetUri;
+              else if (cnt >= 1) iconUri = goodPingUri ?? defaultAssetUri;
+              else iconUri = defaultAssetUri;
+
+              console.log("➕ 마커 추가 시도:", r.__lat, r.__lon, title, "count=", cnt, "source=", usedCountSource, "icon=", iconUri ? '(asset)' : '(default)');
+              if (iconUri && (map as any).addMarkerWithIcon) {
+                (map as any).addMarkerWithIcon(r.__lat, r.__lon, title, iconUri);
               } else {
                 // fall back to default marker provided by the native map
                 map.addMarker(r.__lat, r.__lon, title);
@@ -806,8 +891,20 @@ export default function SafeRouteScreen() {
         )}
         <TouchableOpacity
           style={extraStyles.longReportButton}
-          onPress={() => {
-            setSafetyOpen(true);
+          onPress={async () => {
+            try {
+              // 먼저 서버에서 매칭 상태를 확인합니다.
+              const me = await getMe();
+              if (!me || !me.matched) {
+                setUnmatchedOpen(true);
+                return;
+              }
+              // 매칭된 경우에만 안전 안내 모달을 표시
+              setSafetyOpen(true);
+            } catch (e) {
+              console.warn('GET /users/me 실패', e);
+              Alert.alert('알림', '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.');
+            }
           }}
           accessibilityRole="button"
           accessibilityLabel="긴 제보하기 버튼"
@@ -819,18 +916,52 @@ export default function SafeRouteScreen() {
       <SafetyNoticeModal
         visible={safetyOpen}
         onClose={() => setSafetyOpen(false)}
-        onConfirm={() => {
-          setSafetyOpen(false);
-          // open report modal and pass a sensible location (prefer start, fallback to end)
-          const loc = start
-            ? { location_lat: start.lat, location_lng: start.lon }
-            : end
-            ? { location_lat: end.lat, location_lng: end.lon }
-            : undefined;
-          setReportLocation(loc);
-          setReportOpen(true);
-        }}
+        onConfirm={async () => {
+            // Before opening report modal, ensure user is matched with a parent
+            try {
+              setSafetyOpen(false);
+              const me = await getMe();
+              // backend returns { matched: true } when parent match exists
+              if (!me || !me.matched) {
+                setUnmatchedOpen(true);
+                return;
+              }
+            } catch (e) {
+              console.warn('GET /users/me 실패', e);
+              // If we cannot verify, be conservative and block report with a user-facing alert
+              Alert.alert('알림', '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.');
+              return;
+            }
+
+            // open report modal and pass a sensible location (prefer start, fallback to end)
+            const loc = start
+              ? { location_lat: start.lat, location_lng: start.lon }
+              : end
+              ? { location_lat: end.lat, location_lng: end.lon }
+              : undefined;
+            setReportLocation(loc);
+            setReportOpen(true);
+          }}
       />
+
+        {/* 부모 미매칭 안내 — SafetyNoticeModal 디자인을 재사용 */}
+        <SafetyNoticeModal
+          visible={unmatchedOpen}
+          onClose={() => setUnmatchedOpen(false)}
+          onConfirm={() => setUnmatchedOpen(false)}
+          title="알림"
+          body={
+            ((): string => {
+              const role = getCurrentUserRole();
+              if (role === 'parent') {
+                return '아직 자녀와 매칭되지 않은 계정입니다.\n자녀 계정 가입 후 다시 시도하세요.';
+              }
+              // child (or default) case: instruct to sign up parent account
+              return '아직 부모와 매칭되지 않은 계정입니다.\n부모 계정 가입 후 다시 시도하세요.';
+            })()
+          }
+          ctaText="확인"
+        />
 
       {/* Report modal: 렌더링은 reportOpen으로 제어 */}
       {reportOpen && (
@@ -868,16 +999,17 @@ export default function SafeRouteScreen() {
                   shadowColor: 'transparent',
                   shadowOpacity: 0,
                 }}
-                onPress={() => {
-                  const rid = String(selectedReport?.reportId ?? selectedReport?.id ?? '');
-                  if (!rid) { detailOpenRef.current = false; setDetailOpen(false); return; }
-                  Alert.alert('이제 없어요', '정말 더 이상 존재하지 않나요?', [
-                    { text: '취소', style: 'cancel' },
-                    { text: '확인', onPress: async () => {
+                  onPress={() => {
+                    const rid = String(selectedReport?.reportId ?? selectedReport?.id ?? '');
+                    if (!rid) { detailOpenRef.current = false; setDetailOpen(false); return; }
+                    useAppAlertStore.getState().show({
+                      title: '이제 없어요',
+                      body: '정말 더 이상 존재하지 않나요?',
+                      ctaText: '확인',
+                      cancelText: '취소',
+                      onConfirm: async () => {
                         try {
-                          try {
-                            console.log('[NotThere] map modal send for reportId=', rid, 'category=', selectedReport?.category ?? selectedReport?.title ?? '제보');
-                          } catch (logErr) {}
+                          try { console.log('[NotThere] map modal send for reportId=', rid, 'category=', selectedReport?.category ?? selectedReport?.title ?? '제보'); } catch (logErr) {}
                           let token: string | null = null;
                           try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
                           await postReportNotThere(rid, token ?? undefined);
@@ -892,9 +1024,9 @@ export default function SafeRouteScreen() {
                         }
                         // 닫기
                         detailOpenRef.current = false; setDetailOpen(false);
-                      } }
-                  ]);
-                }}
+                      }
+                    });
+                  }}
               >
                 <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
               </TouchableOpacity>
@@ -971,80 +1103,125 @@ export default function SafeRouteScreen() {
                             {/* 위로 끌어올리면 전체보기(풀스크린)로 전환됩니다. */}
                       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
                         {/* 좋음(라벨) → bad 평가 키 */}
-                        <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                          <TouchableOpacity
-                            style={{ padding: 6 }}
-                            disabled={evaluating}
-                            onPress={async () => {
-                              if (!selectedReport || evaluating) return;
-                              try {
-                                setEvaluating(true);
-                                let token: string | null = null;
-                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                                await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'bad', token ?? undefined);
-                                applyOptimisticEvaluation('bad');
-                              } catch (e) {
-                                console.warn('evaluation failed (좋음->bad)', e);
-                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
-                              } finally { setEvaluating(false); }
-                            }}
-                          >
-                            <Text style={{ fontSize: 28 }}>😊</Text>
-                          </TouchableOpacity>
-                          <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'bad' ? '700' : '400', color: selectedReport?.userEvaluation === 'bad' ? '#000' : '#666' }}>
-                            좋음 {Number(selectedReport?.badCount ?? 0)}
-                          </Text>
-                        </View>
+                        {(() => {
+                          const role = getCurrentUserRole();
+                          if (role === 'parent') {
+                            return (
+                              <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                                <Text style={{ fontSize: 28 }}>😊</Text>
+                                <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'bad' ? '700' : '400', color: selectedReport?.userEvaluation === 'bad' ? '#000' : '#666' }}>
+                                  좋음 {Number(selectedReport?.badCount ?? 0)}
+                                </Text>
+                              </View>
+                            );
+                          }
+                          return (
+                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                              <TouchableOpacity
+                                style={{ padding: 6 }}
+                                disabled={evaluating}
+                                onPress={async () => {
+                                  if (!selectedReport || evaluating) return;
+                                  try {
+                                    setEvaluating(true);
+                                    let token: string | null = null;
+                                    try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                    await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'bad', token ?? undefined);
+                                    applyOptimisticEvaluation('bad');
+                                  } catch (e) {
+                                    console.warn('evaluation failed (좋음->bad)', e);
+                                    Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                                  } finally { setEvaluating(false); }
+                                }}
+                              >
+                                <Text style={{ fontSize: 28 }}>😊</Text>
+                              </TouchableOpacity>
+                              <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'bad' ? '700' : '400', color: selectedReport?.userEvaluation === 'bad' ? '#000' : '#666' }}>
+                                좋음 {Number(selectedReport?.badCount ?? 0)}
+                              </Text>
+                            </View>
+                          );
+                        })()}
                         {/* 보통 → normal */}
-                        <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                          <TouchableOpacity
-                            style={{ padding: 6 }}
-                            disabled={evaluating}
-                            onPress={async () => {
-                              if (!selectedReport || evaluating) return;
-                              try {
-                                setEvaluating(true);
-                                let token: string | null = null;
-                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                                await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'normal', token ?? undefined);
-                                applyOptimisticEvaluation('normal');
-                              } catch (e) {
-                                console.warn('evaluation failed (보통->normal)', e);
-                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
-                              } finally { setEvaluating(false); }
-                            }}
-                          >
-                            <Text style={{ fontSize: 28 }}>😐</Text>
-                          </TouchableOpacity>
-                          <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'normal' ? '700' : '400', color: selectedReport?.userEvaluation === 'normal' ? '#000' : '#666' }}>
-                            보통 {Number(selectedReport?.normalCount ?? 0)}
-                          </Text>
-                        </View>
+                        {(() => {
+                          const role = getCurrentUserRole();
+                          if (role === 'parent') {
+                            return (
+                              <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                                <Text style={{ fontSize: 28 }}>😐</Text>
+                                <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'normal' ? '700' : '400', color: selectedReport?.userEvaluation === 'normal' ? '#000' : '#666' }}>
+                                  보통 {Number(selectedReport?.normalCount ?? 0)}
+                                </Text>
+                              </View>
+                            );
+                          }
+                          return (
+                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                              <TouchableOpacity
+                                style={{ padding: 6 }}
+                                disabled={evaluating}
+                                onPress={async () => {
+                                  if (!selectedReport || evaluating) return;
+                                  try {
+                                    setEvaluating(true);
+                                    let token: string | null = null;
+                                    try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                    await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'normal', token ?? undefined);
+                                    applyOptimisticEvaluation('normal');
+                                  } catch (e) {
+                                    console.warn('evaluation failed (보통->normal)', e);
+                                    Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                                  } finally { setEvaluating(false); }
+                                }}
+                              >
+                                <Text style={{ fontSize: 28 }}>😐</Text>
+                              </TouchableOpacity>
+                              <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'normal' ? '700' : '400', color: selectedReport?.userEvaluation === 'normal' ? '#000' : '#666' }}>
+                                보통 {Number(selectedReport?.normalCount ?? 0)}
+                              </Text>
+                            </View>
+                          );
+                        })()}
                         {/* 아쉬움 → good */}
-                        <View style={{ alignItems: 'center', marginLeft: 6 }}>
-                          <TouchableOpacity
-                            style={{ padding: 6 }}
-                            disabled={evaluating}
-                            onPress={async () => {
-                              if (!selectedReport || evaluating) return;
-                              try {
-                                setEvaluating(true);
-                                let token: string | null = null;
-                                try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                                await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'good', token ?? undefined);
-                                applyOptimisticEvaluation('good');
-                              } catch (e) {
-                                console.warn('evaluation failed (아쉬움->good)', e);
-                                Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
-                              } finally { setEvaluating(false); }
-                            }}
-                          >
-                            <Text style={{ fontSize: 28 }}>☹️</Text>
-                          </TouchableOpacity>
-                          <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'good' ? '700' : '400', color: selectedReport?.userEvaluation === 'good' ? '#000' : '#666' }}>
-                            아쉬움 {Number(selectedReport?.goodCount ?? 0)}
-                          </Text>
-                        </View>
+                        {(() => {
+                          const role = getCurrentUserRole();
+                          if (role === 'parent') {
+                            return (
+                              <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                                <Text style={{ fontSize: 28 }}>☹️</Text>
+                                <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'good' ? '700' : '400', color: selectedReport?.userEvaluation === 'good' ? '#000' : '#666' }}>
+                                  아쉬움 {Number(selectedReport?.goodCount ?? 0)}
+                                </Text>
+                              </View>
+                            );
+                          }
+                          return (
+                            <View style={{ alignItems: 'center', marginLeft: 6 }}>
+                              <TouchableOpacity
+                                style={{ padding: 6 }}
+                                disabled={evaluating}
+                                onPress={async () => {
+                                  if (!selectedReport || evaluating) return;
+                                  try {
+                                    setEvaluating(true);
+                                    let token: string | null = null;
+                                    try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                                    await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'good', token ?? undefined);
+                                    applyOptimisticEvaluation('good');
+                                  } catch (e) {
+                                    console.warn('evaluation failed (아쉬움->good)', e);
+                                    Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                                  } finally { setEvaluating(false); }
+                                }}
+                              >
+                                <Text style={{ fontSize: 28 }}>☹️</Text>
+                              </TouchableOpacity>
+                              <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'good' ? '700' : '400', color: selectedReport?.userEvaluation === 'good' ? '#000' : '#666' }}>
+                                아쉬움 {Number(selectedReport?.goodCount ?? 0)}
+                              </Text>
+                            </View>
+                          );
+                        })()}
                       </View>
 
                     </View>

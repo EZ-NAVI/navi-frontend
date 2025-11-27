@@ -3,6 +3,10 @@ import { useReportStore } from '../stores/reportStore';
 import { useReportApprovalModal } from '../stores/reportApprovalModalStore';
 import { useReportEditModal } from '../stores/reportEditModalStore';
 import { Alert, Platform } from 'react-native';
+import { useAppAlertStore } from '../stores/appAlertStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchReportById } from '../api/reports';
+import { getCurrentUserRole } from '../lib/authState';
 
 // 이벤트 타입 정의
 type EventType = 'report.created' | 'report.reviewed' | 'report.updated' | 'report.deleted';
@@ -52,27 +56,31 @@ export function handleIncomingEvent(data: WebSocketEventData): void {
       return;
     }
 
-    // 현재 유저의 role 가져오기 (기기 타입으로 자동 판별)
-    // const role = authStore.getState().role as UserRole; // 나중에 구현
-    // TODO: 실제 authStore 연결 후 아래 로직을 주석 처리
-    
-    // 임시: 실기기면 CHILD, 에뮬레이터면 PARENT (dev.ts와 동일하게)
-    const isEmulator = (): boolean => {
-      if (Platform.OS === 'android') {
-        const { Brand, Model } = Platform.constants as any;
-        return (
-          Brand === 'google' || 
-          Model?.toLowerCase().includes('sdk') || 
-          Model?.toLowerCase().includes('emulator')
-        );
-      }
-      return false;
-    };
-    
-    // ✅ 실기기 = CHILD, 에뮬레이터 = PARENT
-    const role = (!isEmulator() ? 'CHILD' : 'PARENT') as UserRole;
+    // 현재 유저의 role 가져오기: 우선 런타임 authState에서 읽습니다.
+    let roleStr = getCurrentUserRole(); // 'parent' | 'child' | null
+    let role: UserRole | null = null;
+    if (roleStr === 'parent') role = 'PARENT';
+    else if (roleStr === 'child') role = 'CHILD';
 
-    console.log(`[WebSocket Event] 👤 role=${role} (${!isEmulator() ? '실기기' : '에뮬레이터'}), 🎯 eventType=${eventType}`);
+    // Fallback: 이전 동작(에뮬레이터 판정)에 의존하던 경우를 위해
+    // 런타임 role이 없을 때만 에뮬레이터 감지 로직을 사용합니다.
+    if (!role) {
+      const isEmulator = (): boolean => {
+        if (Platform.OS === 'android') {
+          const { Brand, Model } = Platform.constants as any;
+          return (
+            Brand === 'google' || 
+            Model?.toLowerCase().includes('sdk') || 
+            Model?.toLowerCase().includes('emulator')
+          );
+        }
+        return false;
+      };
+      role = (!isEmulator() ? 'CHILD' : 'PARENT') as UserRole;
+      console.log('[WebSocket Event] role not available from authState — falling back to emulator detection');
+    }
+
+    console.log(`[WebSocket Event] 👤 role=${role}, 🎯 eventType=${eventType}`);
 
     // eventType과 reportId를 데이터에 정규화
     const normalizedData: WebSocketEventData = {
@@ -98,7 +106,7 @@ export function handleIncomingEvent(data: WebSocketEventData): void {
  * CHILD 계정의 이벤트 처리
  * - ②단계: "report.reviewed" 처리 (승인 시 알림, 반려 시 수정 모달)
  */
-function handleChildEvents(data: WebSocketEventData): void {
+async function handleChildEvents(data: WebSocketEventData): Promise<void> {
   const { eventType, reportId, status } = data;
 
   switch (eventType) {
@@ -114,20 +122,37 @@ function handleChildEvents(data: WebSocketEventData): void {
 
       // ②단계: 상태에 따라 처리
       if (status === 'APPROVED') {
-        // ✅ 승인 시: Alert만 표시 (아무 액션 없음)
-        Alert.alert(
-          '✅ 승인됨',
-          '부모님이 제보를 승인했어요!',
-          [{ text: '확인', style: 'default' }]
-        );
+        // ✅ 승인 시: 앱 스타일 모달로 대체
+        try {
+          useAppAlertStore.getState().show({ title: '✅ 승인됨', body: '부모님이 제보를 승인했어요!', ctaText: '확인' });
+        } catch (e) {
+          // fallback to Alert
+          Alert.alert('✅ 승인됨', '부모님이 제보를 승인했어요!', [{ text: '확인', style: 'default' }]);
+        }
       } else if (status === 'REJECTED') {
-        // ❌ 반려 시: 수정 모달 자동 표시
-        console.log('❌ [CHILD Event] 반려됨 → 수정 모달 표시');
+        // ❌ 반려 시: 서버에서 전체 제보를 조회한 뒤 수정 모달을 표시
+        console.log('❌ [CHILD Event] 반려됨 → 서버에서 전체 제보 조회 후 수정 모달 표시 시도');
+        try {
+          if (reportId) {
+            const token = await AsyncStorage.getItem('access_token');
+            const fullReport = await fetchReportById(String(reportId), token || undefined);
+            console.log('[CHILD Event] fetchReportById 성공, 수정 모달 호출 전:', fullReport?.reportId ?? fullReport?.id ?? reportId);
+            useReportEditModal.getState().showModal(fullReport);
+            console.log('[CHILD Event] useReportEditModal.showModal 호출 완료');
+            return;
+          }
+        } catch (e) {
+          console.warn('[CHILD Event] fetchReportById 실패, 이벤트 데이터로 폴백', e);
+        }
+
+        // 폴백: 이벤트에 포함된 데이터로 모달 표시
+        console.log('[CHILD Event] 폴백: 이벤트 데이터로 수정 모달 표시 시도', { reportId, status });
         useReportEditModal.getState().showModal({
           ...data,
           reportId,
           status,
         });
+        console.log('[CHILD Event] 폴백 수정 모달 호출 완료');
       }
       break;
 
@@ -178,12 +203,12 @@ function handleParentEvents(data: WebSocketEventData): void {
       useReportStore.getState().remove(reportId);
       console.log(`🗑️ [PARENT Event] 제보 삭제됨: reportId=${reportId}`);
 
-      // Alert 알림 표시
-      Alert.alert(
-        '🗑️ 제보 삭제',
-        '자녀가 제보를 삭제했어요.',
-        [{ text: '확인', style: 'default' }]
-      );
+      // Alert 대신 앱 스타일 모달로 표시
+      try {
+        useAppAlertStore.getState().show({ title: '🗑️ 제보 삭제', body: '자녀가 제보를 삭제했어요.', ctaText: '확인' });
+      } catch (e) {
+        Alert.alert('🗑️ 제보 삭제', '자녀가 제보를 삭제했어요.', [{ text: '확인', style: 'default' }]);
+      }
       break;
 
     default:
