@@ -127,9 +127,9 @@ export default function ReportDetailScreen() {
                       console.warn('not-there failed', e);
                       const errorMsg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '상태 전송에 실패했습니다.';
                       if (errorMsg.includes('이미') && errorMsg.includes('이제 없어요')) {
-                        Alert.alert('알림', '이미 누른 제보입니다.');
+                        openAlert('알림', '이미 누른 제보입니다.');
                       } else {
-                        Alert.alert('처리 실패', errorMsg);
+                        openAlert('처리 실패', errorMsg);
                       }
                     }
                   }
@@ -186,7 +186,7 @@ export default function ReportDetailScreen() {
                             applyOptimisticEvaluation('bad');
                           } catch (e) {
                             console.warn('report evaluation failed (좋음->bad)', e);
-                            Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                            openAlert('전송 실패', '피드백 전송에 실패했습니다.');
                           } finally { setEvaluating(false); }
                         }}
                       >
@@ -206,7 +206,7 @@ export default function ReportDetailScreen() {
                             applyOptimisticEvaluation('normal');
                           } catch (e) {
                             console.warn('report evaluation failed (보통->normal)', e);
-                            Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                            openAlert('전송 실패', '피드백 전송에 실패했습니다.');
                           } finally { setEvaluating(false); }
                         }}
                       >
@@ -226,7 +226,7 @@ export default function ReportDetailScreen() {
                             applyOptimisticEvaluation('good');
                           } catch (e) {
                             console.warn('report evaluation failed (아쉬움->good)', e);
-                            Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                            openAlert('전송 실패', '피드백 전송에 실패했습니다.');
                           } finally { setEvaluating(false); }
                         }}
                       >
@@ -355,7 +355,7 @@ export default function ReportDetailScreen() {
                       setNewComment('');
                     } catch (e) {
                       console.warn('post comment failed', e);
-                      Alert.alert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
+                      openAlert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
                     } finally { setPosting(false); }
                   }}
                 />
@@ -371,7 +371,7 @@ export default function ReportDetailScreen() {
                       setNewComment('');
                     } catch (e) {
                       console.warn('post comment failed', e);
-                      Alert.alert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
+                      openAlert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
                     } finally { setPosting(false); }
                   }}
                   style={{ backgroundColor: '#FFD44C', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20 }}

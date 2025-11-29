@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.navi.app-mergeDebugResources-53:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Win10\\Desktop\\navii\\node_modules\\react-native-bootsplash\\android\\build\\intermediates\\packaged_res\\debug\\packageDebugResources\\values-v30\\values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "12",
+                        "endColumns": "12",
+                        "endOffsets": "691"
+                    }
+                }
+            ]
+        }
+    ]
+}

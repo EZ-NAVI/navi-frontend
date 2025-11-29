@@ -62,7 +62,7 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
       applyOptimisticEvaluation(rid, evalKey);
     } catch (e) {
       console.warn('Cluster evaluation failed', e);
-      Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+      openAlert('전송 실패', '피드백 전송에 실패했습니다.');
     } finally {
       setEvaluatingIds((m) => ({ ...m, [rid]: false }));
     }
@@ -158,7 +158,7 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
     })();
       } catch (e) {
         console.warn('cluster list load failed', e);
-        Alert.alert('불러오기 실패', '클러스터 제보를 불러오지 못했습니다.');
+        openAlert('불러오기 실패', '클러스터 제보를 불러오지 못했습니다.');
       } finally {
         setLoading(false);
       }
@@ -217,9 +217,9 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                       console.warn('not-there failed', e);
                       const errorMsg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '상태 전송에 실패했습니다.';
                       if (errorMsg.includes('이미') && errorMsg.includes('이제 없어요')) {
-                        Alert.alert('알림', '이미 누른 제보입니다.');
+                        openAlert('알림', '이미 누른 제보입니다.');
                       } else {
-                        Alert.alert('처리 실패', errorMsg);
+                        openAlert('처리 실패', errorMsg);
                       }
                     }
                   }

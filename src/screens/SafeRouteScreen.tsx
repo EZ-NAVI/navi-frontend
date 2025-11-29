@@ -24,6 +24,7 @@ import SafetyNoticeModal from "../components/SafetyNoticeModal";
 import ReportModal from "../components/ReportModal";
 import { fetchReports, fetchReportById, fetchReportComments, postReportComment, postReportEvaluation, postReportNotThere, fetchReportsByCluster } from "../api/reports";
 import { getMe } from '../api/auth';
+import { deleteUser } from '../api/auth';
 import { getCurrentUserRole } from '../lib/authState';
 import { useAppAlertStore } from '../stores/appAlertStore';
 import ClusterReportsScreen from "./ClusterReportsScreen";
@@ -31,14 +32,17 @@ import { Modal, PanResponder, Animated, Dimensions } from 'react-native';
 import { useReportStore } from "../stores/reportStore";
 import { DEV_TOKEN } from "../config/dev";
 
-// 🔥 승아 안전 경로 기능 관련 추가 import
+// 🔥 안전 경로 기능 관련 추가 import
 import { evaluateRoute } from "../api/evaluateRoute";
 import { startTracking, stopTracking } from "../utils/locationTracker";
 import { haversine } from "../utils/haversine";
 import RouteRatingModal from "../components/RouteRatingModal";
+import CustomAlert from "../components/CustomAlert";
+import CustomConfirm from "../components/CustomConfirm";
 
 export default function SafeRouteScreen() {
   const navigation = useNavigation<any>();
+
   const { start, end } = useRouteData();
   const map = useTMapCommands();
   const [isReady, setIsReady] = useState(false);
@@ -80,13 +84,118 @@ export default function SafeRouteScreen() {
   // a friendly fallback when the URL is missing or returns 403/404.
   const [selectedImageStatus, setSelectedImageStatus] = useState<'unknown' | 'ok' | 'error' | 'no-url'>('unknown');
 
-  // 🔥 승아 기능용 상태 추가
+  // 🔥 기능용 상태 추가
   const [routeId, setRouteId] = useState<string | null>(null);
   const [userPositions, setUserPositions] = useState<any[]>([]);
   const reachedRef = useRef(false);
   const [showRating, setShowRating] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<{ lat: number; lon: number } | null>(null);
   const routePathRef = useRef<any[]>([]);
+
+  const [myPageOpen, setMyPageOpen] = useState(false);
+  const [myInfo, setMyInfo] = useState<any | null>(null);
+  const slideX = useRef(new Animated.Value(-300)).current;
+
+  // ⭐ CustomAlert 상태
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("알림");
+  const [alertMsg, setAlertMsg] = useState("");
+
+  // ⭐ CustomConfirm 상태 (확인/취소 두 버튼 알림)
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [confirmTitle, setConfirmTitle] = useState("");
+  const [confirmMsg, setConfirmMsg] = useState("");
+  const [confirmCallback, setConfirmCallback] = useState<() => void>(() => () => {});
+
+  // ⭐ CustomAlert 열기 함수
+  const openAlert = (title: string, msg: string) => {
+    setAlertTitle(title);
+    setAlertMsg(msg);
+    setAlertVisible(true);
+  };
+  // ⭐ CustomConfirm 열기 함수 (확인/취소 있는 알림)
+  const openConfirm = (title: string, msg: string, onConfirm: () => void) => {
+    setConfirmTitle(title);
+    setConfirmMsg(msg);
+    setConfirmCallback(() => onConfirm);
+    setConfirmVisible(true);
+  };
+
+  const openMyPage = () => {
+    setMyPageOpen(true);
+    Animated.timing(slideX, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const closeMyPage = () => {
+    Animated.timing(slideX, {
+      toValue: -300,
+      duration: 200,
+      useNativeDriver: false,
+    }).start(() => {
+      setMyPageOpen(false);
+    });
+  };
+
+  // ⭐ 로그아웃 함수 (CustomConfirm 사용)
+  const handleLogout = () => {
+    const doLogout = async () => {
+      await AsyncStorage.removeItem("access_token");
+      await AsyncStorage.removeItem("user_id");
+      await AsyncStorage.removeItem("user_role");
+      await AsyncStorage.removeItem("fcm_token");
+
+      closeMyPage();
+      navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+    };
+
+    openConfirm(
+      "로그아웃",
+      "정말 로그아웃하시겠어요?",
+      () => {
+        // 비동기 함수 실행 (에러 무시)
+        void doLogout();
+      }
+    );
+  };
+
+  // 🔥 마이페이지 열릴 때 정보 가져오기
+  useEffect(() => {
+    if (!myPageOpen) return;
+
+    const loadMe = async () => {
+      try {
+        // 1) 토큰 확인
+        const token = await AsyncStorage.getItem("access_token");
+
+        // 2) 토큰 없으면 = 비로그인 체험 모드
+        if (!token) {
+          setMyInfo(null);   // ← 체험 모드 = null
+          return;
+        }
+
+        // 3) 로그인 상태라면 실제 정보 불러오기
+        const me = await getMe();
+        setMyInfo(me);
+
+      } catch (e) {
+        console.warn('사용자 정보 조회 실패', e);
+
+        // 실패했다면 기본 guest 정보 표시
+        setMyInfo({
+          name: "체험 이용자",
+          email: "-",
+          phone: "-",
+        });
+      }
+    };
+
+    loadMe();
+  }, [myPageOpen]);
+
 
   // 컴포넌트 언마운트 시 GPS 추적 종료
   useEffect(() => {
@@ -324,7 +433,7 @@ export default function SafeRouteScreen() {
               }
 
               // if still nothing, inform user and revert height
-              Alert.alert('클러스터 정보 없음', '이 제보에 대한 클러스터 ID가 없습니다.');
+              openAlert('클러스터 정보 없음', '이 제보에 대한 클러스터 ID가 없습니다.');
               Animated.timing(modalHeight, { toValue: COLLAPSED_HEIGHT, duration: 200, useNativeDriver: false }).start();
             });
           } else {
@@ -336,7 +445,7 @@ export default function SafeRouteScreen() {
     })
   ).current;
 
-  // ✅ 출발/도착 + preview 경로 + GPS 추적 (승아 기능 merge)
+  // ✅ 출발/도착 + preview 경로 + GPS 추적 (기능 merge)
   useEffect(() => {
     if (!isReady || !map.ref.current) return;
 
@@ -386,11 +495,11 @@ export default function SafeRouteScreen() {
           // ⭐ GPS 추적 시작
           startTracking(setUserPositions);
         } else {
-          Alert.alert("경로를 찾을 수 없습니다.");
+          openAlert("경로를 찾을 수 없습니다.");
         }
       } catch (err) {
         console.error("❌ 경로 요청 실패:", err);
-        Alert.alert("서버 연결 실패", "잠시 후 다시 시도해주세요.");
+        openAlert("서버 연결 실패", "잠시 후 다시 시도해주세요.");
       }
     };
 
@@ -433,7 +542,13 @@ export default function SafeRouteScreen() {
         } catch (e) {
           console.warn('AsyncStorage read failed', e);
         }
-        if (!tokenToUse) tokenToUse = DEV_TOKEN;
+        // if (!tokenToUse) tokenToUse = DEV_TOKEN;
+        if (!tokenToUse) {
+          console.log("체험 모드 → 제보 조회 안 함");
+          setReportsData([]);       // 핀 초기화
+          setReportsInStore([]);    // store 초기화
+          return;                   // 여기서 로딩 중단!
+        }
 
         const reports = await fetchReports(tokenToUse ?? undefined);
         console.log("📍 전체 제보 불러옴:", reports);
@@ -653,7 +768,7 @@ export default function SafeRouteScreen() {
       setDetailOpen(true);
     } catch (e) {
       console.warn('/reports/{id} 조회 실패', e);
-      Alert.alert('제보 불러오기 실패', '서버에서 제보를 불러오지 못했습니다.');
+      openAlert('제보 불러오기 실패', '서버에서 제보를 불러오지 못했습니다.');
     } finally {
       setLoadingDetail(false);
     }
@@ -733,9 +848,9 @@ export default function SafeRouteScreen() {
       const serverBody = e?.response?.data;
       if (serverBody) {
         const maybeMsg = typeof serverBody === 'string' ? serverBody : (serverBody.message || serverBody.error || JSON.stringify(serverBody));
-        Alert.alert('댓글 추가 실패', String(maybeMsg).slice(0,200));
+        openAlert('댓글 추가 실패', String(maybeMsg).slice(0,200));
       } else {
-        Alert.alert('댓글 추가 실패', String(e?.message || '서버 오류'));
+        openAlert('댓글 추가 실패', String(e?.message || '서버 오류'));
       }
     } finally {
       setPostingComment(false);
@@ -811,7 +926,7 @@ export default function SafeRouteScreen() {
 
   return (
     <View style={styles.container}>
-      {/* ⭐ 승아 별점 모달 */}
+      {/* ⭐ 별점 모달 */}
       <RouteRatingModal
         visible={showRating}
         onClose={() => setShowRating(false)}
@@ -893,17 +1008,26 @@ export default function SafeRouteScreen() {
           style={extraStyles.longReportButton}
           onPress={async () => {
             try {
-              // 먼저 서버에서 매칭 상태를 확인합니다.
+              // 🔥 0) 체험 모드(토큰 없음) 체크
+              const token = await AsyncStorage.getItem("access_token");
+              if (!token) {
+                openAlert("알림", "체험해보기 상태에서는 제보 기능을 사용할 수 없어요!");
+                return;
+              }
+
+              // 1) 먼저 서버에서 매칭 상태를 확인합니다.
               const me = await getMe();
               if (!me || !me.matched) {
                 setUnmatchedOpen(true);
                 return;
               }
-              // 매칭된 경우에만 안전 안내 모달을 표시
+
+              // 2) 매칭된 경우에만 안전 안내 모달 표시
               setSafetyOpen(true);
+
             } catch (e) {
               console.warn('GET /users/me 실패', e);
-              Alert.alert('알림', '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.');
+              openAlert('알림', '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.');
             }
           }}
           accessibilityRole="button"
@@ -929,7 +1053,7 @@ export default function SafeRouteScreen() {
             } catch (e) {
               console.warn('GET /users/me 실패', e);
               // If we cannot verify, be conservative and block report with a user-facing alert
-              Alert.alert('알림', '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.');
+              openAlert('알림', '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.');
               return;
             }
 
@@ -1017,9 +1141,9 @@ export default function SafeRouteScreen() {
                           console.warn('not-there failed', e);
                           const errorMsg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '상태 전송에 실패했습니다.';
                           if (errorMsg.includes('이미') && errorMsg.includes('이제 없어요')) {
-                            Alert.alert('알림', '이미 누른 제보입니다.');
+                            openAlert('알림', '이미 누른 제보입니다.');
                           } else {
-                            Alert.alert('처리 실패', errorMsg);
+                            openAlert('처리 실패', errorMsg);
                           }
                         }
                         // 닫기
@@ -1130,7 +1254,7 @@ export default function SafeRouteScreen() {
                                     applyOptimisticEvaluation('bad');
                                   } catch (e) {
                                     console.warn('evaluation failed (좋음->bad)', e);
-                                    Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                                    openAlert('전송 실패', '피드백 전송에 실패했습니다.');
                                   } finally { setEvaluating(false); }
                                 }}
                               >
@@ -1170,7 +1294,7 @@ export default function SafeRouteScreen() {
                                     applyOptimisticEvaluation('normal');
                                   } catch (e) {
                                     console.warn('evaluation failed (보통->normal)', e);
-                                    Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                                    openAlert('전송 실패', '피드백 전송에 실패했습니다.');
                                   } finally { setEvaluating(false); }
                                 }}
                               >
@@ -1210,7 +1334,7 @@ export default function SafeRouteScreen() {
                                     applyOptimisticEvaluation('good');
                                   } catch (e) {
                                     console.warn('evaluation failed (아쉬움->good)', e);
-                                    Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+                                    openAlert('전송 실패', '피드백 전송에 실패했습니다.');
                                   } finally { setEvaluating(false); }
                                 }}
                               >
@@ -1266,6 +1390,13 @@ export default function SafeRouteScreen() {
 
       <View style={styles.topSection}>
         <Text style={styles.logo}>NAVI</Text>
+        {/* 🔥 우측 상단 햄버거 메뉴 추가 */}
+        <TouchableOpacity
+          style={{ position: "absolute", left: 20, top: 22 }}
+          onPress={openMyPage}
+        >
+          <Icon name="menu" size={26} color="#333" />
+        </TouchableOpacity>
         <View style={styles.topCard}>
           <TouchableOpacity
             style={styles.row}
@@ -1308,6 +1439,244 @@ export default function SafeRouteScreen() {
           </TouchableOpacity>
         </View>
       </View>
+      {/* ⭐ 오른쪽 슬라이드 패널 */}
+      {myPageOpen && (
+        <Pressable
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.4)",
+          }}
+          onPress={closeMyPage}
+        >
+          <Animated.View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "55%",
+              height: "100%",
+              backgroundColor: "#fff",
+              padding: 20,
+              transform: [{ translateX: slideX }],
+              alignItems: "flex-start", // ← 전체 오른쪽 정렬
+            }}
+          >
+            {/* 🔥 제목 */}
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "800",
+                marginBottom: 30,
+                color: "#000", // 검정색
+                textAlign: "left",
+                width: "100%",
+              }}
+            >
+              마이페이지
+            </Text>
+
+            {myInfo ? (
+              <>
+                {/* 🔥 로그인 상태 UI */}
+                <View
+                  style={{
+                    width: 80,          // 80 + 테두리 두께*2
+                    height: 80,
+                    borderRadius: 44,
+                    borderWidth: 3,
+                    borderColor: "#FFDE59",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginBottom: 12,
+                    marginLeft: -5,
+                  }}
+                >
+                  <Image
+                    source={require("../asset/character.png")}
+                    style={{
+                      width: 76,
+                      height: 76,
+                      borderRadius: 38,
+                    }}
+                    resizeMode="cover"
+                  />
+                </View>
+                <Text style={{ marginBottom: 8, color: "#000" }}>
+                  이름: {myInfo.name}
+                </Text>
+                <Text style={{ marginBottom: 8, color: "#000" }}>
+                  이메일: {myInfo.email}
+                </Text>
+                <Text style={{ marginBottom: 8, color: "#000" }}>
+                  전화번호: {myInfo.phone}
+                </Text>
+
+                {/* 매칭 정보 */}
+                {myInfo.matched ? (
+                  <Text style={{ marginTop: 12, color: "#000", fontWeight: "600" }}>
+                    {myInfo.userType === "parent"
+                      ? "현재 자녀와 매칭된 상태예요!"
+                      : "현재 부모님과 매칭된 상태예요!"}
+                  </Text>
+                ) : (
+                  <Text style={{ marginTop: 12, color: "#666" }}>
+                    {myInfo.userType === "parent"
+                      ? "아직 자녀와 매칭되지 않았어요."
+                      : "아직 부모님과 매칭되지 않았어요."}
+                  </Text>
+                )}
+              </>
+            ) : (
+              /* 🔥 비로그인 체험 모드 UI */
+              <View style={{ width: "100%", alignItems: "flex-start" }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    marginBottom: 20,
+                    color: "#000",
+                  }}
+                >
+                  '체험해보기' 상태입니다.
+                </Text>
+
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#FFDE59",
+                    paddingVertical: 12,
+                    borderRadius: 8,
+                    marginBottom: 12,
+                    width: "100%",
+                  }}
+                  onPress={() => {
+                    closeMyPage();
+                    navigation.navigate("Login");
+                  }}
+                >
+                  <Text style={{ textAlign: "center", fontWeight: "700", color: "#000" }}>
+                    로그인하기
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#fff",
+                    paddingVertical: 12,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    width: "100%",
+                  }}
+                  onPress={() => {
+                    closeMyPage();
+                    navigation.navigate("SignupType");
+                  }}
+                >
+                  <Text style={{ textAlign: "center", fontWeight: "700", color: "#000" }}>
+                    회원가입하기
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* 🔥 구분선 */}
+            <View
+              style={{
+                width: "100%",
+                height: 1,
+                backgroundColor: "#e0e0e0",
+                marginTop: 40,
+                marginBottom: 10,
+              }}
+            />
+
+            {/* 🔥 로그아웃 / 회원탈퇴 텍스트 버튼 — 로그인 상태에서만 표시 */}
+            {myInfo && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginTop: 0,
+                  marginBottom: 50,
+                  gap: 12,
+                }}
+              >
+                <TouchableOpacity onPress={handleLogout}>
+                  <Text style={{ color: "#000", fontWeight: "700", fontSize: 12 }}>
+                    로그아웃
+                  </Text>
+                </TouchableOpacity>
+
+                <Text style={{ color: "#999", fontSize: 12 }}>|</Text>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    openConfirm(
+                      "회원탈퇴",
+                      "탈퇴 시 회원정보가 즉시 파기됩니다.\n정말 탈퇴하시겠어요?",
+                      async () => {
+                        try {
+                          await deleteUser();
+                          await AsyncStorage.multiRemove([
+                            "access_token",
+                            "user_role",
+                            "user_id",
+                            "fcm_token",
+                          ]);
+
+                          closeMyPage();
+                          navigation.reset({
+                            index: 0,
+                            routes: [{ name: "Login" }],
+                          });
+                        } catch (e: any) {
+                          openAlert("오류", e.message || "회원탈퇴 실패");
+                        }
+                      }
+                    );
+                  }}
+                >
+                  <Text style={{ color: "#E53935", fontWeight: "700", fontSize: 12 }}>
+                    회원탈퇴
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {/* 🔥 닫기 버튼 */}
+            <TouchableOpacity
+              style={{
+                alignSelf: "flex-start",
+                paddingVertical: 10,
+                paddingHorizontal: 18,
+                backgroundColor: "#FFDE59",
+                borderRadius: 8,
+              }}
+              onPress={closeMyPage}
+            >
+              <Text style={{ fontWeight: "700", color: "#000" }}>닫기</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </Pressable>
+      )}
+    <CustomConfirm
+      visible={confirmVisible}
+      title={confirmTitle}
+      message={confirmMsg}
+      onCancel={() => setConfirmVisible(false)}
+      onConfirm={() => {
+        setConfirmVisible(false);
+        confirmCallback();
+      }}
+    />
+    <CustomAlert
+      visible={alertVisible}
+      title={alertTitle}
+      message={alertMsg}
+      onClose={() => setAlertVisible(false)}
+    />
     </View>
   );
 }
@@ -1336,6 +1705,7 @@ const styles = StyleSheet.create({
     color: "#f7d23e",
     letterSpacing: 1,
     marginBottom: 6,
+    textAlign: "right",
   },
   topCard: {
     backgroundColor: "#f6f6f6",
@@ -1348,7 +1718,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
-  circle: { fontSize: 10, color: "#333", marginRight: 4, marginTop: 2 },
+  circle: { fontSize: 8, color: "#FFDE59", marginRight: 4, marginTop: 2 },
   label: { fontSize: 15, fontWeight: "600", color: "#333", marginRight: 4 },
   value: { color: "#111", flex: 1 },
   line: { height: 1, backgroundColor: "#e0e0e0", marginHorizontal: 10 },

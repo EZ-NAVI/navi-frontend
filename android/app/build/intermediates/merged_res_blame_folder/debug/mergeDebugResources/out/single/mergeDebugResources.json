@@ -1,5 +1,9 @@
 [
     {
+        "merged": "com.navi.app-debug-55:/drawable_bootsplash.xml.flat",
+        "source": "com.navi.app-main-57:/drawable/bootsplash.xml"
+    },
+    {
         "merged": "com.navi.app-debug-55:/mipmap-hdpi_ic_launcher_round.png.flat",
         "source": "com.navi.app-main-57:/mipmap-hdpi/ic_launcher_round.png"
     },
@@ -18,6 +22,10 @@
     {
         "merged": "com.navi.app-debug-55:/drawable_rn_edit_text_material.xml.flat",
         "source": "com.navi.app-main-57:/drawable/rn_edit_text_material.xml"
+    },
+    {
+        "merged": "com.navi.app-debug-55:/drawable-nodpi_bootsplash.png.flat",
+        "source": "com.navi.app-main-57:/drawable-nodpi/bootsplash.png"
     },
     {
         "merged": "com.navi.app-debug-55:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
