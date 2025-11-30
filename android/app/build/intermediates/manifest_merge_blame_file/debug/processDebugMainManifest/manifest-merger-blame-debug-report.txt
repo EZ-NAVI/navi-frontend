@@ -9,477 +9,477 @@
 9        android:targetSdkVersion="34" />
 10
 11    <uses-permission android:name="android.permission.INTERNET" />
-11-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:4:5-66
-11-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:4:22-64
+11-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:4:5-66
+11-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:4:22-64
 12    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-12-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:5:5-78
-12-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:5:22-76
+12-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:5:5-78
+12-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:5:22-76
 13    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-13-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:6:5-80
-13-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:6:22-78
+13-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:6:5-80
+13-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:6:22-78
 14    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-14-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:7:5-80
-14-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:7:22-77
+14-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:7:5-80
+14-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:7:22-77
 15    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-15-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:8:5-76
-15-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:8:22-73
+15-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:8:5-76
+15-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:8:22-73
 16    <uses-permission android:name="android.permission.CAMERA" />
-16-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:9:5-65
-16-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:9:22-62
+16-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:9:5-65
+16-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:9:22-62
 17    <uses-permission android:name="android.permission.WAKE_LOCK" />
-17-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:5-68
-17-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:22-65
+17-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:5-68
+17-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:22-65
 18    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-18-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:5-79
-18-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:22-76
+18-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:5-79
+18-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:22-76
 19    <!--
 20    This manifest file is used only by Gradle to configure debug-only capabilities
 21    for React Native Apps.
 22    -->
 23    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-23-->[com.facebook.react:react-android:0.75.4] C:\Users\Win10\.gradle\caches\8.8\transforms\36ee22e9e8f3d8ae53b5766045655ce6\transformed\react-android-0.75.4-debug\AndroidManifest.xml:16:5-78
-23-->[com.facebook.react:react-android:0.75.4] C:\Users\Win10\.gradle\caches\8.8\transforms\36ee22e9e8f3d8ae53b5766045655ce6\transformed\react-android-0.75.4-debug\AndroidManifest.xml:16:22-75
+23-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/36ee22e9e8f3d8ae53b5766045655ce6/transformed/react-android-0.75.4-debug/AndroidManifest.xml:16:5-78
+23-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/36ee22e9e8f3d8ae53b5766045655ce6/transformed/react-android-0.75.4-debug/AndroidManifest.xml:16:22-75
 24    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Required by older versions of Google Play services to create IID tokens -->
-24-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:23:5-77
-24-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:23:22-74
+24-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:23:5-77
+24-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:23:22-74
 25    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-25-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:26:5-82
-25-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:26:22-79
+25-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:26:5-82
+25-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:26:22-79
 26
 27    <permission
-27-->[androidx.core:core:1.13.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1baaefb1f97a28699917b458c7ae939c\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+27-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1baaefb1f97a28699917b458c7ae939c/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
 28        android:name="com.navi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-28-->[androidx.core:core:1.13.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1baaefb1f97a28699917b458c7ae939c\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+28-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1baaefb1f97a28699917b458c7ae939c/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
 29        android:protectionLevel="signature" />
-29-->[androidx.core:core:1.13.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1baaefb1f97a28699917b458c7ae939c\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+29-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1baaefb1f97a28699917b458c7ae939c/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
 30
 31    <uses-permission android:name="com.navi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-31-->[androidx.core:core:1.13.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1baaefb1f97a28699917b458c7ae939c\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
-31-->[androidx.core:core:1.13.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1baaefb1f97a28699917b458c7ae939c\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+31-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1baaefb1f97a28699917b458c7ae939c/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+31-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1baaefb1f97a28699917b458c7ae939c/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
 32
 33    <uses-feature
-33-->[:vsm-tmap-sdk-v2-android-1.7.45:] C:\Users\Win10\.gradle\caches\8.8\transforms\361a47d72ce4e61c266a16ed6a82bc92\transformed\vsm-tmap-sdk-v2-android-1.7.45\AndroidManifest.xml:7:5-9:35
+33-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/361a47d72ce4e61c266a16ed6a82bc92/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:7:5-9:35
 34        android:glEsVersion="0x00020000"
-34-->[:vsm-tmap-sdk-v2-android-1.7.45:] C:\Users\Win10\.gradle\caches\8.8\transforms\361a47d72ce4e61c266a16ed6a82bc92\transformed\vsm-tmap-sdk-v2-android-1.7.45\AndroidManifest.xml:8:9-41
+34-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/361a47d72ce4e61c266a16ed6a82bc92/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:8:9-41
 35        android:required="true" />
-35-->[:vsm-tmap-sdk-v2-android-1.7.45:] C:\Users\Win10\.gradle\caches\8.8\transforms\361a47d72ce4e61c266a16ed6a82bc92\transformed\vsm-tmap-sdk-v2-android-1.7.45\AndroidManifest.xml:9:9-32
+35-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/361a47d72ce4e61c266a16ed6a82bc92/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:9:9-32
 36
 37    <application
-37-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:11:5-40:19
+37-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:11:5-40:19
 38        android:name="com.navi.MainApplication"
-38-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:12:9-40
+38-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:12:9-40
 39        android:allowBackup="false"
-39-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:16:9-36
+39-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:16:9-36
 40        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-40-->[androidx.core:core:1.13.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1baaefb1f97a28699917b458c7ae939c\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+40-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1baaefb1f97a28699917b458c7ae939c/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
 41        android:debuggable="true"
 42        android:extractNativeLibs="false"
 43        android:icon="@mipmap/ic_launcher"
-43-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:14:9-43
+43-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:14:9-43
 44        android:label="@string/app_name"
-44-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:13:9-41
+44-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:13:9-41
 45        android:roundIcon="@mipmap/ic_launcher_round"
-45-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:15:9-54
+45-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:15:9-54
 46        android:supportsRtl="true"
-46-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:18:9-35
+46-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:18:9-35
 47        android:theme="@style/AppTheme"
-47-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:17:9-40
+47-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:17:9-40
 48        android:usesCleartextTraffic="true" >
-48-->C:\Users\Win10\Desktop\navii\android\app\src\debug\AndroidManifest.xml:6:9-44
+48-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/debug/AndroidManifest.xml:6:9-44
 49        <meta-data
-49-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:21:9-23:71
+49-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:21:9-23:71
 50            android:name="com.skt.Tmap.APIKey"
-50-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:22:13-47
+50-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:22:13-47
 51            android:value="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy" />
-51-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:23:13-69
+51-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:23:13-69
 52
 53        <activity
-53-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:25:9-39:20
+53-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:25:9-39:20
 54            android:name="com.navi.MainActivity"
-54-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:26:13-41
+54-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:26:13-41
 55            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-55-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:28:13-122
+55-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:28:13-122
 56            android:exported="true"
-56-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:31:13-36
+56-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:31:13-36
 57            android:label="@string/app_name"
-57-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:27:13-45
+57-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:27:13-45
 58            android:launchMode="singleTask"
-58-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:29:13-44
+58-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:29:13-44
 59            android:theme="@style/BootSplashTheme"
-59-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:32:13-51
+59-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:32:13-51
 60            android:windowSoftInputMode="adjustResize" > <!-- ⭐ 여기 변경 -->
-60-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:30:13-55
+60-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:30:13-55
 61
 62            <intent-filter>
-62-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:34:13-37:29
+62-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:34:13-37:29
 63                <action android:name="android.intent.action.MAIN" />
-63-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:35:17-68
-63-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:35:25-66
+63-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:35:17-68
+63-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:35:25-66
 64
 65                <category android:name="android.intent.category.LAUNCHER" />
-65-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:36:17-76
-65-->C:\Users\Win10\Desktop\navii\android\app\src\main\AndroidManifest.xml:36:27-74
+65-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:36:17-76
+65-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:36:27-74
 66            </intent-filter>
 67        </activity>
 68
 69        <service
-69-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:9-14:40
+69-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:9-14:40
 70            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingHeadlessService"
-70-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:13:13-103
+70-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:13-103
 71            android:exported="false" />
-71-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:14:13-37
+71-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:13-37
 72        <service
-72-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:9-21:19
+72-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:9-21:19
 73            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingService"
-73-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:16:13-95
+73-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-95
 74            android:exported="false" >
-74-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:17:13-37
+74-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:13-37
 75            <intent-filter>
-75-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-20:29
+75-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-20:29
 76                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-76-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:19:17-78
-76-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:19:25-75
+76-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:17-78
+76-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:25-75
 77            </intent-filter>
 78        </service>
 79
 80        <receiver
-80-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:23:9-30:20
+80-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:23:9-30:20
 81            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingReceiver"
-81-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:24:13-96
+81-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:13-96
 82            android:exported="true"
-82-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-36
+82-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:13-36
 83            android:permission="com.google.android.c2dm.permission.SEND" >
-83-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:13-73
+83-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:26:13-73
 84            <intent-filter>
-84-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:13-29:29
+84-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-29:29
 85                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-85-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:28:17-81
-85-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:28:25-78
+85-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:17-81
+85-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:25-78
 86            </intent-filter>
 87        </receiver>
 88
 89        <meta-data
-89-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:32:9-34:37
+89-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:32:9-34:37
 90            android:name="delivery_metrics_exported_to_big_query_enabled"
-90-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:33:13-74
+90-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:33:13-74
 91            android:value="false" />
-91-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:34:13-34
+91-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:34:13-34
 92        <meta-data
-92-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:35:9-37:36
+92-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:35:9-37:36
 93            android:name="firebase_messaging_auto_init_enabled"
-93-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:36:13-64
+93-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:36:13-64
 94            android:value="true" />
-94-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:37:13-33
+94-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:37:13-33
 95        <meta-data
-95-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:38:9-40:37
+95-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:38:9-40:37
 96            android:name="firebase_messaging_notification_delegation_enabled"
-96-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:39:13-78
+96-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:39:13-78
 97            android:value="false" />
-97-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:40:13-34
+97-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:40:13-34
 98        <meta-data
-98-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:41:9-43:32
+98-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:41:9-43:32
 99            android:name="com.google.firebase.messaging.default_notification_channel_id"
-99-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:42:13-89
+99-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:42:13-89
 100            android:value="" />
-100-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:43:13-29
+100-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:43:13-29
 101        <meta-data
-101-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:44:9-46:47
+101-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:44:9-46:47
 102            android:name="com.google.firebase.messaging.default_notification_color"
-102-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:45:13-84
+102-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:45:13-84
 103            android:resource="@color/white" />
-103-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:46:13-44
+103-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:46:13-44
 104        <meta-data
-104-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:9-11:36
+104-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:9-11:36
 105            android:name="app_data_collection_default_enabled"
-105-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:13-63
+105-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-63
 106            android:value="true" />
-106-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-33
+106-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-33
 107
 108        <service
-108-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:13:9-21:19
+108-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:9-21:19
 109            android:name="com.google.firebase.components.ComponentDiscoveryService"
-109-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:14:13-84
+109-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:13-84
 110            android:directBootAware="true"
-110-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:13-43
+110-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:13-43
 111            android:exported="false" >
-111-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:16:13-37
+111-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-37
 112            <meta-data
-112-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-20:85
+112-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-20:85
 113                android:name="com.google.firebase.components:io.invertase.firebase.app.ReactNativeFirebaseAppRegistrar"
-113-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:19:17-120
+113-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:17-120
 114                android:value="com.google.firebase.components.ComponentRegistrar" />
-114-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:20:17-82
+114-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:17-82
 115            <meta-data
-115-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:57:13-59:85
+115-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:57:13-59:85
 116                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar"
-116-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:58:17-122
+116-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:58:17-122
 117                android:value="com.google.firebase.components.ComponentRegistrar" />
-117-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:59:17-82
+117-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:59:17-82
 118            <meta-data
-118-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:60:13-62:85
+118-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:60:13-62:85
 119                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
-119-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:61:17-119
+119-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:61:17-119
 120                android:value="com.google.firebase.components.ComponentRegistrar" />
-120-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:62:17-82
+120-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:62:17-82
 121            <meta-data
-121-->[com.google.firebase:firebase-installations:19.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55d96734fa3614f6c277cca6710adc80\transformed\firebase-installations-19.0.1\AndroidManifest.xml:15:13-17:85
+121-->[com.google.firebase:firebase-installations:19.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55d96734fa3614f6c277cca6710adc80/transformed/firebase-installations-19.0.1/AndroidManifest.xml:15:13-17:85
 122                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
-122-->[com.google.firebase:firebase-installations:19.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55d96734fa3614f6c277cca6710adc80\transformed\firebase-installations-19.0.1\AndroidManifest.xml:16:17-130
+122-->[com.google.firebase:firebase-installations:19.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55d96734fa3614f6c277cca6710adc80/transformed/firebase-installations-19.0.1/AndroidManifest.xml:16:17-130
 123                android:value="com.google.firebase.components.ComponentRegistrar" />
-123-->[com.google.firebase:firebase-installations:19.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55d96734fa3614f6c277cca6710adc80\transformed\firebase-installations-19.0.1\AndroidManifest.xml:17:17-82
+123-->[com.google.firebase:firebase-installations:19.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55d96734fa3614f6c277cca6710adc80/transformed/firebase-installations-19.0.1/AndroidManifest.xml:17:17-82
 124            <meta-data
-124-->[com.google.firebase:firebase-installations:19.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55d96734fa3614f6c277cca6710adc80\transformed\firebase-installations-19.0.1\AndroidManifest.xml:18:13-20:85
+124-->[com.google.firebase:firebase-installations:19.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55d96734fa3614f6c277cca6710adc80/transformed/firebase-installations-19.0.1/AndroidManifest.xml:18:13-20:85
 125                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
-125-->[com.google.firebase:firebase-installations:19.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55d96734fa3614f6c277cca6710adc80\transformed\firebase-installations-19.0.1\AndroidManifest.xml:19:17-127
+125-->[com.google.firebase:firebase-installations:19.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55d96734fa3614f6c277cca6710adc80/transformed/firebase-installations-19.0.1/AndroidManifest.xml:19:17-127
 126                android:value="com.google.firebase.components.ComponentRegistrar" />
-126-->[com.google.firebase:firebase-installations:19.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55d96734fa3614f6c277cca6710adc80\transformed\firebase-installations-19.0.1\AndroidManifest.xml:20:17-82
+126-->[com.google.firebase:firebase-installations:19.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55d96734fa3614f6c277cca6710adc80/transformed/firebase-installations-19.0.1/AndroidManifest.xml:20:17-82
 127            <meta-data
-127-->[com.google.firebase:firebase-common:22.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1bf50ec5121f4f116ced630dfbcd4cc1\transformed\firebase-common-22.0.1\AndroidManifest.xml:35:13-37:85
+127-->[com.google.firebase:firebase-common:22.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1bf50ec5121f4f116ced630dfbcd4cc1/transformed/firebase-common-22.0.1/AndroidManifest.xml:35:13-37:85
 128                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
-128-->[com.google.firebase:firebase-common:22.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1bf50ec5121f4f116ced630dfbcd4cc1\transformed\firebase-common-22.0.1\AndroidManifest.xml:36:17-109
+128-->[com.google.firebase:firebase-common:22.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1bf50ec5121f4f116ced630dfbcd4cc1/transformed/firebase-common-22.0.1/AndroidManifest.xml:36:17-109
 129                android:value="com.google.firebase.components.ComponentRegistrar" />
-129-->[com.google.firebase:firebase-common:22.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1bf50ec5121f4f116ced630dfbcd4cc1\transformed\firebase-common-22.0.1\AndroidManifest.xml:37:17-82
+129-->[com.google.firebase:firebase-common:22.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1bf50ec5121f4f116ced630dfbcd4cc1/transformed/firebase-common-22.0.1/AndroidManifest.xml:37:17-82
 130            <meta-data
-130-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\Win10\.gradle\caches\8.8\transforms\0446c50cdbef47d3c14fd74726ac0099\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:25:13-27:85
+130-->[com.google.firebase:firebase-datatransport:18.2.0] /Users/ohminseok/.gradle/caches/8.8/transforms/0446c50cdbef47d3c14fd74726ac0099/transformed/firebase-datatransport-18.2.0/AndroidManifest.xml:25:13-27:85
 131                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
-131-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\Win10\.gradle\caches\8.8\transforms\0446c50cdbef47d3c14fd74726ac0099\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:26:17-115
+131-->[com.google.firebase:firebase-datatransport:18.2.0] /Users/ohminseok/.gradle/caches/8.8/transforms/0446c50cdbef47d3c14fd74726ac0099/transformed/firebase-datatransport-18.2.0/AndroidManifest.xml:26:17-115
 132                android:value="com.google.firebase.components.ComponentRegistrar" />
-132-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\Win10\.gradle\caches\8.8\transforms\0446c50cdbef47d3c14fd74726ac0099\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:27:17-82
+132-->[com.google.firebase:firebase-datatransport:18.2.0] /Users/ohminseok/.gradle/caches/8.8/transforms/0446c50cdbef47d3c14fd74726ac0099/transformed/firebase-datatransport-18.2.0/AndroidManifest.xml:27:17-82
 133        </service>
 134
 135        <provider
-135-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:23:9-27:38
+135-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:23:9-27:38
 136            android:name="io.invertase.firebase.app.ReactNativeFirebaseAppInitProvider"
-136-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:24:13-88
+136-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:13-88
 137            android:authorities="com.navi.reactnativefirebaseappinitprovider"
-137-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:25:13-86
+137-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:13-86
 138            android:exported="false"
-138-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:26:13-37
+138-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:26:13-37
 139            android:initOrder="99" />
-139-->[:react-native-firebase_app] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\app\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:13-35
+139-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-35
 140        <provider
-140-->[:react-native-image-picker] C:\Users\Win10\Desktop\navii\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:8:9-16:20
+140-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:9-16:20
 141            android:name="com.imagepicker.ImagePickerProvider"
-141-->[:react-native-image-picker] C:\Users\Win10\Desktop\navii\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:9:13-63
+141-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:13-63
 142            android:authorities="com.navi.imagepickerprovider"
-142-->[:react-native-image-picker] C:\Users\Win10\Desktop\navii\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:10:13-71
+142-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-71
 143            android:exported="false"
-143-->[:react-native-image-picker] C:\Users\Win10\Desktop\navii\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:11:13-37
+143-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-37
 144            android:grantUriPermissions="true" >
-144-->[:react-native-image-picker] C:\Users\Win10\Desktop\navii\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:12:13-47
+144-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:13-47
 145            <meta-data
-145-->[:react-native-image-picker] C:\Users\Win10\Desktop\navii\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:13:13-15:70
+145-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:13-15:70
 146                android:name="android.support.FILE_PROVIDER_PATHS"
-146-->[:react-native-image-picker] C:\Users\Win10\Desktop\navii\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:14:17-67
+146-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:17-67
 147                android:resource="@xml/imagepicker_provider_paths" />
-147-->[:react-native-image-picker] C:\Users\Win10\Desktop\navii\node_modules\react-native-image-picker\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:15:17-67
+147-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:17-67
 148        </provider>
 149
 150        <activity
-150-->[com.facebook.react:react-android:0.75.4] C:\Users\Win10\.gradle\caches\8.8\transforms\36ee22e9e8f3d8ae53b5766045655ce6\transformed\react-android-0.75.4-debug\AndroidManifest.xml:19:9-21:40
+150-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/36ee22e9e8f3d8ae53b5766045655ce6/transformed/react-android-0.75.4-debug/AndroidManifest.xml:19:9-21:40
 151            android:name="com.facebook.react.devsupport.DevSettingsActivity"
-151-->[com.facebook.react:react-android:0.75.4] C:\Users\Win10\.gradle\caches\8.8\transforms\36ee22e9e8f3d8ae53b5766045655ce6\transformed\react-android-0.75.4-debug\AndroidManifest.xml:20:13-77
+151-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/36ee22e9e8f3d8ae53b5766045655ce6/transformed/react-android-0.75.4-debug/AndroidManifest.xml:20:13-77
 152            android:exported="false" />
-152-->[com.facebook.react:react-android:0.75.4] C:\Users\Win10\.gradle\caches\8.8\transforms\36ee22e9e8f3d8ae53b5766045655ce6\transformed\react-android-0.75.4-debug\AndroidManifest.xml:21:13-37
+152-->[com.facebook.react:react-android:0.75.4] /Users/ohminseok/.gradle/caches/8.8/transforms/36ee22e9e8f3d8ae53b5766045655ce6/transformed/react-android-0.75.4-debug/AndroidManifest.xml:21:13-37
 153
 154        <receiver
-154-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:29:9-40:20
+154-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:29:9-40:20
 155            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
-155-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:30:13-78
+155-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:30:13-78
 156            android:exported="true"
-156-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:31:13-36
+156-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:31:13-36
 157            android:permission="com.google.android.c2dm.permission.SEND" >
-157-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:32:13-73
+157-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:32:13-73
 158            <intent-filter>
-158-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:27:13-29:29
+158-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-29:29
 159                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-159-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:28:17-81
-159-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:28:25-78
+159-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:17-81
+159-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:25-78
 160            </intent-filter>
 161
 162            <meta-data
-162-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:37:13-39:40
+162-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:37:13-39:40
 163                android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED"
-163-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:38:17-92
+163-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:38:17-92
 164                android:value="true" />
-164-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:39:17-37
+164-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:39:17-37
 165        </receiver>
 166        <!--
 167             FirebaseMessagingService performs security checks at runtime,
 168             but set to not exported to explicitly avoid allowing another app to call it.
 169        -->
 170        <service
-170-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:46:9-53:19
+170-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:46:9-53:19
 171            android:name="com.google.firebase.messaging.FirebaseMessagingService"
-171-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:47:13-82
+171-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:47:13-82
 172            android:directBootAware="true"
-172-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:48:13-43
+172-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:48:13-43
 173            android:exported="false" >
-173-->[com.google.firebase:firebase-messaging:25.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\be59d848dae42d652f9fe82ed63c5ce0\transformed\firebase-messaging-25.0.1\AndroidManifest.xml:49:13-37
+173-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:49:13-37
 174            <intent-filter android:priority="-500" >
-174-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:18:13-20:29
+174-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-20:29
 175                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-175-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:19:17-78
-175-->[:react-native-firebase_messaging] C:\Users\Win10\Desktop\navii\node_modules\@react-native-firebase\messaging\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:19:25-75
+175-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:17-78
+175-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:25-75
 176            </intent-filter>
 177        </service>
 178
 179        <provider
-179-->[com.google.firebase:firebase-common:22.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1bf50ec5121f4f116ced630dfbcd4cc1\transformed\firebase-common-22.0.1\AndroidManifest.xml:23:9-28:39
+179-->[com.google.firebase:firebase-common:22.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1bf50ec5121f4f116ced630dfbcd4cc1/transformed/firebase-common-22.0.1/AndroidManifest.xml:23:9-28:39
 180            android:name="com.google.firebase.provider.FirebaseInitProvider"
-180-->[com.google.firebase:firebase-common:22.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1bf50ec5121f4f116ced630dfbcd4cc1\transformed\firebase-common-22.0.1\AndroidManifest.xml:24:13-77
+180-->[com.google.firebase:firebase-common:22.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1bf50ec5121f4f116ced630dfbcd4cc1/transformed/firebase-common-22.0.1/AndroidManifest.xml:24:13-77
 181            android:authorities="com.navi.firebaseinitprovider"
-181-->[com.google.firebase:firebase-common:22.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1bf50ec5121f4f116ced630dfbcd4cc1\transformed\firebase-common-22.0.1\AndroidManifest.xml:25:13-72
+181-->[com.google.firebase:firebase-common:22.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1bf50ec5121f4f116ced630dfbcd4cc1/transformed/firebase-common-22.0.1/AndroidManifest.xml:25:13-72
 182            android:directBootAware="true"
-182-->[com.google.firebase:firebase-common:22.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1bf50ec5121f4f116ced630dfbcd4cc1\transformed\firebase-common-22.0.1\AndroidManifest.xml:26:13-43
+182-->[com.google.firebase:firebase-common:22.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1bf50ec5121f4f116ced630dfbcd4cc1/transformed/firebase-common-22.0.1/AndroidManifest.xml:26:13-43
 183            android:exported="false"
-183-->[com.google.firebase:firebase-common:22.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1bf50ec5121f4f116ced630dfbcd4cc1\transformed\firebase-common-22.0.1\AndroidManifest.xml:27:13-37
+183-->[com.google.firebase:firebase-common:22.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1bf50ec5121f4f116ced630dfbcd4cc1/transformed/firebase-common-22.0.1/AndroidManifest.xml:27:13-37
 184            android:initOrder="100" />
-184-->[com.google.firebase:firebase-common:22.0.1] C:\Users\Win10\.gradle\caches\8.8\transforms\1bf50ec5121f4f116ced630dfbcd4cc1\transformed\firebase-common-22.0.1\AndroidManifest.xml:28:13-36
+184-->[com.google.firebase:firebase-common:22.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1bf50ec5121f4f116ced630dfbcd4cc1/transformed/firebase-common-22.0.1/AndroidManifest.xml:28:13-36
 185
 186        <activity
-186-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:23:9-27:75
+186-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:23:9-27:75
 187            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
-187-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:24:13-93
+187-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:24:13-93
 188            android:excludeFromRecents="true"
-188-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:25:13-46
+188-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:25:13-46
 189            android:exported="false"
-189-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:26:13-37
+189-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:26:13-37
 190            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-190-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:27:13-72
+190-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:27:13-72
 191        <!--
 192            Service handling Google Sign-In user revocation. For apps that do not integrate with
 193            Google Sign-In, this service will never be started.
 194        -->
 195        <service
-195-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:33:9-37:51
+195-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:33:9-37:51
 196            android:name="com.google.android.gms.auth.api.signin.RevocationBoundService"
-196-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:34:13-89
+196-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:34:13-89
 197            android:exported="true"
-197-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:35:13-36
+197-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:35:13-36
 198            android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"
-198-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:36:13-107
+198-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:36:13-107
 199            android:visibleToInstantApps="true" />
-199-->[com.google.android.gms:play-services-auth:21.4.0] C:\Users\Win10\.gradle\caches\8.8\transforms\259850375e3e7c53e1fc62e9fd44f6a5\transformed\play-services-auth-21.4.0\AndroidManifest.xml:37:13-48
+199-->[com.google.android.gms:play-services-auth:21.4.0] /Users/ohminseok/.gradle/caches/8.8/transforms/259850375e3e7c53e1fc62e9fd44f6a5/transformed/play-services-auth-21.4.0/AndroidManifest.xml:37:13-48
 200
 201        <activity
-201-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Win10\.gradle\caches\8.8\transforms\67c22a01a015a7d6f31ae40961047735\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:9-173
+201-->[com.google.android.gms:play-services-base:18.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/67c22a01a015a7d6f31ae40961047735/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:9-173
 202            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-202-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Win10\.gradle\caches\8.8\transforms\67c22a01a015a7d6f31ae40961047735\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:19-85
+202-->[com.google.android.gms:play-services-base:18.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/67c22a01a015a7d6f31ae40961047735/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:19-85
 203            android:exported="false"
-203-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Win10\.gradle\caches\8.8\transforms\67c22a01a015a7d6f31ae40961047735\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:146-170
+203-->[com.google.android.gms:play-services-base:18.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/67c22a01a015a7d6f31ae40961047735/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:146-170
 204            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-204-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\Win10\.gradle\caches\8.8\transforms\67c22a01a015a7d6f31ae40961047735\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:86-145
+204-->[com.google.android.gms:play-services-base:18.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/67c22a01a015a7d6f31ae40961047735/transformed/play-services-base-18.5.0/AndroidManifest.xml:5:86-145
 205
 206        <provider
-206-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Win10\.gradle\caches\8.8\transforms\d1e18c7647159dfeaaf4454d414ad4ae\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+206-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/d1e18c7647159dfeaaf4454d414ad4ae/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
 207            android:name="androidx.startup.InitializationProvider"
-207-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Win10\.gradle\caches\8.8\transforms\d1e18c7647159dfeaaf4454d414ad4ae\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+207-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/d1e18c7647159dfeaaf4454d414ad4ae/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
 208            android:authorities="com.navi.androidx-startup"
-208-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Win10\.gradle\caches\8.8\transforms\d1e18c7647159dfeaaf4454d414ad4ae\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+208-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/d1e18c7647159dfeaaf4454d414ad4ae/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
 209            android:exported="false" >
-209-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Win10\.gradle\caches\8.8\transforms\d1e18c7647159dfeaaf4454d414ad4ae\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+209-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/d1e18c7647159dfeaaf4454d414ad4ae/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
 210            <meta-data
-210-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Win10\.gradle\caches\8.8\transforms\d1e18c7647159dfeaaf4454d414ad4ae\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+210-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/d1e18c7647159dfeaaf4454d414ad4ae/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
 211                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-211-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Win10\.gradle\caches\8.8\transforms\d1e18c7647159dfeaaf4454d414ad4ae\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+211-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/d1e18c7647159dfeaaf4454d414ad4ae/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
 212                android:value="androidx.startup" />
-212-->[androidx.emoji2:emoji2:1.3.0] C:\Users\Win10\.gradle\caches\8.8\transforms\d1e18c7647159dfeaaf4454d414ad4ae\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+212-->[androidx.emoji2:emoji2:1.3.0] /Users/ohminseok/.gradle/caches/8.8/transforms/d1e18c7647159dfeaaf4454d414ad4ae/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
 213            <meta-data
-213-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Win10\.gradle\caches\8.8\transforms\04868d2e6c0771f04b9e5281384f822a\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+213-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/ohminseok/.gradle/caches/8.8/transforms/04868d2e6c0771f04b9e5281384f822a/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:29:13-31:52
 214                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-214-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Win10\.gradle\caches\8.8\transforms\04868d2e6c0771f04b9e5281384f822a\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+214-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/ohminseok/.gradle/caches/8.8/transforms/04868d2e6c0771f04b9e5281384f822a/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:30:17-78
 215                android:value="androidx.startup" />
-215-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\Win10\.gradle\caches\8.8\transforms\04868d2e6c0771f04b9e5281384f822a\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+215-->[androidx.lifecycle:lifecycle-process:2.8.7] /Users/ohminseok/.gradle/caches/8.8/transforms/04868d2e6c0771f04b9e5281384f822a/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:31:17-49
 216            <meta-data
-216-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:29:13-31:52
+216-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:29:13-31:52
 217                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-217-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:30:17-85
+217-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:30:17-85
 218                android:value="androidx.startup" />
-218-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:31:17-49
+218-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:31:17-49
 219        </provider>
 220
 221        <meta-data
-221-->[com.google.android.gms:play-services-basement:18.5.0] C:\Users\Win10\.gradle\caches\8.8\transforms\76a5f6415affa483c46a156f9c65be16\transformed\play-services-basement-18.5.0\AndroidManifest.xml:21:9-23:69
+221-->[com.google.android.gms:play-services-basement:18.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/76a5f6415affa483c46a156f9c65be16/transformed/play-services-basement-18.5.0/AndroidManifest.xml:21:9-23:69
 222            android:name="com.google.android.gms.version"
-222-->[com.google.android.gms:play-services-basement:18.5.0] C:\Users\Win10\.gradle\caches\8.8\transforms\76a5f6415affa483c46a156f9c65be16\transformed\play-services-basement-18.5.0\AndroidManifest.xml:22:13-58
+222-->[com.google.android.gms:play-services-basement:18.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/76a5f6415affa483c46a156f9c65be16/transformed/play-services-basement-18.5.0/AndroidManifest.xml:22:13-58
 223            android:value="@integer/google_play_services_version" />
-223-->[com.google.android.gms:play-services-basement:18.5.0] C:\Users\Win10\.gradle\caches\8.8\transforms\76a5f6415affa483c46a156f9c65be16\transformed\play-services-basement-18.5.0\AndroidManifest.xml:23:13-66
+223-->[com.google.android.gms:play-services-basement:18.5.0] /Users/ohminseok/.gradle/caches/8.8/transforms/76a5f6415affa483c46a156f9c65be16/transformed/play-services-basement-18.5.0/AndroidManifest.xml:23:13-66
 224
 225        <receiver
-225-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:34:9-52:20
+225-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:34:9-52:20
 226            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-226-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:35:13-76
+226-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:35:13-76
 227            android:directBootAware="false"
-227-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:36:13-44
+227-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:36:13-44
 228            android:enabled="true"
-228-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:37:13-35
+228-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:37:13-35
 229            android:exported="true"
-229-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:38:13-36
+229-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:38:13-36
 230            android:permission="android.permission.DUMP" >
-230-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:39:13-57
+230-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:39:13-57
 231            <intent-filter>
-231-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:40:13-42:29
+231-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:40:13-42:29
 232                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-232-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:17-91
-232-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:41:25-88
+232-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:17-91
+232-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:41:25-88
 233            </intent-filter>
 234            <intent-filter>
-234-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:43:13-45:29
+234-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:43:13-45:29
 235                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-235-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:17-85
-235-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:44:25-82
+235-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:17-85
+235-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:44:25-82
 236            </intent-filter>
 237            <intent-filter>
-237-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:46:13-48:29
+237-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:46:13-48:29
 238                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-238-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:17-88
-238-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:47:25-85
+238-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:17-88
+238-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:47:25-85
 239            </intent-filter>
 240            <intent-filter>
-240-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:49:13-51:29
+240-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:49:13-51:29
 241                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-241-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:17-95
-241-->[androidx.profileinstaller:profileinstaller:1.4.1] C:\Users\Win10\.gradle\caches\8.8\transforms\55bd28faab17ba259cf40e933bea3b2b\transformed\profileinstaller-1.4.1\AndroidManifest.xml:50:25-92
+241-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:17-95
+241-->[androidx.profileinstaller:profileinstaller:1.4.1] /Users/ohminseok/.gradle/caches/8.8/transforms/55bd28faab17ba259cf40e933bea3b2b/transformed/profileinstaller-1.4.1/AndroidManifest.xml:50:25-92
 242            </intent-filter>
 243        </receiver>
 244
 245        <service
-245-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\d81a5adae8a7365a4c451846a4c20718\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:28:9-34:19
+245-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/d81a5adae8a7365a4c451846a4c20718/transformed/transport-backend-cct-3.1.9/AndroidManifest.xml:28:9-34:19
 246            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
-246-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\d81a5adae8a7365a4c451846a4c20718\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:29:13-103
+246-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/d81a5adae8a7365a4c451846a4c20718/transformed/transport-backend-cct-3.1.9/AndroidManifest.xml:29:13-103
 247            android:exported="false" >
-247-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\d81a5adae8a7365a4c451846a4c20718\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:30:13-37
+247-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/d81a5adae8a7365a4c451846a4c20718/transformed/transport-backend-cct-3.1.9/AndroidManifest.xml:30:13-37
 248            <meta-data
-248-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\d81a5adae8a7365a4c451846a4c20718\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:31:13-33:39
+248-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/d81a5adae8a7365a4c451846a4c20718/transformed/transport-backend-cct-3.1.9/AndroidManifest.xml:31:13-33:39
 249                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
-249-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\d81a5adae8a7365a4c451846a4c20718\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:32:17-94
+249-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/d81a5adae8a7365a4c451846a4c20718/transformed/transport-backend-cct-3.1.9/AndroidManifest.xml:32:17-94
 250                android:value="cct" />
-250-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\d81a5adae8a7365a4c451846a4c20718\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:33:17-36
+250-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/d81a5adae8a7365a4c451846a4c20718/transformed/transport-backend-cct-3.1.9/AndroidManifest.xml:33:17-36
 251        </service>
 252        <service
-252-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\97d6355ce69437834890af5efa667f45\transformed\transport-runtime-3.1.9\AndroidManifest.xml:26:9-30:19
+252-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/97d6355ce69437834890af5efa667f45/transformed/transport-runtime-3.1.9/AndroidManifest.xml:26:9-30:19
 253            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
-253-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\97d6355ce69437834890af5efa667f45\transformed\transport-runtime-3.1.9\AndroidManifest.xml:27:13-117
+253-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/97d6355ce69437834890af5efa667f45/transformed/transport-runtime-3.1.9/AndroidManifest.xml:27:13-117
 254            android:exported="false"
-254-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\97d6355ce69437834890af5efa667f45\transformed\transport-runtime-3.1.9\AndroidManifest.xml:28:13-37
+254-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/97d6355ce69437834890af5efa667f45/transformed/transport-runtime-3.1.9/AndroidManifest.xml:28:13-37
 255            android:permission="android.permission.BIND_JOB_SERVICE" >
-255-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\97d6355ce69437834890af5efa667f45\transformed\transport-runtime-3.1.9\AndroidManifest.xml:29:13-69
+255-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/97d6355ce69437834890af5efa667f45/transformed/transport-runtime-3.1.9/AndroidManifest.xml:29:13-69
 256        </service>
 257
 258        <receiver
-258-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\97d6355ce69437834890af5efa667f45\transformed\transport-runtime-3.1.9\AndroidManifest.xml:32:9-34:40
+258-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/97d6355ce69437834890af5efa667f45/transformed/transport-runtime-3.1.9/AndroidManifest.xml:32:9-34:40
 259            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
-259-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\97d6355ce69437834890af5efa667f45\transformed\transport-runtime-3.1.9\AndroidManifest.xml:33:13-132
+259-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/97d6355ce69437834890af5efa667f45/transformed/transport-runtime-3.1.9/AndroidManifest.xml:33:13-132
 260            android:exported="false" />
-260-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\Win10\.gradle\caches\8.8\transforms\97d6355ce69437834890af5efa667f45\transformed\transport-runtime-3.1.9\AndroidManifest.xml:34:13-37
+260-->[com.google.android.datatransport:transport-runtime:3.1.9] /Users/ohminseok/.gradle/caches/8.8/transforms/97d6355ce69437834890af5efa667f45/transformed/transport-runtime-3.1.9/AndroidManifest.xml:34:13-37
 261
 262        <meta-data
-262-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Win10\.gradle\caches\8.8\transforms\50c86bb1efb1166c9ea38484bcd8c749\transformed\soloader-0.11.0\AndroidManifest.xml:12:9-14:37
+262-->[com.facebook.soloader:soloader:0.11.0] /Users/ohminseok/.gradle/caches/8.8/transforms/50c86bb1efb1166c9ea38484bcd8c749/transformed/soloader-0.11.0/AndroidManifest.xml:12:9-14:37
 263            android:name="com.facebook.soloader.enabled"
-263-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Win10\.gradle\caches\8.8\transforms\50c86bb1efb1166c9ea38484bcd8c749\transformed\soloader-0.11.0\AndroidManifest.xml:13:13-57
+263-->[com.facebook.soloader:soloader:0.11.0] /Users/ohminseok/.gradle/caches/8.8/transforms/50c86bb1efb1166c9ea38484bcd8c749/transformed/soloader-0.11.0/AndroidManifest.xml:13:13-57
 264            android:value="false" />
-264-->[com.facebook.soloader:soloader:0.11.0] C:\Users\Win10\.gradle\caches\8.8\transforms\50c86bb1efb1166c9ea38484bcd8c749\transformed\soloader-0.11.0\AndroidManifest.xml:14:13-34
+264-->[com.facebook.soloader:soloader:0.11.0] /Users/ohminseok/.gradle/caches/8.8/transforms/50c86bb1efb1166c9ea38484bcd8c749/transformed/soloader-0.11.0/AndroidManifest.xml:14:13-34
 265    </application>
 266
 267</manifest>

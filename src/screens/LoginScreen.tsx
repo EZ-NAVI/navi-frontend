@@ -13,7 +13,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { api } from "../api/api";
+import { login as authLogin, getMe as authGetMe } from "../api/auth";
+import client from '../api/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { emit } from '../lib/emitter';
 import { requestNotificationPermission, getFcmToken, registerFcmTokenToServer } from '../lib/fcm';
@@ -45,9 +46,43 @@ export default function LoginScreen() {
     }
     try {
       setLoading(true);
-      const loginResp = await api.login(email.trim(), password);
-      const me = await api.me();
+      const loginResp = await authLogin(email.trim(), password);
 
+      // 서버가 로그인 응답에 access_token을 주기 때문에, AsyncStorage에
+      // 저장된 값을 읽기 전에 바로 /users/me를 호출해야 할 수 있습니다.
+      // 그러므로 가능한 경우 loginResp.access_token을 이용해 직접 Authorization
+      // 헤더를 붙여서 /users/me를 호출합니다. 이렇게 하면 AsyncStorage 쓰기/읽기
+      // 타이밍으로 인한 race condition을 피할 수 있습니다.
+      let me: any = null;
+      const tokenFromLogin = loginResp?.access_token ?? null;
+      // 안전성: auth.login 내부에서 AsyncStorage에 저장했더라도 확실히 반영되도록
+      // 여기서도 한 번 더 명시적으로 저장합니다.
+      if (tokenFromLogin) {
+        try {
+          await AsyncStorage.setItem('access_token', tokenFromLogin);
+          if (loginResp?.token_type) await AsyncStorage.setItem('token_type', loginResp.token_type);
+          console.log('[Login] AsyncStorage에 토큰 저장 완료');
+        } catch (e) {
+          console.warn('[Login] AsyncStorage 토큰 저장 실패', e);
+        }
+      }
+      if (tokenFromLogin) {
+        try {
+          const resp = await client.get('/users/me', {
+            headers: { Authorization: `Bearer ${tokenFromLogin}` },
+          });
+          me = resp?.data;
+        } catch (err) {
+          // fallback to authGetMe which relies on AsyncStorage/interceptor
+          try {
+            me = await authGetMe();
+          } catch (e) {
+            throw e;
+          }
+        }
+      } else {
+        me = await authGetMe();
+      }
       const token = loginResp?.access_token ?? null;
       const userType = me?.user_type ?? me?.type ?? me?.userType ?? null;
 

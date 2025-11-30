@@ -182,27 +182,6 @@ export default function App() {
 
   if (isLoading) return null;
 
-  const navigation = (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator initialRouteName={"Login"} screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
-        <Stack.Screen name="LocationSearch" component={LocationSearchScreen} />
-        <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
-        <Stack.Screen name="ReportEdit" component={ReportEditScreen} />
-
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignupType" component={SignupTypeScreen} />
-        <Stack.Screen name="SignupConsent" component={SignupConsentScreen} />
-        <Stack.Screen name="SignupForm" component={SignupFormScreen} />
-
-        <Stack.Screen name="DevSettings" component={DevSettingsScreen} />
-        <Stack.Screen name="DebugNotification" component={DebugNotificationScreen} />
-      </Stack.Navigator>
-
-      <NavigationContent />
-    </NavigationContainer>
-  );
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar
@@ -211,13 +190,49 @@ export default function App() {
       />
       <RouteProvider>
         <AppAlertModal />
-        {userId ? (
-          <WebSocketProvider userId={userId}>
-            <AppWithModal>{navigation}</AppWithModal>
-          </WebSocketProvider>
-        ) : (
-          navigation
-        )}
+        <NavigationContainer ref={navigationRef}>
+          <AppWithModal>
+            {userId ? (
+              <WebSocketProvider userId={userId}>
+                <>
+                  <Stack.Navigator initialRouteName={"Login"} screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
+                    <Stack.Screen name="LocationSearch" component={LocationSearchScreen} />
+                    <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
+                    <Stack.Screen name="ReportEdit" component={ReportEditScreen} />
+
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                    <Stack.Screen name="SignupType" component={SignupTypeScreen} />
+                    <Stack.Screen name="SignupConsent" component={SignupConsentScreen} />
+                    <Stack.Screen name="SignupForm" component={SignupFormScreen} />
+
+                    <Stack.Screen name="DevSettings" component={DevSettingsScreen} />
+                    <Stack.Screen name="DebugNotification" component={DebugNotificationScreen} />
+                  </Stack.Navigator>
+                  <NavigationContent />
+                </>
+              </WebSocketProvider>
+            ) : (
+              <>
+                <Stack.Navigator initialRouteName={"Login"} screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
+                  <Stack.Screen name="LocationSearch" component={LocationSearchScreen} />
+                  <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
+                  <Stack.Screen name="ReportEdit" component={ReportEditScreen} />
+
+                  <Stack.Screen name="Login" component={LoginScreen} />
+                  <Stack.Screen name="SignupType" component={SignupTypeScreen} />
+                  <Stack.Screen name="SignupConsent" component={SignupConsentScreen} />
+                  <Stack.Screen name="SignupForm" component={SignupFormScreen} />
+
+                  <Stack.Screen name="DevSettings" component={DevSettingsScreen} />
+                  <Stack.Screen name="DebugNotification" component={DebugNotificationScreen} />
+                </Stack.Navigator>
+                <NavigationContent />
+              </>
+            )}
+          </AppWithModal>
+        </NavigationContainer>
       </RouteProvider>
     </GestureHandlerRootView>
   );
