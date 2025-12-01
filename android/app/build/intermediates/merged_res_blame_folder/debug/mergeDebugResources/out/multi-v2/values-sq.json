@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.navi.app-mergeDebugResources-53:/values-sq/values-sq.xml",
+            "outputFile": "com.navi.app-mergeDebugResources-63:/values-sq/values-sq.xml",
             "map": [
                 {
                     "source": "/Users/ohminseok/.gradle/caches/8.8/transforms/1baaefb1f97a28699917b458c7ae939c/transformed/core-1.13.1/res/values-sq/values-sq.xml",

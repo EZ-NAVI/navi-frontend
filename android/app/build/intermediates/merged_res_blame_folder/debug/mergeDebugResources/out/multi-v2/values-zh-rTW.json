@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.navi.app-mergeDebugResources-53:/values-zh-rTW/values-zh-rTW.xml",
+            "outputFile": "com.navi.app-mergeDebugResources-63:/values-zh-rTW/values-zh-rTW.xml",
             "map": [
                 {
                     "source": "/Users/ohminseok/.gradle/caches/8.8/transforms/36ee22e9e8f3d8ae53b5766045655ce6/transformed/react-android-0.75.4-debug/res/values-zh-rTW/values-zh-rTW.xml",

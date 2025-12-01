@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.navi.app-mergeDebugResources-53:/values-uz/values-uz.xml",
+            "outputFile": "com.navi.app-mergeDebugResources-63:/values-uz/values-uz.xml",
             "map": [
                 {
                     "source": "/Users/ohminseok/.gradle/caches/8.8/transforms/76a5f6415affa483c46a156f9c65be16/transformed/play-services-basement-18.5.0/res/values-uz/values.xml",

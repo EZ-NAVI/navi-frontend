@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.navi.app-mergeDebugResources-53:/values-small-v4/values-small-v4.xml",
+            "outputFile": "com.navi.app-mergeDebugResources-63:/values-small-v4/values-small-v4.xml",
             "map": [
                 {
                     "source": "/Users/ohminseok/.gradle/caches/8.8/transforms/86308f402bd3bfc9e8918e3b618979a7/transformed/material-1.12.0/res/values-small-v4/values-small-v4.xml",

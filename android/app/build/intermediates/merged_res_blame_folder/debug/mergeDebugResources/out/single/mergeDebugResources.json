@@ -1,70 +1,74 @@
 [
     {
-        "merged": "com.navi.app-debug-55:/drawable_bootsplash.xml.flat",
-        "source": "com.navi.app-main-57:/drawable/bootsplash.xml"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-xxxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-hdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-hdpi/ic_launcher_round.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/drawable_marker_end.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/drawable/marker_end.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-mdpi/ic_launcher.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-mdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/drawable_good_ping.png.flat",
-        "source": "com.navi.app-main-57:/drawable/good_ping.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-xxxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-xxhdpi/ic_launcher.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/drawable_danger.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/drawable/danger.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/drawable_rn_edit_text_material.xml.flat",
-        "source": "com.navi.app-main-57:/drawable/rn_edit_text_material.xml"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/drawable_marker_start.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/drawable/marker_start.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/drawable-nodpi_bootsplash.png.flat",
-        "source": "com.navi.app-main-57:/drawable-nodpi/bootsplash.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-xxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-xxxhdpi/ic_launcher_round.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-xxhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-xxxhdpi/ic_launcher.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-hdpi/ic_launcher.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-mdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-mdpi/ic_launcher_round.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-xhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/drawable_marker_end.png.flat",
-        "source": "com.navi.app-main-57:/drawable/marker_end.png"
+        "merged": "com.navi.app-debug-65:/drawable-nodpi_bootsplash.png.flat",
+        "source": "com.navi.app-main-67:/drawable-nodpi/bootsplash.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-xxhdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-xxhdpi/ic_launcher_round.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-mdpi/ic_launcher.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-xhdpi/ic_launcher.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/drawable_good_ping.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/drawable/good_ping.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-xhdpi_ic_launcher_round.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-xhdpi/ic_launcher_round.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/drawable_bootsplash.xml.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/drawable/bootsplash.xml"
     },
     {
-        "merged": "com.navi.app-debug-55:/drawable_marker_start.png.flat",
-        "source": "com.navi.app-main-57:/drawable/marker_start.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/drawable_rn_edit_text_material.xml.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/drawable/rn_edit_text_material.xml"
     },
     {
-        "merged": "com.navi.app-debug-55:/drawable_danger.png.flat",
-        "source": "com.navi.app-main-57:/drawable/danger.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-xhdpi/ic_launcher.png"
     },
     {
-        "merged": "com.navi.app-debug-55:/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "com.navi.app-main-57:/mipmap-hdpi/ic_launcher.png"
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-debug-65:/drawable-nodpi_bootsplash.png.flat",
+        "source": "/Users/ohminseok/.gradle/daemon/8.8/com.navi.app-main-67:/drawable-nodpi/bootsplash.png"
     }
 ]
