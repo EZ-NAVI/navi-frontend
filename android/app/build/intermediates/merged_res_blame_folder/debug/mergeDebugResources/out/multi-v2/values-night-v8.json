@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-bootsplash/android/build/intermediates/packaged_res/debug/packageDebugResources/values-night-v8/values-night-v8.xml",
+                    "source": "/Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-bootsplash/android/build/intermediates/packaged_res/debug/packageDebugResources/values-night-v8/values-night-v8.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

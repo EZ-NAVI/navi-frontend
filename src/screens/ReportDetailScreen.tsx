@@ -8,10 +8,35 @@ import { TextInput } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { getCurrentUserRole } from '../lib/authState';
 
+import CustomAlert from "../components/CustomAlert";
+
 export default function ReportDetailScreen() {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const { reportId } = route.params ?? {};
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("알림");
+  const [alertMsg, setAlertMsg] = useState("");
+  const [alertConfirm, setAlertConfirm] = useState<null | (() => void)>(null);
+  const [alertHideCancel, setAlertHideCancel] = useState(false);
+
+  const openAlert = (title: string, msg: string) => {
+    setAlertTitle(title);
+    setAlertMsg(msg);
+    setAlertVisible(true);
+  };
+
+  useEffect(() => {
+    const role = getCurrentUserRole();   // ⭐ 현재 로그인된 역할 가져오기
+    if (role === "child") {
+      openAlert(
+        "댓글 안내",
+        "댓글은 다른 사용자에게 영향을 줄 수 있어요.\n신중하게 작성해주세요."
+      );
+    }
+  }, []);
+
   const [loading, setLoading] = useState(true);
   const [report, setReport] = useState<any | null>(null);
   const [comments, setComments] = useState<any[]>([]);
@@ -112,28 +137,39 @@ export default function ReportDetailScreen() {
               onPress={() => {
                 const fromCluster = (route.params as any)?.fromCluster;
                 const clusterId = (route.params as any)?.clusterId;
-                useAppAlertStore.getState().show({
-                  title: '이제 없어요',
-                  body: '정말 더 이상 존재하지 않나요?',
-                  ctaText: '확인',
-                  cancelText: '취소',
-                  onConfirm: async () => {
+                (async () => {
+                  // 토큰 체크: 없으면 CustomAlert 사용
+                  let tokenCheck: string | null = null;
+                  try { tokenCheck = await AsyncStorage.getItem('access_token'); } catch (e) { console.warn('token read failed', e); }
+                  if (!tokenCheck) {
+                    openAlert('안내', "체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!");
+                    return;
+                  }
+
+                  // Use local CustomAlert confirm (consistent with community flow)
+                  setAlertTitle('이제 없어요');
+                  setAlertMsg('정말 더 이상 존재하지 않나요?');
+                  setAlertHideCancel(false);
+                  setAlertConfirm(() => async () => {
                     try {
                       try { console.log('[NotThere] detail screen send for reportId=', String(reportId), 'category=', report?.category ?? report?.title ?? '제보'); } catch (logErr) {}
                       let token: string | null = null;
                       try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
                       await postReportNotThere(String(reportId), token ?? undefined);
+                      // On success: close alert
+                      setAlertVisible(false);
+                      setAlertConfirm(null);
                     } catch (e: any) {
                       console.warn('not-there failed', e);
-                      const errorMsg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '상태 전송에 실패했습니다.';
-                      if (errorMsg.includes('이미') && errorMsg.includes('이제 없어요')) {
-                        openAlert('알림', '이미 누른 제보입니다.');
-                      } else {
-                        openAlert('처리 실패', errorMsg);
-                      }
+                      // Standardize to single dismissible message
+                      setAlertTitle('안내');
+                      setAlertMsg('이미 누른 제보입니다.');
+                      setAlertConfirm(null);
+                      setAlertHideCancel(true);
                     }
-                  }
-                });
+                  });
+                  setAlertVisible(true);
+                })();
               }}
             >
               <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
@@ -178,6 +214,13 @@ export default function ReportDetailScreen() {
                         disabled={evaluating}
                         onPress={async () => {
                           if (!reportId || evaluating) return;
+                          // 토큰 체크
+                          let tokenCheck: string | null = null;
+                          try { tokenCheck = await AsyncStorage.getItem('access_token'); } catch (e) { console.warn('token read failed', e); }
+                          if (!tokenCheck) {
+                            openAlert('안내', '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!');
+                            return;
+                          }
                           try {
                             setEvaluating(true);
                             let token: string | null = null;
@@ -198,6 +241,13 @@ export default function ReportDetailScreen() {
                         disabled={evaluating}
                         onPress={async () => {
                           if (!reportId || evaluating) return;
+                          // 토큰 체크
+                          let tokenCheck: string | null = null;
+                          try { tokenCheck = await AsyncStorage.getItem('access_token'); } catch (e) { console.warn('token read failed', e); }
+                          if (!tokenCheck) {
+                            openAlert('안내', '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!');
+                            return;
+                          }
                           try {
                             setEvaluating(true);
                             let token: string | null = null;
@@ -218,6 +268,13 @@ export default function ReportDetailScreen() {
                         disabled={evaluating}
                         onPress={async () => {
                           if (!reportId || evaluating) return;
+                          // 토큰 체크
+                          let tokenCheck: string | null = null;
+                          try { tokenCheck = await AsyncStorage.getItem('access_token'); } catch (e) { console.warn('token read failed', e); }
+                          if (!tokenCheck) {
+                            openAlert('안내', '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!');
+                            return;
+                          }
                           try {
                             setEvaluating(true);
                             let token: string | null = null;
@@ -355,7 +412,7 @@ export default function ReportDetailScreen() {
                       setNewComment('');
                     } catch (e) {
                       console.warn('post comment failed', e);
-                      openAlert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
+                      openAlert('알림', '체험하기 상태에서는 댓글을 달 수 없습니다!');
                     } finally { setPosting(false); }
                   }}
                 />
@@ -371,7 +428,7 @@ export default function ReportDetailScreen() {
                       setNewComment('');
                     } catch (e) {
                       console.warn('post comment failed', e);
-                      openAlert('댓글 추가 실패', '댓글 전송에 실패했습니다.');
+                      openAlert('알림', '체험하기 상태에서는\n댓글을 달 수 없습니다!');
                     } finally { setPosting(false); }
                   }}
                   style={{ backgroundColor: '#FFD44C', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20 }}
@@ -384,6 +441,15 @@ export default function ReportDetailScreen() {
           );
         })()}
       </KeyboardAvoidingView>
+
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMsg}
+        onClose={() => setAlertVisible(false)}
+        onConfirm={alertConfirm || undefined}
+        hideCancel={alertHideCancel}
+      />
     </View>
   );
 }

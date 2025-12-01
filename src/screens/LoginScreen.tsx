@@ -121,10 +121,13 @@ export default function LoginScreen() {
         }
       } catch (e) {}
 
+      await AsyncStorage.removeItem("map_notice_shown");
+      await AsyncStorage.removeItem("session_started");
+
       navigation.reset({ index: 0, routes: [{ name: "SafeRoute" }] });
 
     } catch (err: any) {
-      // ⭐ 영어 메시지 → 한글 메시지로 고정 변경
+      // 영어 메시지 → 한글 메시지로 고정 변경
       openAlert("로그인 실패", "아이디 또는 비밀번호가 올바르지 않습니다.");
     } finally {
       setLoading(false);
@@ -142,6 +145,9 @@ export default function LoginScreen() {
     await AsyncStorage.removeItem("user_id");
     await AsyncStorage.removeItem("user_role");
     await AsyncStorage.removeItem("fcm_token");
+
+    await AsyncStorage.removeItem("map_notice_shown");
+    await AsyncStorage.removeItem("session_started");
 
     navigation.reset({
       index: 0,

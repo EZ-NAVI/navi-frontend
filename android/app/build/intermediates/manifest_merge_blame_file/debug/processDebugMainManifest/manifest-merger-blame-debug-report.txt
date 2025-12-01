@@ -9,29 +9,29 @@
 9        android:targetSdkVersion="34" />
 10
 11    <uses-permission android:name="android.permission.INTERNET" />
-11-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:4:5-66
-11-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:4:22-64
+11-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:4:5-66
+11-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:4:22-64
 12    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-12-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:5:5-78
-12-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:5:22-76
+12-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:5:5-78
+12-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:5:22-76
 13    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-13-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:6:5-80
-13-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:6:22-78
+13-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:6:5-80
+13-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:6:22-78
 14    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-14-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:7:5-80
-14-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:7:22-77
+14-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:7:5-80
+14-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:7:22-77
 15    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-15-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:8:5-76
-15-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:8:22-73
+15-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:8:5-76
+15-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:8:22-73
 16    <uses-permission android:name="android.permission.CAMERA" />
-16-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:9:5-65
-16-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:9:22-62
+16-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:9:5-65
+16-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:9:22-62
 17    <uses-permission android:name="android.permission.WAKE_LOCK" />
-17-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:5-68
-17-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:22-65
+17-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:5-68
+17-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:22-65
 18    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-18-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:5-79
-18-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:22-76
+18-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:5-79
+18-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:22-76
 19    <!--
 20    This manifest file is used only by Gradle to configure debug-only capabilities
 21    for React Native Apps.
@@ -65,150 +65,150 @@
 35-->[:vsm-tmap-sdk-v2-android-1.7.45:] /Users/ohminseok/.gradle/caches/8.8/transforms/361a47d72ce4e61c266a16ed6a82bc92/transformed/vsm-tmap-sdk-v2-android-1.7.45/AndroidManifest.xml:9:9-32
 36
 37    <application
-37-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:11:5-40:19
+37-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:11:5-40:19
 38        android:name="com.navi.MainApplication"
-38-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:12:9-40
+38-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:12:9-40
 39        android:allowBackup="false"
-39-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:16:9-36
+39-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:16:9-36
 40        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 40-->[androidx.core:core:1.13.1] /Users/ohminseok/.gradle/caches/8.8/transforms/1baaefb1f97a28699917b458c7ae939c/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
 41        android:debuggable="true"
 42        android:extractNativeLibs="false"
 43        android:icon="@mipmap/ic_launcher"
-43-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:14:9-43
+43-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:14:9-43
 44        android:label="@string/app_name"
-44-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:13:9-41
+44-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:13:9-41
 45        android:roundIcon="@mipmap/ic_launcher_round"
-45-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:15:9-54
+45-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:15:9-54
 46        android:supportsRtl="true"
-46-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:18:9-35
+46-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:18:9-35
 47        android:theme="@style/AppTheme"
-47-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:17:9-40
+47-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:17:9-40
 48        android:usesCleartextTraffic="true" >
-48-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/debug/AndroidManifest.xml:6:9-44
+48-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/debug/AndroidManifest.xml:6:9-44
 49        <meta-data
-49-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:21:9-23:71
+49-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:21:9-23:71
 50            android:name="com.skt.Tmap.APIKey"
-50-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:22:13-47
+50-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:22:13-47
 51            android:value="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy" />
-51-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:23:13-69
+51-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:23:13-69
 52
 53        <activity
-53-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:25:9-39:20
+53-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:25:9-39:20
 54            android:name="com.navi.MainActivity"
-54-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:26:13-41
+54-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:26:13-41
 55            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-55-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:28:13-122
+55-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:28:13-122
 56            android:exported="true"
-56-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:31:13-36
+56-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:31:13-36
 57            android:label="@string/app_name"
-57-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:27:13-45
+57-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:27:13-45
 58            android:launchMode="singleTask"
-58-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:29:13-44
+58-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:29:13-44
 59            android:theme="@style/BootSplashTheme"
-59-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:32:13-51
+59-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:32:13-51
 60            android:windowSoftInputMode="adjustResize" > <!-- ⭐ 여기 변경 -->
-60-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:30:13-55
+60-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:30:13-55
 61
 62            <intent-filter>
-62-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:34:13-37:29
+62-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:34:13-37:29
 63                <action android:name="android.intent.action.MAIN" />
-63-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:35:17-68
-63-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:35:25-66
+63-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:35:17-68
+63-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:35:25-66
 64
 65                <category android:name="android.intent.category.LAUNCHER" />
-65-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:36:17-76
-65-->/Users/ohminseok/Desktop/naviiii/navi-frontend/android/app/src/main/AndroidManifest.xml:36:27-74
+65-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:36:17-76
+65-->/Users/ohminseok/Desktop/navii/navi-frontend/android/app/src/main/AndroidManifest.xml:36:27-74
 66            </intent-filter>
 67        </activity>
 68
 69        <service
-69-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:9-14:40
+69-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:9-14:40
 70            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingHeadlessService"
-70-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:13-103
+70-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:13-103
 71            android:exported="false" />
-71-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:13-37
+71-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:13-37
 72        <service
-72-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:9-21:19
+72-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:9-21:19
 73            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingService"
-73-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-95
+73-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-95
 74            android:exported="false" >
-74-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:13-37
+74-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:13-37
 75            <intent-filter>
-75-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-20:29
+75-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-20:29
 76                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-76-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:17-78
-76-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:25-75
+76-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:17-78
+76-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:25-75
 77            </intent-filter>
 78        </service>
 79
 80        <receiver
-80-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:23:9-30:20
+80-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:23:9-30:20
 81            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingReceiver"
-81-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:13-96
+81-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:13-96
 82            android:exported="true"
-82-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:13-36
+82-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:13-36
 83            android:permission="com.google.android.c2dm.permission.SEND" >
-83-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:26:13-73
+83-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:26:13-73
 84            <intent-filter>
-84-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-29:29
+84-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-29:29
 85                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-85-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:17-81
-85-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:25-78
+85-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:17-81
+85-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:25-78
 86            </intent-filter>
 87        </receiver>
 88
 89        <meta-data
-89-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:32:9-34:37
+89-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:32:9-34:37
 90            android:name="delivery_metrics_exported_to_big_query_enabled"
-90-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:33:13-74
+90-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:33:13-74
 91            android:value="false" />
-91-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:34:13-34
+91-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:34:13-34
 92        <meta-data
-92-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:35:9-37:36
+92-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:35:9-37:36
 93            android:name="firebase_messaging_auto_init_enabled"
-93-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:36:13-64
+93-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:36:13-64
 94            android:value="true" />
-94-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:37:13-33
+94-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:37:13-33
 95        <meta-data
-95-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:38:9-40:37
+95-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:38:9-40:37
 96            android:name="firebase_messaging_notification_delegation_enabled"
-96-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:39:13-78
+96-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:39:13-78
 97            android:value="false" />
-97-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:40:13-34
+97-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:40:13-34
 98        <meta-data
-98-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:41:9-43:32
+98-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:41:9-43:32
 99            android:name="com.google.firebase.messaging.default_notification_channel_id"
-99-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:42:13-89
+99-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:42:13-89
 100            android:value="" />
-100-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:43:13-29
+100-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:43:13-29
 101        <meta-data
-101-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:44:9-46:47
+101-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:44:9-46:47
 102            android:name="com.google.firebase.messaging.default_notification_color"
-102-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:45:13-84
+102-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:45:13-84
 103            android:resource="@color/white" />
-103-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:46:13-44
+103-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:46:13-44
 104        <meta-data
-104-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:9-11:36
+104-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:9-11:36
 105            android:name="app_data_collection_default_enabled"
-105-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-63
+105-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-63
 106            android:value="true" />
-106-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-33
+106-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-33
 107
 108        <service
-108-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:9-21:19
+108-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:9-21:19
 109            android:name="com.google.firebase.components.ComponentDiscoveryService"
-109-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:13-84
+109-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:13-84
 110            android:directBootAware="true"
-110-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:13-43
+110-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:13-43
 111            android:exported="false" >
-111-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-37
+111-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-37
 112            <meta-data
-112-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-20:85
+112-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-20:85
 113                android:name="com.google.firebase.components:io.invertase.firebase.app.ReactNativeFirebaseAppRegistrar"
-113-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:17-120
+113-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:17-120
 114                android:value="com.google.firebase.components.ComponentRegistrar" />
-114-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:17-82
+114-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:17-82
 115            <meta-data
 115-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:57:13-59:85
 116                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar"
@@ -248,31 +248,31 @@
 133        </service>
 134
 135        <provider
-135-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:23:9-27:38
+135-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:23:9-27:38
 136            android:name="io.invertase.firebase.app.ReactNativeFirebaseAppInitProvider"
-136-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:13-88
+136-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:13-88
 137            android:authorities="com.navi.reactnativefirebaseappinitprovider"
-137-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:13-86
+137-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:13-86
 138            android:exported="false"
-138-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:26:13-37
+138-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:26:13-37
 139            android:initOrder="99" />
-139-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-35
+139-->[:react-native-firebase_app] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/app/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-35
 140        <provider
-140-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:9-16:20
+140-->[:react-native-image-picker] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:9-16:20
 141            android:name="com.imagepicker.ImagePickerProvider"
-141-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:13-63
+141-->[:react-native-image-picker] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:13-63
 142            android:authorities="com.navi.imagepickerprovider"
-142-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-71
+142-->[:react-native-image-picker] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:13-71
 143            android:exported="false"
-143-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-37
+143-->[:react-native-image-picker] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:13-37
 144            android:grantUriPermissions="true" >
-144-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:13-47
+144-->[:react-native-image-picker] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:13-47
 145            <meta-data
-145-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:13-15:70
+145-->[:react-native-image-picker] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:13-15:70
 146                android:name="android.support.FILE_PROVIDER_PATHS"
-146-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:17-67
+146-->[:react-native-image-picker] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:17-67
 147                android:resource="@xml/imagepicker_provider_paths" />
-147-->[:react-native-image-picker] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:17-67
+147-->[:react-native-image-picker] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:17-67
 148        </provider>
 149
 150        <activity
@@ -291,10 +291,10 @@
 157            android:permission="com.google.android.c2dm.permission.SEND" >
 157-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:32:13-73
 158            <intent-filter>
-158-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-29:29
+158-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-29:29
 159                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-159-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:17-81
-159-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:25-78
+159-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:17-81
+159-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:25-78
 160            </intent-filter>
 161
 162            <meta-data
@@ -317,10 +317,10 @@
 173            android:exported="false" >
 173-->[com.google.firebase:firebase-messaging:25.0.1] /Users/ohminseok/.gradle/caches/8.8/transforms/be59d848dae42d652f9fe82ed63c5ce0/transformed/firebase-messaging-25.0.1/AndroidManifest.xml:49:13-37
 174            <intent-filter android:priority="-500" >
-174-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-20:29
+174-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:13-20:29
 175                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-175-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:17-78
-175-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:25-75
+175-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:17-78
+175-->[:react-native-firebase_messaging] /Users/ohminseok/Desktop/navi/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:25-75
 176            </intent-filter>
 177        </service>
 178
