@@ -150,11 +150,13 @@ export default function SafeRouteScreen() {
   const [confirmCallback, setConfirmCallback] = useState<() => void>(() => () => {});
 
   // CustomAlert 열기 함수
-  const openAlert = (title: string, msg: string) => {
+  const openAlert = (title: string, msg?: string) => {
     setAlertTitle(title);
-    setAlertMsg(msg);
+    setAlertMsg(msg ?? '');
     setAlertVisible(true);
   };
+  const [alertConfirm, setAlertConfirm] = useState<null | (() => void)>(null);
+  const [alertHideCancel, setAlertHideCancel] = useState(false);
   // CustomConfirm 열기 함수 (확인/취소 있는 알림)
   const openConfirm = (title: string, msg: string, onConfirm: () => void) => {
     setConfirmTitle(title);
@@ -1167,34 +1169,52 @@ export default function SafeRouteScreen() {
                   shadowColor: 'transparent',
                   shadowOpacity: 0,
                 }}
-                  onPress={() => {
-                    const rid = String(selectedReport?.reportId ?? selectedReport?.id ?? '');
-                    if (!rid) { detailOpenRef.current = false; setDetailOpen(false); return; }
-                    useAppAlertStore.getState().show({
-                      title: '이제 없어요',
-                      body: '정말 더 이상 존재하지 않나요?',
-                      ctaText: '확인',
-                      cancelText: '취소',
-                      onConfirm: async () => {
-                        try {
-                          try { console.log('[NotThere] map modal send for reportId=', rid, 'category=', selectedReport?.category ?? selectedReport?.title ?? '제보'); } catch (logErr) {}
-                          let token: string | null = null;
-                          try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                          await postReportNotThere(rid, token ?? undefined);
-                        } catch (e: any) {
-                          console.warn('not-there failed', e);
-                          const errorMsg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '상태 전송에 실패했습니다.';
-                          if (errorMsg.includes('이미') && errorMsg.includes('이제 없어요')) {
-                            openAlert('알림', '이미 누른 제보입니다.');
-                          } else {
-                            openAlert('처리 실패', errorMsg);
-                          }
-                        }
-                        // 닫기
-                        detailOpenRef.current = false; setDetailOpen(false);
-                      }
-                    });
-                  }}
+                onPress={async () => {
+                  const rid = String(selectedReport?.reportId ?? selectedReport?.id ?? '');
+                  if (!rid) {
+                    detailOpenRef.current = false;
+                    setDetailOpen(false);
+                    return;
+                  }
+
+                  // 토큰 확인: 체험 모드면 CustomAlert로 안내
+                  let token: string | null = null;
+                  try {
+                    token = await AsyncStorage.getItem('access_token');
+                  } catch (e) {
+                    console.warn('token read failed', e);
+                  }
+                  if (!token) {
+                    openAlert('알림', '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!');
+                    return;
+                  }
+
+                  // Use local CustomAlert confirm (consistent with Cluster behavior)
+                  setAlertTitle('이제 없어요');
+                  setAlertMsg('정말 더 이상 존재하지 않나요?');
+                  setAlertHideCancel(false);
+                  setAlertConfirm(() => async () => {
+                    try {
+                      try { console.log('[NotThere] map modal send for reportId=', rid, 'category=', selectedReport?.category ?? selectedReport?.title ?? '제보'); } catch (logErr) {}
+                      let tokenToUse: string | null = null;
+                      try { tokenToUse = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                      await postReportNotThere(rid, tokenToUse ?? undefined);
+                      // on success: close alert
+                      setAlertVisible(false);
+                      setAlertConfirm(null);
+                    } catch (e: any) {
+                      console.warn('not-there failed', e);
+                      // Standardize to single dismissible message
+                      setAlertTitle('안내');
+                      setAlertMsg('이미 누른 제보입니다.');
+                      setAlertConfirm(null);
+                      setAlertHideCancel(true);
+                    }
+                    // 닫기 modal
+                    detailOpenRef.current = false; setDetailOpen(false);
+                  });
+                  setAlertVisible(true);
+                }}
               >
                 <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
               </TouchableOpacity>
@@ -1740,7 +1760,9 @@ export default function SafeRouteScreen() {
       visible={alertVisible}
       title={alertTitle}
       message={alertMsg}
-      onClose={() => setAlertVisible(false)}
+      onClose={() => { setAlertVisible(false); setAlertConfirm(null); }}
+      onConfirm={alertConfirm ?? undefined}
+      hideCancel={alertHideCancel}
     />
     </View>
   );

@@ -69,7 +69,12 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
 
     const tokenCheck = await AsyncStorage.getItem("access_token");
     if (!tokenCheck) {
-      openAlert("안내", "체험해보기 상태에서는 평가 기능을 사용할 수 없어요!");
+      // Use local CustomAlert UI (consistent with '이제 없어요' flow)
+      setAlertTitle("안내");
+      setAlertMsg("체험해보기 상태에서는 평가 기능을 사용할 수 없어요!");
+      setAlertHideCancel(true);
+      setAlertConfirm(null);
+      setAlertVisible(true);
       return;
     }
 
@@ -225,14 +230,11 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                     try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
                     await postReportNotThere(rid, token ?? undefined);
                   } catch (e: any) {
-                    const msg =
-                      e?.response?.data?.detail ||
-                      e?.response?.data?.message ||
-                      e?.message ||
-                      "상태 전송에 실패했습니다.";
-                    setAlertTitle("처리 실패");
-                    setAlertMsg(msg);
+                    // Standardize message to '이미 누른 제보입니다.' and prevent retry
+                    setAlertTitle("안내");
+                    setAlertMsg("이미 누른 제보입니다.");
                     setAlertHideCancel(true);
+                    setAlertConfirm(null);
                   }
                 });
                 setAlertVisible(true);
