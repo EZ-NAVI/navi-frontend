@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -14,6 +13,9 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { api } from "../api/api";
+
+// ⭐ CustomAlert 추가
+import CustomAlert from "../components/CustomAlert";
 
 export default function SignupFormScreen() {
   const navigation = useNavigation<any>();
@@ -36,7 +38,20 @@ export default function SignupFormScreen() {
 
   const [submitting, setSubmitting] = useState(false);
 
-  // ✅ 형식 검증 함수
+  // ⭐ CustomAlert 상태
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMsg, setAlertMsg] = useState("");
+
+  const openAlert = (title: string, msg: string) => {
+    setAlertTitle(title);
+    setAlertMsg(msg);
+    setAlertVisible(true);
+  };
+
+  // ----------------------------
+  //   🔍 형식 검증
+  // ----------------------------
   const isValidPhone = (value: string) =>
     /^01[016789]-\d{3,4}-\d{4}$/.test(value.trim());
   const isValidEmail = (value: string) =>
@@ -58,36 +73,39 @@ export default function SignupFormScreen() {
       !relPhone ||
       !relEmail
     ) {
-      Alert.alert("입력 확인", "모든 항목을 입력해주세요.");
+      openAlert("입력 확인", "모든 항목을 입력해주세요.");
       return false;
     }
     if (!isValidPhone(phone)) {
-      Alert.alert("형식 오류", "휴대폰 번호 형식이 올바르지 않습니다. 예: 010-1234-5678");
+      openAlert("형식 오류", "휴대폰 번호 형식이 올바르지 않습니다.\n예: 010-1234-5678");
       return false;
     }
     if (!isValidEmail(email)) {
-      Alert.alert("형식 오류", "이메일 형식이 올바르지 않습니다.");
+      openAlert("형식 오류", "이메일 형식이 올바르지 않습니다.");
       return false;
     }
     if (!isValidBirthYear(birthYear)) {
-      Alert.alert("형식 오류", "출생년도는 4자리 숫자로 입력해주세요.");
+      openAlert("형식 오류", "출생년도는 4자리 숫자로 입력해주세요.");
       return false;
     }
     if (!isValidPhone(relPhone)) {
-      Alert.alert("형식 오류", "매칭 대상의 휴대폰 번호 형식이 올바르지 않습니다.");
+      openAlert("형식 오류", "매칭 대상의 휴대폰 번호 형식이 올바르지 않습니다.");
       return false;
     }
     if (!isValidEmail(relEmail)) {
-      Alert.alert("형식 오류", "매칭 대상의 이메일 형식이 올바르지 않습니다.");
+      openAlert("형식 오류", "매칭 대상의 이메일 형식이 올바르지 않습니다.");
       return false;
     }
     if (!isValidBirthYear(relBirth)) {
-      Alert.alert("형식 오류", "매칭 대상의 출생년도는 4자리 숫자로 입력해주세요.");
+      openAlert("형식 오류", "매칭 대상의 출생년도는 4자리 숫자로 입력해주세요.");
       return false;
     }
     return true;
   };
 
+  // ----------------------------
+  //   🚀 회원가입 요청
+  // ----------------------------
   const onSubmit = async () => {
     if (!validateForm()) return;
 
@@ -119,33 +137,37 @@ export default function SignupFormScreen() {
     try {
       setSubmitting(true);
 
-      // ✅ 서버 응답에서 matched 필드를 직접 받음
+      // 🟡 서버 응답
       const res = await api.register(payload);
 
       if (res.matched) {
-        Alert.alert(
+        openAlert(
           "가입 완료",
           isParent
             ? "회원가입이 완료되었습니다.\n자녀와 매칭되었어요!"
             : "회원가입이 완료되었습니다.\n부모님과 매칭되었어요!"
         );
       } else {
-        Alert.alert(
+        openAlert(
           "가입 완료",
           isParent
             ? "회원가입이 완료되었습니다.\n자녀가 아직 가입을 안 했어요."
-            : "회원가입이 완료되었습니다.\n부모님이 아직 가입을 안 하셨네요."
+            : "회원가입이 완료되었습니다.\n부모님이 아직 가입을 안 하셨어요."
         );
       }
 
       navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+
     } catch (err: any) {
-      Alert.alert("가입 실패", String(err?.message || err));
+      openAlert("가입 실패", String(err?.message || err));
     } finally {
       setSubmitting(false);
     }
   };
 
+  // ----------------------------
+  //   UI
+  // ----------------------------
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: "#FFFFFF" }}
@@ -155,7 +177,7 @@ export default function SignupFormScreen() {
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
-        {/* 좌상단 뒤로가기 */}
+        {/* 🔙 뒤로가기 */}
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
@@ -163,14 +185,14 @@ export default function SignupFormScreen() {
           <Icon name="chevron-back" size={26} color="#333" />
         </TouchableOpacity>
 
-        {/* 중앙 로고 */}
+        {/* ⭐ 로고 영역 */}
         <View style={styles.header}>
           <Text style={styles.logoText}>NAVI</Text>
           <Text style={styles.title}>회원 정보 입력</Text>
         </View>
 
+        {/* 입력 폼 */}
         <View style={styles.form}>
-          {/* 본인 정보 */}
           <TextInput
             placeholder="이름"
             placeholderTextColor="#A0A0A0"
@@ -216,7 +238,6 @@ export default function SignupFormScreen() {
           {/* 구분선 */}
           <View style={styles.divider} />
 
-          {/* 부모/자녀 정보 */}
           <Text style={styles.sectionTitle}>
             {isParent
               ? "매칭될 자녀 정보를 입력해 주세요!"
@@ -257,7 +278,7 @@ export default function SignupFormScreen() {
             onChangeText={setRelEmail}
           />
 
-          {/* 가입 완료 */}
+          {/* 가입 버튼 */}
           <TouchableOpacity
             style={[
               styles.primaryBtn,
@@ -266,10 +287,20 @@ export default function SignupFormScreen() {
             disabled={submitting}
             onPress={onSubmit}
           >
-            <Text style={styles.primaryBtnText}>{submitting ? "처리 중..." : "가입 완료"}</Text>
+            <Text style={styles.primaryBtnText}>
+              {submitting ? "처리 중..." : "가입 완료"}
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* ⭐ CustomAlert 표시 */}
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMsg}
+        onClose={() => setAlertVisible(false)}
+      />
     </KeyboardAvoidingView>
   );
 }

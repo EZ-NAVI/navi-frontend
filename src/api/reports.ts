@@ -115,10 +115,18 @@ export const fetchReportComments = async (reportId: string, token?: string) => {
   try {
     const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
     const res = await client.get(`/reports/${encodeURIComponent(reportId)}/comments/`, config as any);
-    // defensive: if res.data.results exists, return it, else return res.data
-    if (Array.isArray(res.data)) return res.data;
-    if (res.data && Array.isArray(res.data.results)) return res.data.results;
-    return res.data;
+    // Normalize multiple possible server response shapes to always return an array.
+    const d = res.data;
+    if (!d) return [];
+    if (Array.isArray(d)) return d;
+    if (d && Array.isArray(d.results)) return d.results;
+    if (d && Array.isArray(d.comments)) return d.comments;
+    if (d && Array.isArray(d.data)) return d.data;
+    if (d && Array.isArray(d.items)) return d.items;
+    // Some servers return an object for a single comment; wrap it so callers receive an array
+    if (d && typeof d === 'object') return [d];
+    // Fallback: return empty array instead of unexpected primitive
+    return [];
   } catch (error: any) {
     console.error(`❌ /reports/${reportId}/comments/ 조회 실패:`, error.response?.data || error.message);
     throw error;
@@ -139,6 +147,23 @@ export const postReportComment = async (reportId: string, content: string, token
     return res.data;
   } catch (error: any) {
     console.error(`❌ /reports/${reportId}/comments/ POST 실패:`, error.response?.data || error.message);
+    throw error;
+  }
+};
+
+/**
+ * 댓글 삭제
+ * Endpoint: DELETE /reports/{report_id}/comments/{comment_id}
+ */
+export const deleteReportComment = async (reportId: string, commentId: string, token?: string) => {
+  try {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+    try { console.log(`API: DELETE /reports/${reportId}/comments/${commentId}`); } catch (e) {}
+    const res = await client.delete(`/reports/${encodeURIComponent(reportId)}/comments/${encodeURIComponent(commentId)}`, config as any);
+    try { console.log('API: delete comment success', { status: res.status, data: res.data }); } catch (e) {}
+    return res.data;
+  } catch (error: any) {
+    console.error(`❌ /reports/${reportId}/comments/${commentId} 삭제 실패:`, error.response?.data || error.message);
     throw error;
   }
 };

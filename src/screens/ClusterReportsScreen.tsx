@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { useAppAlertStore } from '../stores/appAlertStore';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { fetchReportsByCluster, fetchReportComments, postReportEvaluation, fetchReportById, postReportNotThere } from '../api/reports';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCurrentUserRole } from '../lib/authState';
 import { useReportStore } from '../stores/reportStore';
 
 type Props = {
@@ -60,7 +62,7 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
       applyOptimisticEvaluation(rid, evalKey);
     } catch (e) {
       console.warn('Cluster evaluation failed', e);
-      Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+      openAlert('전송 실패', '피드백 전송에 실패했습니다.');
     } finally {
       setEvaluatingIds((m) => ({ ...m, [rid]: false }));
     }
@@ -73,22 +75,22 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
         // Debug: log incoming props
         try { console.log('ClusterReportsScreen load: clusterId=', clusterId, 'nearbyReports present=', Array.isArray(nearbyReports) && nearbyReports.length > 0); } catch (e) {}
 
-        // If nearbyReports provided, use them directly
+        // If nearbyReports provided, use them directly (but still fetch comments below)
+        let initialList: any[] = [];
         if (Array.isArray(nearbyReports) && nearbyReports.length > 0) {
           console.log('ClusterReportsScreen: using nearbyReports directly, count=', nearbyReports.length);
           // filter out unwanted category '도로폐쇄'
-          const filteredNearby = nearbyReports.filter((r: any) => {
+          initialList = nearbyReports.filter((r: any) => {
             const cat = (r.category ?? r.type ?? '').toString();
             return cat.trim() !== '도로폐쇄';
           });
-          setItems(filteredNearby);
-          return;
+          setItems(initialList);
         }
         // try to use stored token if any (dev fallback handled in API too)
         let token: string | null = null;
         try { token = await AsyncStorage.getItem('access_token'); } catch (e) { /* ignore */ }
   console.log('ClusterReportsScreen: calling fetchReportsByCluster with cluster_id=', String(clusterId));
-  const data = await fetchReportsByCluster(String(clusterId), token ?? undefined);
+  const data = initialList.length > 0 ? initialList : await fetchReportsByCluster(String(clusterId), token ?? undefined);
   console.log('ClusterReportsScreen: fetchReportsByCluster response received');
     // Handle multiple possible response shapes: array, { results: [...] }, { reports: [...] }, or object
   let resolved: any[] = [];
@@ -113,29 +115,29 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
       setSelectedCategory('전체');
     } catch (e) {}
 
-    // Fetch comments & userEvaluation for a few items, attach them.
+    // Fetch comments & userEvaluation for multiple items (not just top-5).
+    // We limit to a reasonable number to avoid too many network calls at once.
     (async () => {
       try {
-        const toInspect = Array.isArray(resolved) ? resolved.slice(0, 5) : [];
-        for (const it of toInspect) {
+        const listToInspect = Array.isArray(filtered) ? filtered.slice(0, 30) : [];
+        for (const it of listToInspect) {
           const rid = String(it.reportId ?? it.id ?? '');
           if (!rid) continue;
           try {
-            // detail fetch for userEvaluation
+            // detail fetch for userEvaluation (best-effort)
             try {
               const detail = await fetchReportById(rid, token ?? undefined);
-              if (detail?.userEvaluation) {
+              if (detail && detail.userEvaluation) {
                 setItems((prev) => prev.map((p) => {
                   const pid = String(p.reportId ?? p.id ?? '');
                   if (pid === rid) return { ...p, userEvaluation: detail.userEvaluation };
                   return p;
                 }));
               }
-            } catch (e) { /* ignore */ }
+            } catch (e) { /* ignore detail errors */ }
+
             const comments = await fetchReportComments(rid, token ?? undefined);
-            const preview = Array.isArray(comments)
-              ? { count: comments.length, sample: comments.slice(0, 3) }
-              : { type: typeof comments, value: comments };
+            const preview = { count: Array.isArray(comments) ? comments.length : 0, sample: Array.isArray(comments) ? comments.slice(0,3) : [] };
             try { console.log('ClusterReportsScreen: comments preview for report', rid, preview); } catch (e) {}
 
             // attach comments to the corresponding item in the list so UI can show them
@@ -156,7 +158,7 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
     })();
       } catch (e) {
         console.warn('cluster list load failed', e);
-        Alert.alert('불러오기 실패', '클러스터 제보를 불러오지 못했습니다.');
+        openAlert('불러오기 실패', '클러스터 제보를 불러오지 못했습니다.');
       } finally {
         setLoading(false);
       }
@@ -200,13 +202,14 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
               onPress={() => {
                 const rid = String(item.reportId ?? item.id ?? '');
                 if (!rid) return;
-                Alert.alert('이제 없어요', '정말 더 이상 존재하지 않나요?', [
-                  { text: '취소', style: 'cancel' },
-                  { text: '확인', onPress: async () => {
+                useAppAlertStore.getState().show({
+                  title: '이제 없어요',
+                  body: '정말 더 이상 존재하지 않나요?',
+                  ctaText: '확인',
+                  cancelText: '취소',
+                  onConfirm: async () => {
                     try {
-                      try {
-                        console.log('[NotThere] cluster screen send for reportId=', rid, 'category=', item.category ?? item.title ?? '제보');
-                      } catch (logErr) {}
+                      try { console.log('[NotThere] cluster screen send for reportId=', rid, 'category=', item.category ?? item.title ?? '제보'); } catch (logErr) {}
                       let token: string | null = null;
                       try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
                       await postReportNotThere(rid, token ?? undefined);
@@ -214,13 +217,13 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                       console.warn('not-there failed', e);
                       const errorMsg = e?.response?.data?.detail || e?.response?.data?.message || e?.message || '상태 전송에 실패했습니다.';
                       if (errorMsg.includes('이미') && errorMsg.includes('이제 없어요')) {
-                        Alert.alert('알림', '이미 누른 제보입니다.');
+                        openAlert('알림', '이미 누른 제보입니다.');
                       } else {
-                        Alert.alert('처리 실패', errorMsg);
+                        openAlert('처리 실패', errorMsg);
                       }
                     }
-                  } }
-                ]);
+                  }
+                });
               }}
             >
               <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
@@ -260,9 +263,18 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                   const rid = String(item.reportId ?? item.id ?? '');
                   const selected = (item.userEvaluation ?? null) === 'bad';
                   const count = Number(item.badCount ?? 0);
+                  const role = getCurrentUserRole();
+                    if (role === 'parent') {
+                    return (
+                      <View style={[styles.emojiBtn, { opacity: 1, marginRight: 6 }]}> 
+                        <Image source={require('../asset/emoji_good.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
+                        <Text style={[styles.emojiLabel, selected && styles.emojiLabelSelected]}>좋음 {count}</Text>
+                      </View>
+                    );
+                  }
                   return (
-                    <TouchableOpacity style={styles.emojiBtn} disabled={!!evaluatingIds[rid]} onPress={() => submitEvaluation(rid, 'bad')}>
-                      <Text style={styles.emoji}>😊</Text>
+                    <TouchableOpacity style={[styles.emojiBtn, { marginRight: 6 }]} disabled={!!evaluatingIds[rid]} onPress={() => submitEvaluation(rid, 'bad')}>
+                      <Image source={require('../asset/emoji_good.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
                       <Text style={[styles.emojiLabel, selected && styles.emojiLabelSelected]}>좋음 {count}</Text>
                     </TouchableOpacity>
                   );
@@ -272,9 +284,18 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                   const rid = String(item.reportId ?? item.id ?? '');
                   const selected = (item.userEvaluation ?? null) === 'normal';
                   const count = Number(item.normalCount ?? 0);
+                  const role = getCurrentUserRole();
+                  if (role === 'parent') {
+                    return (
+                      <View style={[styles.emojiBtn, { opacity: 1 }]}> 
+                        <Image source={require('../asset/emoji_soso.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
+                        <Text style={[styles.emojiLabel, selected && styles.emojiLabelSelected]}>보통 {count}</Text>
+                      </View>
+                    );
+                  }
                   return (
                     <TouchableOpacity style={styles.emojiBtn} disabled={!!evaluatingIds[rid]} onPress={() => submitEvaluation(rid, 'normal')}>
-                      <Text style={styles.emoji}>😐</Text>
+                      <Image source={require('../asset/emoji_soso.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
                       <Text style={[styles.emojiLabel, selected && styles.emojiLabelSelected]}>보통 {count}</Text>
                     </TouchableOpacity>
                   );
@@ -284,9 +305,18 @@ export default function ClusterReportsScreen({ clusterId, onClose, nearbyReports
                   const rid = String(item.reportId ?? item.id ?? '');
                   const selected = (item.userEvaluation ?? null) === 'good';
                   const count = Number(item.goodCount ?? 0);
+                  const role = getCurrentUserRole();
+                  if (role === 'parent') {
+                    return (
+                      <View style={[styles.emojiBtn, { opacity: 1 }]}> 
+                        <Image source={require('../asset/emoji_bad.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
+                        <Text style={[styles.emojiLabel, selected && styles.emojiLabelSelected]}>아쉬움 {count}</Text>
+                      </View>
+                    );
+                  }
                   return (
                     <TouchableOpacity style={styles.emojiBtn} disabled={!!evaluatingIds[rid]} onPress={() => submitEvaluation(rid, 'good')}>
-                      <Text style={styles.emoji}>☹️</Text>
+                      <Image source={require('../asset/emoji_bad.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
                       <Text style={[styles.emojiLabel, selected && styles.emojiLabelSelected]}>아쉬움 {count}</Text>
                     </TouchableOpacity>
                   );
@@ -347,10 +377,10 @@ const styles = StyleSheet.create({
   cardText: { color: '#000', marginBottom: 10 },
   cardTextSmall: { color: '#000', marginBottom: 6, fontSize: 14 },
   commentLabel: { fontWeight: '700', marginBottom: 8, color: '#000' },
-  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  rightArea: { alignItems: 'flex-end', marginLeft: 12, justifyContent: 'space-between' },
-  emojisRow: { flexDirection: 'row', alignItems: 'center' },
-  emojiBtn: { alignItems: 'center', marginLeft: 6 },
+  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  rightArea: { alignItems: 'flex-end', marginLeft: 12, justifyContent: 'flex-start' },
+  emojisRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6 },
+  emojiBtn: { alignItems: 'center', marginHorizontal: 2 },
   emoji: { fontSize: 28 },
   emojiLabel: { fontSize: 12, marginTop: 4, color: '#666' },
   emojiLabelSelected: { fontSize: 12, marginTop: 4, color: '#000', fontWeight: '700' },

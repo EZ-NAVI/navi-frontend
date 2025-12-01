@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { deleteReport } from '../api/reports';
+import { useAppAlertStore } from '../stores/appAlertStore';
 
 interface ReportEditModalProps {
   visible: boolean;
@@ -48,34 +49,27 @@ export default function ReportEditModal({
       return;
     }
 
-    Alert.alert(
-      '제보 삭제',
-      '정말로 이 제보를 삭제하시겠습니까?',
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setIsDeleting(true);
-              console.log(`🗑️ [DELETE] 제보 삭제 시작: reportId=${reportId}`);
-              
-              await deleteReport(reportId);
-              
-              console.log('✅ [DELETE] 제보 삭제 완료');
-              notify('제보가 삭제되었습니다.');
-              onClose();
-            } catch (error: any) {
-              console.error('❌ [DELETE] 제보 삭제 실패:', error);
-              notify(error?.response?.data?.message || '제보 삭제에 실패했습니다.');
-            } finally {
-              setIsDeleting(false);
-            }
-          },
-        },
-      ]
-    );
+    useAppAlertStore.getState().show({
+      title: '제보 삭제',
+      body: '정말로 이 제보를 삭제하시겠습니까?',
+      ctaText: '삭제',
+      cancelText: '취소',
+      onConfirm: async () => {
+        try {
+          setIsDeleting(true);
+          console.log(`🗑️ [DELETE] 제보 삭제 시작: reportId=${reportId}`);
+          await deleteReport(reportId);
+          console.log('✅ [DELETE] 제보 삭제 완료');
+          notify('제보가 삭제되었습니다.');
+          onClose();
+        } catch (error: any) {
+          console.error('❌ [DELETE] 제보 삭제 실패:', error);
+          notify(error?.response?.data?.message || '제보 삭제에 실패했습니다.');
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+    });
   };
 
   return (

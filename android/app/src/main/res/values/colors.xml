@@ -9,4 +9,7 @@
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- ⭐ 스플래시 배경색 추가 -->
+    <color name="bootsplash_background">#FFFFFF</color>
 </resources>
