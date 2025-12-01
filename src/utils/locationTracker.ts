@@ -1,8 +1,9 @@
 // src/utils/locationTracker.ts
 import { PermissionsAndroid, Platform } from "react-native";
+import type { Dispatch, SetStateAction } from 'react';
 import Geolocation from "react-native-geolocation-service";
 
-let intervalId: NodeJS.Timeout | null = null;
+let intervalId: ReturnType<typeof setInterval> | null = null;
 
 export async function requestLocationPermission() {
   if (Platform.OS === "android") {
@@ -20,7 +21,7 @@ export async function requestLocationPermission() {
   return true;
 }
 
-export const startTracking = async (setPositions: (pos: any[]) => void) => {
+export const startTracking = async (setPositions: Dispatch<SetStateAction<any[]>>) => {
   const ok = await requestLocationPermission();
   if (!ok) return;
 

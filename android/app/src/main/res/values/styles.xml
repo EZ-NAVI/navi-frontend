@@ -16,6 +16,10 @@
     <!-- ⭐ 스플래시 테마 추가 -->
     <style name="BootSplashTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/bootsplash</item>
+        <!-- Make status bar white on splash to match other screens -->
+        <item name="android:statusBarColor">@color/white</item>
+        <!-- Use dark status bar icons/text on white background -->
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
 </resources>
