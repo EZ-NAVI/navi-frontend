@@ -32,7 +32,6 @@ import { Modal, PanResponder, Animated, Dimensions } from 'react-native';
 import { useReportStore } from "../stores/reportStore";
 import { DEV_TOKEN } from "../config/dev";
 
-// 🔥 안전 경로 기능 관련 추가 import
 import { evaluateRoute } from "../api/evaluateRoute";
 import { startTracking, stopTracking } from "../utils/locationTracker";
 import { haversine } from "../utils/haversine";
@@ -65,6 +64,49 @@ export default function SafeRouteScreen() {
     return () => { mounted = false; };
   }, []);
 
+  // SafeRouteScreen 진입 시 1회만 안내 띄우기
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      try {
+        const hasSeen = await AsyncStorage.getItem("map_notice_shown");
+        const session = await AsyncStorage.getItem("session_started");
+
+        // 🔥 session_started가 없다면 "새 로그인 or 체험해보기" 상태로 판단
+        if (!session) {
+          await AsyncStorage.setItem("map_notice_shown", "false");
+          await AsyncStorage.setItem("session_started", "true");
+        }
+
+        const seen = await AsyncStorage.getItem("map_notice_shown");
+        if (seen === "true") return;
+
+        // 아직 본 적 없는 경우 → 안내 띄우기
+        const timer = setTimeout(() => {
+          if (!mounted) return;
+          openAlert(
+            "지도 이용 안내",
+            "지도가 보이지 않을 경우, 화면 회전을 켜고 한 번 회전하면 정상 표시될 수 있어요!\n\n" +
+              "경로 검색 후 마커가 잘 안 보이면 지도를 축소하거나 이동해 확인해 주세요!"
+          );
+        }, 300);
+
+        // 본 것으로 저장
+        await AsyncStorage.setItem("map_notice_shown", "true");
+
+        return () => clearTimeout(timer);
+      } catch (e) {
+        console.warn("map notice error", e);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+
   // reportStore에서 제보 리스트 가져오기 (WebSocket 실시간 갱신 반영)
   const reportsFromStore = useReportStore((state) => state.reports);
   const setReportsInStore = useReportStore((state) => state.setReports);
@@ -84,7 +126,7 @@ export default function SafeRouteScreen() {
   // a friendly fallback when the URL is missing or returns 403/404.
   const [selectedImageStatus, setSelectedImageStatus] = useState<'unknown' | 'ok' | 'error' | 'no-url'>('unknown');
 
-  // 🔥 기능용 상태 추가
+  // 기능용 상태 추가
   const [routeId, setRouteId] = useState<string | null>(null);
   const [userPositions, setUserPositions] = useState<any[]>([]);
   const reachedRef = useRef(false);
@@ -96,24 +138,24 @@ export default function SafeRouteScreen() {
   const [myInfo, setMyInfo] = useState<any | null>(null);
   const slideX = useRef(new Animated.Value(-300)).current;
 
-  // ⭐ CustomAlert 상태
+  // CustomAlert 상태
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertTitle, setAlertTitle] = useState("알림");
   const [alertMsg, setAlertMsg] = useState("");
 
-  // ⭐ CustomConfirm 상태 (확인/취소 두 버튼 알림)
+  // CustomConfirm 상태 (확인/취소 두 버튼 알림)
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [confirmTitle, setConfirmTitle] = useState("");
   const [confirmMsg, setConfirmMsg] = useState("");
   const [confirmCallback, setConfirmCallback] = useState<() => void>(() => () => {});
 
-  // ⭐ CustomAlert 열기 함수
+  // CustomAlert 열기 함수
   const openAlert = (title: string, msg: string) => {
     setAlertTitle(title);
     setAlertMsg(msg);
     setAlertVisible(true);
   };
-  // ⭐ CustomConfirm 열기 함수 (확인/취소 있는 알림)
+  // CustomConfirm 열기 함수 (확인/취소 있는 알림)
   const openConfirm = (title: string, msg: string, onConfirm: () => void) => {
     setConfirmTitle(title);
     setConfirmMsg(msg);
@@ -140,13 +182,15 @@ export default function SafeRouteScreen() {
     });
   };
 
-  // ⭐ 로그아웃 함수 (CustomConfirm 사용)
+  // 로그아웃 함수 (CustomConfirm 사용)
   const handleLogout = () => {
     const doLogout = async () => {
       await AsyncStorage.removeItem("access_token");
       await AsyncStorage.removeItem("user_id");
       await AsyncStorage.removeItem("user_role");
       await AsyncStorage.removeItem("fcm_token");
+      await AsyncStorage.removeItem("map_notice_shown");
+      await AsyncStorage.removeItem("session_started");
 
       closeMyPage();
       navigation.reset({ index: 0, routes: [{ name: "Login" }] });
@@ -162,7 +206,7 @@ export default function SafeRouteScreen() {
     );
   };
 
-  // 🔥 마이페이지 열릴 때 정보 가져오기
+  // 마이페이지 열릴 때 정보 가져오기
   useEffect(() => {
     if (!myPageOpen) return;
 
@@ -445,7 +489,7 @@ export default function SafeRouteScreen() {
     })
   ).current;
 
-  // ✅ 출발/도착 + preview 경로 + GPS 추적 (기능 merge)
+  // 출발/도착 + preview 경로 + GPS 추적 (기능 merge)
   useEffect(() => {
     if (!isReady || !map.ref.current) return;
 
@@ -492,7 +536,7 @@ export default function SafeRouteScreen() {
           const middle = pathCoords[Math.floor(pathCoords.length / 2)];
           map.animateTo(middle.lat, middle.lon, 15);
 
-          // ⭐ GPS 추적 시작
+          // GPS 추적 시작
           startTracking(setUserPositions);
         } else {
           openAlert("경로를 찾을 수 없습니다.");
@@ -519,7 +563,7 @@ export default function SafeRouteScreen() {
 
     if (reachedRef.current) return;
 
-    // ✅ 30m 이내 도착으로 판단
+    // 30m 이내 도착으로 판단
     if (distToDest <= 30) {
       console.log("🎉 목적지 도착!(<=30m)");
       reachedRef.current = true;
@@ -541,13 +585,6 @@ export default function SafeRouteScreen() {
           tokenToUse = await AsyncStorage.getItem('access_token');
         } catch (e) {
           console.warn('AsyncStorage read failed', e);
-        }
-        // if (!tokenToUse) tokenToUse = DEV_TOKEN;
-        if (!tokenToUse) {
-          console.log("체험 모드 → 제보 조회 안 함");
-          setReportsData([]);       // 핀 초기화
-          setReportsInStore([]);    // store 초기화
-          return;                   // 여기서 로딩 중단!
         }
 
         const reports = await fetchReports(tokenToUse ?? undefined);
@@ -830,6 +867,13 @@ export default function SafeRouteScreen() {
       showToast('댓글 내용을 입력해 주세요.');
       return;
     }
+
+  const tokenCheck = await AsyncStorage.getItem("access_token");
+  if (!tokenCheck) {
+    openAlert("알림", "체험해보기 상태에서는 댓글 작성이 불가능해요!");
+    return;
+  }
+
     setPostingComment(true);
     try {
       let tokenToUse: string | null = null;
@@ -857,7 +901,7 @@ export default function SafeRouteScreen() {
     }
   };
 
-  // 🔥 경로 저장 → 평가 모달 열기
+  // 경로 저장 → 평가 모달 열기
   const saveRouteToServer = async () => {
     if (!start || !end || userPositions.length < 2) {
       console.log("⚠ route 저장 불가");
@@ -910,7 +954,7 @@ export default function SafeRouteScreen() {
     }
   };
 
-  // ⭐ 평가 제출
+  // 평가 제출
   const handleSubmitRating = (rating: number) => {
     if (!routeId) {
       console.log("❌ routeId 없음 → 평가 불가");
@@ -1246,6 +1290,13 @@ export default function SafeRouteScreen() {
                                 disabled={evaluating}
                                 onPress={async () => {
                                   if (!selectedReport || evaluating) return;
+
+                                  const token = await AsyncStorage.getItem("access_token");
+                                  if (!token) {
+                                      openAlert("알림", "체험해보기 상태에서는 평가 기능을 사용할 수 없어요!");
+                                      return;
+                                  }
+
                                   try {
                                     setEvaluating(true);
                                     let token: string | null = null;
@@ -1286,6 +1337,13 @@ export default function SafeRouteScreen() {
                                 disabled={evaluating}
                                 onPress={async () => {
                                   if (!selectedReport || evaluating) return;
+
+                                  const token = await AsyncStorage.getItem("access_token");
+                                  if (!token) {
+                                      openAlert("알림", "체험해보기 상태에서는 평가 기능을 사용할 수 없어요!");
+                                      return;
+                                  }
+
                                   try {
                                     setEvaluating(true);
                                     let token: string | null = null;
@@ -1326,6 +1384,13 @@ export default function SafeRouteScreen() {
                                 disabled={evaluating}
                                 onPress={async () => {
                                   if (!selectedReport || evaluating) return;
+
+                                  const token = await AsyncStorage.getItem("access_token");
+                                  if (!token) {
+                                      openAlert("알림", "체험해보기 상태에서는 평가 기능을 사용할 수 없어요!");
+                                      return;
+                                  }
+
                                   try {
                                     setEvaluating(true);
                                     let token: string | null = null;

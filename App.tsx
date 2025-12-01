@@ -26,6 +26,8 @@ import SignupTypeScreen from "./src/screens/SignupTypeScreen";
 import SignupConsentScreen from "./src/screens/SignupConsentScreen";
 import SignupFormScreen from "./src/screens/SignupFormScreen";
 
+import OnboardingScreen from "./src/screens/OnboardingScreen";
+
 import { RouteProvider } from "./src/context/RouteContext";
 import { WebSocketProvider } from "./src/context/WebSocketContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -46,7 +48,6 @@ import messaging from "@react-native-firebase/messaging";
 import navigationRef from "./src/navigationRef";
 import { getCurrentUserRole } from "./src/lib/authState";
 
-// ⭐ 스플래시 숨기기 추가
 import RNBootSplash from "react-native-bootsplash";
 
 const Stack = createStackNavigator();
@@ -135,7 +136,16 @@ export default function App() {
   const [userId, setUserId] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  // ⭐ 스플래시 숨기기: App() 진입 후 실행
+  const [hasSeenOnboarding, setHasSeenOnboarding] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    const check = async () => {
+      const seen = await AsyncStorage.getItem("has_seen_onboarding");
+      setHasSeenOnboarding(seen === "true");
+    };
+    check();
+  }, []);
+
   React.useEffect(() => {
     RNBootSplash.hide({ fade: true });
   }, []);
@@ -180,7 +190,7 @@ export default function App() {
     };
   }, []);
 
-  if (isLoading) return null;
+  if (isLoading || hasSeenOnboarding === null) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -192,45 +202,26 @@ export default function App() {
         <AppAlertModal />
         <NavigationContainer ref={navigationRef}>
           <AppWithModal>
-            {userId ? (
-              <WebSocketProvider userId={userId}>
-                <>
-                  <Stack.Navigator initialRouteName={"Login"} screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
-                    <Stack.Screen name="LocationSearch" component={LocationSearchScreen} />
-                    <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
-                    <Stack.Screen name="ReportEdit" component={ReportEditScreen} />
+            <Stack.Navigator
+              initialRouteName={hasSeenOnboarding ? "Login" : "Onboarding"}
+              screenOptions={{ headerShown: false }}
+            >
+              <Stack.Screen name="Onboarding" component={OnboardingScreen} />
 
-                    <Stack.Screen name="Login" component={LoginScreen} />
-                    <Stack.Screen name="SignupType" component={SignupTypeScreen} />
-                    <Stack.Screen name="SignupConsent" component={SignupConsentScreen} />
-                    <Stack.Screen name="SignupForm" component={SignupFormScreen} />
+              <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
+              <Stack.Screen name="LocationSearch" component={LocationSearchScreen} />
+              <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
+              <Stack.Screen name="ReportEdit" component={ReportEditScreen} />
 
-                    <Stack.Screen name="DevSettings" component={DevSettingsScreen} />
-                    <Stack.Screen name="DebugNotification" component={DebugNotificationScreen} />
-                  </Stack.Navigator>
-                  <NavigationContent />
-                </>
-              </WebSocketProvider>
-            ) : (
-              <>
-                <Stack.Navigator initialRouteName={"Login"} screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
-                  <Stack.Screen name="LocationSearch" component={LocationSearchScreen} />
-                  <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
-                  <Stack.Screen name="ReportEdit" component={ReportEditScreen} />
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="SignupType" component={SignupTypeScreen} />
+              <Stack.Screen name="SignupConsent" component={SignupConsentScreen} />
+              <Stack.Screen name="SignupForm" component={SignupFormScreen} />
 
-                  <Stack.Screen name="Login" component={LoginScreen} />
-                  <Stack.Screen name="SignupType" component={SignupTypeScreen} />
-                  <Stack.Screen name="SignupConsent" component={SignupConsentScreen} />
-                  <Stack.Screen name="SignupForm" component={SignupFormScreen} />
-
-                  <Stack.Screen name="DevSettings" component={DevSettingsScreen} />
-                  <Stack.Screen name="DebugNotification" component={DebugNotificationScreen} />
-                </Stack.Navigator>
-                <NavigationContent />
-              </>
-            )}
+              <Stack.Screen name="DevSettings" component={DevSettingsScreen} />
+              <Stack.Screen name="DebugNotification" component={DebugNotificationScreen} />
+            </Stack.Navigator>
+            <NavigationContent />
           </AppWithModal>
         </NavigationContainer>
       </RouteProvider>
