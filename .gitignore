@@ -1,5 +1,12 @@
 node_modules/
 android/app/build/outputs/
+ios/Pods/
+ios/build/
+
 #.local env file (do not commit secrets)
 .env
 google-services.json
+GoogleService-Info.plist
+
+# macOS / system
+.DS_Store

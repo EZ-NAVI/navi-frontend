@@ -7231,10 +7231,10 @@ react-native-gesture-handler@^2.15.0, "react-native-gesture-handler@>= 2.0.0":
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
-react-native-image-picker@^5.7.0:
-  version "5.7.0"
-  resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-5.7.0.tgz"
-  integrity sha512-LGBrFQzKEAt/u4z+IcY7COZA7N6lCeLQ2dMu1PubK10+d9YBRS8n/ABNj48CJhEpUhcRPt7H3iWbwIuOlcZrDA==
+react-native-image-picker@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-5.0.1.tgz"
+  integrity sha512-+poQTHOnEGrbxJnut591XA9006svFOyfPg/i5bv+fLuwoSHh5HW0E/PVhvT8lbX0Z5C108vh3DAsnrfFFnPBGw==
 
 react-native-is-edge-to-edge@^1.2.1:
   version "1.2.1"

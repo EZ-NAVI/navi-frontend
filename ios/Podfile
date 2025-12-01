@@ -5,36 +5,39 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, min_ios_version_supported
-prepare_react_native_project!
+platform :ios, '16.0'
 
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+# 🔥 Firebase / GoogleUtilities 모듈 충돌 해결
+use_modular_headers!
+use_frameworks! :linkage => :static
+
+prepare_react_native_project!
 
 target 'navi' do
   config = use_native_modules!
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   target 'naviTests' do
     inherit! :complete
-    # Pods for testing
   end
+end
 
-  post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
-    react_native_post_install(
-      installer,
-      config[:reactNativePath],
-      :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
-    )
+post_install do |installer|
+  react_native_post_install(
+    installer,
+    "../node_modules/react-native",
+    :mac_catalyst_enabled => false,
+  )
+
+  # iOS 16 강제 적용 및 헤더 인식 이슈 방지
+  installer.pods_project.targets.each do |t|
+    t.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+      config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+    end
   end
 end
