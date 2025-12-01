@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.navi.app-mergeDebugResources-63:/values-v30/values-v30.xml",
+            "outputFile": "com.navi.app-mergeDebugResources-53:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-bootsplash/android/build/intermediates/packaged_res/debug/packageDebugResources/values-v30/values-v30.xml",
+                    "source": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-bootsplash\\android\\build\\intermediates\\packaged_res\\debug\\packageDebugResources\\values-v30\\values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

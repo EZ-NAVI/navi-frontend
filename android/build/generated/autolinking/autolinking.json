@@ -1,26 +1,26 @@
 {
-  "root": "/Users/ohminseok/Desktop/navii/navi-frontend",
-  "reactNativePath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native",
+  "root": "C:\\Users\\Win10\\Desktop\\navi-test",
+  "reactNativePath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native",
   "reactNativeVersion": "0.75",
   "dependencies": {
     "@react-native-async-storage/async-storage": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-async-storage/async-storage",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\@react-native-async-storage\\async-storage",
       "name": "@react-native-async-storage/async-storage",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-async-storage/async-storage/RNCAsyncStorage.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\@react-native-async-storage\\async-storage\\RNCAsyncStorage.podspec",
           "version": "2.2.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-async-storage/async-storage/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\@react-native-async-storage\\async-storage\\android",
           "packageImportPath": "import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;",
           "packageInstance": "new AsyncStoragePackage()",
           "buildTypes": [],
           "libraryName": "rnasyncstorage",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -29,11 +29,11 @@
       }
     },
     "@react-native-firebase/app": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\@react-native-firebase\\app",
       "name": "@react-native-firebase/app",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/RNFBApp.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\@react-native-firebase\\app\\RNFBApp.podspec",
           "version": "23.5.0",
           "configurations": [],
           "scriptPhases": [
@@ -48,12 +48,12 @@
           ]
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\@react-native-firebase\\app\\android",
           "packageImportPath": "import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;",
           "packageInstance": "new ReactNativeFirebaseAppPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/app/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/@react-native-firebase/app/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -62,22 +62,22 @@
       }
     },
     "@react-native-firebase/messaging": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\@react-native-firebase\\messaging",
       "name": "@react-native-firebase/messaging",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/RNFBMessaging.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\@react-native-firebase\\messaging\\RNFBMessaging.podspec",
           "version": "23.5.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\@react-native-firebase\\messaging\\android",
           "packageImportPath": "import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;",
           "packageInstance": "new ReactNativeFirebaseMessagingPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/@react-native-firebase/messaging/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/@react-native-firebase/messaging/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -86,23 +86,23 @@
       }
     },
     "react-native-bootsplash": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-bootsplash",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-bootsplash",
       "name": "react-native-bootsplash",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-bootsplash/RNBootSplash.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-bootsplash\\RNBootSplash.podspec",
           "version": "6.3.11",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-bootsplash/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-bootsplash\\android",
           "packageImportPath": "import com.zoontek.rnbootsplash.RNBootSplashPackage;",
           "packageInstance": "new RNBootSplashPackage()",
           "buildTypes": [],
           "libraryName": "RNBootSplashSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-bootsplash/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/react-native-bootsplash/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -111,22 +111,22 @@
       }
     },
     "react-native-geolocation-service": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-geolocation-service",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-geolocation-service",
       "name": "react-native-geolocation-service",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-geolocation-service/react-native-geolocation-service.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-geolocation-service\\react-native-geolocation-service.podspec",
           "version": "5.3.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-geolocation-service/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-geolocation-service\\android",
           "packageImportPath": "import com.agontuk.RNFusedLocation.RNFusedLocationPackage;",
           "packageInstance": "new RNFusedLocationPackage()",
           "buildTypes": [],
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-geolocation-service/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/react-native-geolocation-service/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -135,17 +135,17 @@
       }
     },
     "react-native-gesture-handler": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-gesture-handler",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-gesture-handler",
       "name": "react-native-gesture-handler",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-gesture-handler/RNGestureHandler.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-gesture-handler\\RNGestureHandler.podspec",
           "version": "2.15.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-gesture-handler/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-gesture-handler\\android",
           "packageImportPath": "import com.swmansion.gesturehandler.RNGestureHandlerPackage;",
           "packageInstance": "new RNGestureHandlerPackage()",
           "buildTypes": [],
@@ -154,7 +154,7 @@
             "RNGestureHandlerButtonComponentDescriptor",
             "RNGestureHandlerRootViewComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -163,23 +163,23 @@
       }
     },
     "react-native-image-picker": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-image-picker",
       "name": "react-native-image-picker",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/react-native-image-picker.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-image-picker\\react-native-image-picker.podspec",
           "version": "5.7.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-image-picker\\android",
           "packageImportPath": "import com.imagepicker.ImagePickerPackage;",
           "packageInstance": "new ImagePickerPackage()",
           "buildTypes": [],
           "libraryName": "RNImagePickerSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-image-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/react-native-image-picker/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -188,17 +188,17 @@
       }
     },
     "react-native-safe-area-context": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-safe-area-context",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-safe-area-context",
       "name": "react-native-safe-area-context",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-safe-area-context/react-native-safe-area-context.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-safe-area-context\\react-native-safe-area-context.podspec",
           "version": "4.14.1",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-safe-area-context/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-safe-area-context\\android",
           "packageImportPath": "import com.th3rdwave.safeareacontext.SafeAreaContextPackage;",
           "packageInstance": "new SafeAreaContextPackage()",
           "buildTypes": [],
@@ -207,7 +207,7 @@
             "RNCSafeAreaProviderComponentDescriptor",
             "RNCSafeAreaViewComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -216,17 +216,17 @@
       }
     },
     "react-native-screens": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-screens",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-screens",
       "name": "react-native-screens",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-screens/RNScreens.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-screens\\RNScreens.podspec",
           "version": "4.16.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-screens/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-screens\\android",
           "packageImportPath": "import com.swmansion.rnscreens.RNScreensPackage;",
           "packageInstance": "new RNScreensPackage()",
           "buildTypes": [],
@@ -245,7 +245,7 @@
             "RNSModalScreenComponentDescriptor",
             "RNSBottomTabsComponentDescriptor"
           ],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -254,23 +254,23 @@
       }
     },
     "react-native-vector-icons": {
-      "root": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-vector-icons",
+      "root": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-vector-icons",
       "name": "react-native-vector-icons",
       "platforms": {
         "ios": {
-          "podspecPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-vector-icons/RNVectorIcons.podspec",
+          "podspecPath": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-vector-icons\\RNVectorIcons.podspec",
           "version": "10.3.0",
           "configurations": [],
           "scriptPhases": []
         },
         "android": {
-          "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-vector-icons/android",
+          "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\node_modules\\react-native-vector-icons\\android",
           "packageImportPath": "import com.oblador.vectoricons.VectorIconsPackage;",
           "packageInstance": "new VectorIconsPackage()",
           "buildTypes": [],
           "libraryName": "RNVectorIconsSpec",
           "componentDescriptors": [],
-          "cmakeListsPath": "/Users/ohminseok/Desktop/navii/navi-frontend/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cmakeListsPath": "C:/Users/Win10/Desktop/navi-test/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,
@@ -506,7 +506,7 @@
         {
           "name": "--path <path>",
           "description": "Path to the React Native project root.",
-          "default": "/Users/ohminseok/Desktop/navii/navi-frontend"
+          "default": "C:\\Users\\Win10\\Desktop\\navi-test"
         },
         {
           "name": "--platform <string>",
@@ -558,7 +558,7 @@
         {
           "name": "--terminal <string>",
           "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "vscode"
+          "default": "cmd.exe"
         },
         {
           "name": "--binary-path <string>",
@@ -718,7 +718,7 @@
         {
           "name": "--terminal <string>",
           "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "vscode"
+          "default": "cmd.exe"
         },
         {
           "name": "--appId <string>",
@@ -793,7 +793,7 @@
   "assets": [],
   "project": {
     "ios": {
-      "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/ios",
+      "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\ios",
       "xcodeProject": {
         "name": "navi.xcodeproj",
         "path": ".",
@@ -802,7 +802,7 @@
       "assets": []
     },
     "android": {
-      "sourceDir": "/Users/ohminseok/Desktop/navii/navi-frontend/android",
+      "sourceDir": "C:\\Users\\Win10\\Desktop\\navi-test\\android",
       "appName": "app",
       "packageName": "com.navi",
       "applicationId": "com.navi",

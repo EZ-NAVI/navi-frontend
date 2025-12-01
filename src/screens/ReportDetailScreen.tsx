@@ -8,10 +8,33 @@ import { TextInput } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { getCurrentUserRole } from '../lib/authState';
 
+import CustomAlert from "../components/CustomAlert";
+
 export default function ReportDetailScreen() {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const { reportId } = route.params ?? {};
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("알림");
+  const [alertMsg, setAlertMsg] = useState("");
+
+  const openAlert = (title: string, msg: string) => {
+    setAlertTitle(title);
+    setAlertMsg(msg);
+    setAlertVisible(true);
+  };
+
+  useEffect(() => {
+    const role = getCurrentUserRole();   // ⭐ 현재 로그인된 역할 가져오기
+    if (role === "child") {
+      openAlert(
+        "댓글 안내",
+        "댓글은 다른 사용자에게 영향을 줄 수 있어요.\n신중하게 작성해주세요."
+      );
+    }
+  }, []);
+
   const [loading, setLoading] = useState(true);
   const [report, setReport] = useState<any | null>(null);
   const [comments, setComments] = useState<any[]>([]);
@@ -384,6 +407,13 @@ export default function ReportDetailScreen() {
           );
         })()}
       </KeyboardAvoidingView>
+
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMsg}
+        onClose={() => setAlertVisible(false)}
+      />
     </View>
   );
 }
