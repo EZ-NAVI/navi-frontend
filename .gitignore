@@ -1,0 +1,14 @@
+node_modules/
+android/app/build/outputs/
+#.local env file (do not commit secrets)
+.env
+google-services.json
+
+#.keystore file
+*.keystore
+*.jks
+android/app/my-release-key.keystore
+android/app/release.keystore
+
+android/app/build/
+android/.gradle/

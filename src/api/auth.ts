@@ -1,0 +1,45 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "./client";
+
+export type RegisterPayload = {
+  user_type: "child" | "parent" | string;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  parent_id?: string | null;
+  birth_year?: number | null;
+};
+
+export async function registerUser(payload: RegisterPayload) {
+  const { data } = await api.post("/users/register", payload);
+  return data; // { message: "..." }
+}
+
+export async function login(email: string, password: string) {
+  const { data } = await api.post("/users/login", { email, password });
+  // data: { access_token: string, token_type: "bearer" }
+  if (data?.access_token) {
+    await AsyncStorage.setItem("access_token", data.access_token);
+    if (data?.token_type) {
+      await AsyncStorage.setItem("token_type", data.token_type);
+    }
+  }
+  return data;
+}
+
+export async function logout() {
+  await AsyncStorage.multiRemove(["access_token", "token_type"]);
+}
+
+// 현재 인증된 사용자의 정보를 가져옵니다. (GET /users/me)
+export async function getMe() {
+  const { data } = await api.get('/users/me');
+  return data; // Expecting { user_type: 'child' | 'parent', ... }
+}
+
+// 회원탈퇴 추부분
+export async function deleteUser() {
+  const { data } = await api.delete("/users/");
+  return data;   // { message: "..."}
+}
