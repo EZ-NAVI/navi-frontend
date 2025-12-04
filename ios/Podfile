@@ -7,9 +7,7 @@ require Pod::Executable.execute_command('node', ['-p',
 
 platform :ios, '16.0'
 
-# 🔥 Firebase / GoogleUtilities 모듈 충돌 해결
-use_modular_headers!
-use_frameworks! :linkage => :static
+use_frameworks! :linkage => :dynamic
 
 prepare_react_native_project!
 
@@ -33,11 +31,11 @@ post_install do |installer|
     :mac_catalyst_enabled => false,
   )
 
-  # iOS 16 강제 적용 및 헤더 인식 이슈 방지
   installer.pods_project.targets.each do |t|
     t.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+      config.build_settings['HEADER_SEARCH_PATHS'] ||= []
+      config.build_settings['HEADER_SEARCH_PATHS'] << "$(SDKROOT)/usr/include"
     end
   end
 end
