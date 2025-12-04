@@ -7,16 +7,23 @@ require Pod::Executable.execute_command('node', ['-p',
 
 platform :ios, '16.0'
 
-use_frameworks! :linkage => :dynamic
-
 prepare_react_native_project!
 
 target 'navi' do
   config = use_native_modules!
 
+  # 전체 modular_headers 삭제하고
+  # Firebase 관련 모듈만 modular headers로 지정
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'FirebaseInstallations', :modular_headers => true
+  pod 'Firebase/Messaging'
+
   use_react_native!(
     :path => config[:reactNativePath],
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :fabric_enabled => false
   )
 
   target 'naviTests' do
@@ -33,9 +40,8 @@ post_install do |installer|
 
   installer.pods_project.targets.each do |t|
     t.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
-      config.build_settings['HEADER_SEARCH_PATHS'] ||= []
-      config.build_settings['HEADER_SEARCH_PATHS'] << "$(SDKROOT)/usr/include"
     end
   end
 end
