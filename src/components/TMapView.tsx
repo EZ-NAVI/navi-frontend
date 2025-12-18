@@ -1,16 +1,26 @@
-// src/components/TMapView.tsx
-import { requireNativeComponent, ViewProps, NativeSyntheticEvent } from 'react-native';
+import {
+  requireNativeComponent,
+  ViewProps,
+  NativeSyntheticEvent,
+} from 'react-native';
+import {forwardRef} from 'react';
 
-type PressEv = NativeSyntheticEvent<{ lat: number; lon: number }>;
+type PressEvent = NativeSyntheticEvent<{lat: number; lon: number}>;
 
-type Props = ViewProps & {
-  apiKey: string;
+export interface TMapViewProps extends ViewProps {
+  appKey: string;
   centerLat?: number;
   centerLon?: number;
   zoomLevel?: number;
   onMapReady?: () => void;
-  onPress?: (e: PressEv) => void;
-  onLongPress?: (e: PressEv) => void;
-};
+  onPress?: (e: PressEvent) => void;
+  onLongPress?: (e: PressEvent) => void;
+}
 
-export default requireNativeComponent<Props>('SKTTMapView');
+const SKTTMapViewNative = requireNativeComponent<TMapViewProps>('SKTTMapView');
+
+export default forwardRef<any, TMapViewProps>(function TMapView(props, ref) {
+  return (
+    <SKTTMapViewNative ref={ref} {...props} style={[{flex: 1}, props.style]} />
+  );
+});

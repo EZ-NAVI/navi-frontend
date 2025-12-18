@@ -1,5 +1,5 @@
 // SafeRouteScreen.tsx
-import React, { useEffect, useState, useRef } from "react";
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -12,37 +12,45 @@ import {
   Pressable,
   TextInput,
   ActivityIndicator,
-} from "react-native";
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useRoute } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Ionicons";
-import TMapView from "../components/TMapView";
-import { useTMapCommands } from "../components/useTMapCommands";
-import { useRouteData } from "../context/RouteContext";
-import { fetchPreviewRoute, saveRoute } from "../api/routes";
-import SafetyNoticeModal from "../components/SafetyNoticeModal";
-import ReportModal from "../components/ReportModal";
-import { fetchReports, fetchReportById, fetchReportComments, postReportComment, postReportEvaluation, postReportNotThere, fetchReportsByCluster } from "../api/reports";
-import { getMe } from '../api/auth';
-import { deleteUser } from '../api/auth';
-import { getCurrentUserRole } from '../lib/authState';
-import { useAppAlertStore } from '../stores/appAlertStore';
-import ClusterReportsScreen from "./ClusterReportsScreen";
-import { Modal, PanResponder, Animated, Dimensions } from 'react-native';
-import { useReportStore } from "../stores/reportStore";
-import { DEV_TOKEN } from "../config/dev";
+import {useNavigation, useRoute} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import TMapView from '../components/TMapView';
+import {useTMapCommands} from '../components/useTMapCommands';
+import {useRouteData} from '../context/RouteContext';
+import {fetchPreviewRoute, saveRoute} from '../api/routes';
+import SafetyNoticeModal from '../components/SafetyNoticeModal';
+import ReportModal from '../components/ReportModal';
+import {
+  fetchReports,
+  fetchReportById,
+  fetchReportComments,
+  postReportComment,
+  postReportEvaluation,
+  postReportNotThere,
+  fetchReportsByCluster,
+} from '../api/reports';
+import {getMe} from '../api/auth';
+import {deleteUser} from '../api/auth';
+import {getCurrentUserRole} from '../lib/authState';
+import {useAppAlertStore} from '../stores/appAlertStore';
+import ClusterReportsScreen from './ClusterReportsScreen';
+import {Modal, PanResponder, Animated, Dimensions} from 'react-native';
+import {useReportStore} from '../stores/reportStore';
+import {DEV_TOKEN} from '../config/dev';
 
-import { evaluateRoute } from "../api/evaluateRoute";
-import { startTracking, stopTracking } from "../utils/locationTracker";
-import { haversine } from "../utils/haversine";
-import RouteRatingModal from "../components/RouteRatingModal";
-import CustomAlert from "../components/CustomAlert";
-import CustomConfirm from "../components/CustomConfirm";
+import {evaluateRoute} from '../api/evaluateRoute';
+import {startTracking, stopTracking} from '../utils/locationTracker';
+import {haversine} from '../utils/haversine';
+import RouteRatingModal from '../components/RouteRatingModal';
+import CustomAlert from '../components/CustomAlert';
+import CustomConfirm from '../components/CustomConfirm';
 
 export default function SafeRouteScreen() {
   const navigation = useNavigation<any>();
 
-  const { start, end } = useRouteData();
+  const {start, end} = useRouteData();
   const map = useTMapCommands();
   const [isReady, setIsReady] = useState(false);
   // Persisted toggle to hide/show development-only UI (default: hidden)
@@ -61,7 +69,9 @@ export default function SafeRouteScreen() {
         console.warn('show_dev_ui read failed', e);
       }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // SafeRouteScreen 진입 시 1회만 안내 띄우기
@@ -70,34 +80,34 @@ export default function SafeRouteScreen() {
 
     (async () => {
       try {
-        const hasSeen = await AsyncStorage.getItem("map_notice_shown");
-        const session = await AsyncStorage.getItem("session_started");
+        const hasSeen = await AsyncStorage.getItem('map_notice_shown');
+        const session = await AsyncStorage.getItem('session_started');
 
         // 🔥 session_started가 없다면 "새 로그인 or 체험해보기" 상태로 판단
         if (!session) {
-          await AsyncStorage.setItem("map_notice_shown", "false");
-          await AsyncStorage.setItem("session_started", "true");
+          await AsyncStorage.setItem('map_notice_shown', 'false');
+          await AsyncStorage.setItem('session_started', 'true');
         }
 
-        const seen = await AsyncStorage.getItem("map_notice_shown");
-        if (seen === "true") return;
+        const seen = await AsyncStorage.getItem('map_notice_shown');
+        if (seen === 'true') return;
 
         // 아직 본 적 없는 경우 → 안내 띄우기
         const timer = setTimeout(() => {
           if (!mounted) return;
           openAlert(
-            "지도 이용 안내",
-            "지도가 보이지 않을 경우, 화면 회전을 켜고 한 번 회전하면 정상 표시될 수 있어요!\n\n" +
-              "경로 검색 후 마커가 잘 안 보이면 지도를 축소하거나 이동해 확인해 주세요!"
+            '지도 이용 안내',
+            '지도가 보이지 않을 경우, 화면 회전을 켜고 한 번 회전하면 정상 표시될 수 있어요!\n\n' +
+              '경로 검색 후 마커가 잘 안 보이면 지도를 축소하거나 이동해 확인해 주세요!',
           );
         }, 300);
 
         // 본 것으로 저장
-        await AsyncStorage.setItem("map_notice_shown", "true");
+        await AsyncStorage.setItem('map_notice_shown', 'true');
 
         return () => clearTimeout(timer);
       } catch (e) {
-        console.warn("map notice error", e);
+        console.warn('map notice error', e);
       }
     })();
 
@@ -106,10 +116,9 @@ export default function SafeRouteScreen() {
     };
   }, []);
 
-
   // reportStore에서 제보 리스트 가져오기 (WebSocket 실시간 갱신 반영)
-  const reportsFromStore = useReportStore((state) => state.reports);
-  const setReportsInStore = useReportStore((state) => state.setReports);
+  const reportsFromStore = useReportStore(state => state.reports);
+  const setReportsInStore = useReportStore(state => state.setReports);
 
   // 로컬 상태는 초기 로드 및 마커 표시용으로 유지
   const [reportsData, setReportsData] = useState<any[]>([]);
@@ -118,20 +127,27 @@ export default function SafeRouteScreen() {
   const [safetyOpen, setSafetyOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [unmatchedOpen, setUnmatchedOpen] = useState(false);
-  const [reportLocation, setReportLocation] = useState<any | undefined>(undefined);
+  const [reportLocation, setReportLocation] = useState<any | undefined>(
+    undefined,
+  );
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
   // Track accessibility status of the selected report's image so we can show
   // a friendly fallback when the URL is missing or returns 403/404.
-  const [selectedImageStatus, setSelectedImageStatus] = useState<'unknown' | 'ok' | 'error' | 'no-url'>('unknown');
+  const [selectedImageStatus, setSelectedImageStatus] = useState<
+    'unknown' | 'ok' | 'error' | 'no-url'
+  >('unknown');
 
   // 기능용 상태 추가
   const [routeId, setRouteId] = useState<string | null>(null);
   const [userPositions, setUserPositions] = useState<any[]>([]);
   const reachedRef = useRef(false);
   const [showRating, setShowRating] = useState(false);
-  const [currentPosition, setCurrentPosition] = useState<{ lat: number; lon: number } | null>(null);
+  const [currentPosition, setCurrentPosition] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
   const routePathRef = useRef<any[]>([]);
 
   const [myPageOpen, setMyPageOpen] = useState(false);
@@ -140,14 +156,16 @@ export default function SafeRouteScreen() {
 
   // CustomAlert 상태
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertTitle, setAlertTitle] = useState("알림");
-  const [alertMsg, setAlertMsg] = useState("");
+  const [alertTitle, setAlertTitle] = useState('알림');
+  const [alertMsg, setAlertMsg] = useState('');
 
   // CustomConfirm 상태 (확인/취소 두 버튼 알림)
   const [confirmVisible, setConfirmVisible] = useState(false);
-  const [confirmTitle, setConfirmTitle] = useState("");
-  const [confirmMsg, setConfirmMsg] = useState("");
-  const [confirmCallback, setConfirmCallback] = useState<() => void>(() => () => {});
+  const [confirmTitle, setConfirmTitle] = useState('');
+  const [confirmMsg, setConfirmMsg] = useState('');
+  const [confirmCallback, setConfirmCallback] = useState<() => void>(
+    () => () => {},
+  );
 
   // CustomAlert 열기 함수
   const openAlert = (title: string, msg?: string) => {
@@ -187,25 +205,21 @@ export default function SafeRouteScreen() {
   // 로그아웃 함수 (CustomConfirm 사용)
   const handleLogout = () => {
     const doLogout = async () => {
-      await AsyncStorage.removeItem("access_token");
-      await AsyncStorage.removeItem("user_id");
-      await AsyncStorage.removeItem("user_role");
-      await AsyncStorage.removeItem("fcm_token");
-      await AsyncStorage.removeItem("map_notice_shown");
-      await AsyncStorage.removeItem("session_started");
+      await AsyncStorage.removeItem('access_token');
+      await AsyncStorage.removeItem('user_id');
+      await AsyncStorage.removeItem('user_role');
+      await AsyncStorage.removeItem('fcm_token');
+      await AsyncStorage.removeItem('map_notice_shown');
+      await AsyncStorage.removeItem('session_started');
 
       closeMyPage();
-      navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+      navigation.reset({index: 0, routes: [{name: 'Login'}]});
     };
 
-    openConfirm(
-      "로그아웃",
-      "정말 로그아웃하시겠어요?",
-      () => {
-        // 비동기 함수 실행 (에러 무시)
-        void doLogout();
-      }
-    );
+    openConfirm('로그아웃', '정말 로그아웃하시겠어요?', () => {
+      // 비동기 함수 실행 (에러 무시)
+      void doLogout();
+    });
   };
 
   // 마이페이지 열릴 때 정보 가져오기
@@ -215,33 +229,31 @@ export default function SafeRouteScreen() {
     const loadMe = async () => {
       try {
         // 1) 토큰 확인
-        const token = await AsyncStorage.getItem("access_token");
+        const token = await AsyncStorage.getItem('access_token');
 
         // 2) 토큰 없으면 = 비로그인 체험 모드
         if (!token) {
-          setMyInfo(null);   // ← 체험 모드 = null
+          setMyInfo(null); // ← 체험 모드 = null
           return;
         }
 
         // 3) 로그인 상태라면 실제 정보 불러오기
         const me = await getMe();
         setMyInfo(me);
-
       } catch (e) {
         console.warn('사용자 정보 조회 실패', e);
 
         // 실패했다면 기본 guest 정보 표시
         setMyInfo({
-          name: "체험 이용자",
-          email: "-",
-          phone: "-",
+          name: '체험 이용자',
+          email: '-',
+          phone: '-',
         });
       }
     };
 
     loadMe();
   }, [myPageOpen]);
-
 
   // 컴포넌트 언마운트 시 GPS 추적 종료
   useEffect(() => {
@@ -259,7 +271,7 @@ export default function SafeRouteScreen() {
     try {
       // Use HEAD to avoid downloading the full image. Some servers may not
       // support HEAD; in that case a GET may still succeed but be heavier.
-      const res = await fetch(url, { method: 'HEAD' });
+      const res = await fetch(url, {method: 'HEAD'});
       if (res && res.ok) setSelectedImageStatus('ok');
       else setSelectedImageStatus('error');
     } catch (e) {
@@ -270,8 +282,12 @@ export default function SafeRouteScreen() {
   const [newComment, setNewComment] = useState<string>('');
   const [postingComment, setPostingComment] = useState(false);
   const [clusterListOpen, setClusterListOpen] = useState(false);
-  const [clusterIdForList, setClusterIdForList] = useState<string | number | null>(null);
-  const [clusterNearbyReports, setClusterNearbyReports] = useState<any[] | null>(null);
+  const [clusterIdForList, setClusterIdForList] = useState<
+    string | number | null
+  >(null);
+  const [clusterNearbyReports, setClusterNearbyReports] = useState<
+    any[] | null
+  >(null);
   const [evaluating, setEvaluating] = useState(false);
 
   const applyOptimisticEvaluation = (evalKey: 'good' | 'normal' | 'bad') => {
@@ -289,15 +305,29 @@ export default function SafeRouteScreen() {
       if (evalKey === 'bad') bad += 1;
       if (evalKey === 'normal') normal += 1;
       if (evalKey === 'good') good += 1;
-      const newTotal = current ? total : (total + 1);
-      return { ...prev, userEvaluation: evalKey, badCount: bad, normalCount: normal, goodCount: good, totalFeedbacks: newTotal };
+      const newTotal = current ? total : total + 1;
+      return {
+        ...prev,
+        userEvaluation: evalKey,
+        badCount: bad,
+        normalCount: normal,
+        goodCount: good,
+        totalFeedbacks: newTotal,
+      };
     });
   };
 
   // Log when cluster list modal opens and what clusterId is requested
   useEffect(() => {
     if (clusterListOpen) {
-      try { console.log('Opening ClusterReportsScreen: clusterIdForList=', clusterIdForList, 'clusterNearbyReportsCount=', clusterNearbyReports?.length ?? 0); } catch (e) {}
+      try {
+        console.log(
+          'Opening ClusterReportsScreen: clusterIdForList=',
+          clusterIdForList,
+          'clusterNearbyReportsCount=',
+          clusterNearbyReports?.length ?? 0,
+        );
+      } catch (e) {}
     }
   }, [clusterListOpen, clusterIdForList, clusterNearbyReports]);
 
@@ -306,17 +336,38 @@ export default function SafeRouteScreen() {
   useEffect(() => {
     const onFocus = () => {
       try {
-        const p = (navigation as any).dangerouslyGetState?.() ? (navigation as any).dangerouslyGetState().routes.find((r:any) => r.name === 'SafeRoute')?.params : undefined;
+        const p = (navigation as any).dangerouslyGetState?.()
+          ? (navigation as any)
+              .dangerouslyGetState()
+              .routes.find((r: any) => r.name === 'SafeRoute')?.params
+          : undefined;
         // Prefer reading from route params when available (safe fallback)
         let open = undefined;
-        try { const rparams = (navigation as any).getState && (navigation as any).getState().routes.find((r:any) => r.name === 'SafeRoute')?.params; if (rparams) open = rparams; } catch (e) {}
+        try {
+          const rparams =
+            (navigation as any).getState &&
+            (navigation as any)
+              .getState()
+              .routes.find((r: any) => r.name === 'SafeRoute')?.params;
+          if (rparams) open = rparams;
+        } catch (e) {}
         // fallback to route param reading via navigation if available
         const params = open || (navigation as any).route?.params || {};
-        if (params && params.openClusterModal && (params.openClusterId || params.openClusterId === 0)) {
+        if (
+          params &&
+          params.openClusterModal &&
+          (params.openClusterId || params.openClusterId === 0)
+        ) {
           setClusterIdForList(params.openClusterId ?? null);
           setClusterNearbyReports(null);
           setClusterListOpen(true);
-          try { navigation.setParams && navigation.setParams({ openClusterModal: false, openClusterId: undefined }); } catch (e) {}
+          try {
+            navigation.setParams &&
+              navigation.setParams({
+                openClusterModal: false,
+                openClusterId: undefined,
+              });
+          } catch (e) {}
         }
       } catch (e) {
         // ignore
@@ -332,27 +383,57 @@ export default function SafeRouteScreen() {
   // because the PanResponder is created once and its closures would otherwise
   // capture a stale value of detailOpen.
   const detailOpenRef = useRef<boolean>(detailOpen);
-  useEffect(() => { detailOpenRef.current = detailOpen; }, [detailOpen]);
+  useEffect(() => {
+    detailOpenRef.current = detailOpen;
+  }, [detailOpen]);
   // Also keep a ref for selectedReport so pan callbacks can read the
   // current selection even if the closure captured an older value.
   const selectedReportRef = useRef<any | null>(selectedReport);
-  useEffect(() => { selectedReportRef.current = selectedReport; }, [selectedReport]);
+  useEffect(() => {
+    selectedReportRef.current = selectedReport;
+  }, [selectedReport]);
 
   // Try to derive cluster id from a report object or by matching coordinates against loaded reportsData
   const resolveClusterId = (report: any): string | null => {
     try {
-      console.log('resolveClusterId called for report:', report && typeof report === 'object' ? (report.reportId ?? report.id ?? '(no id)') : report);
+      console.log(
+        'resolveClusterId called for report:',
+        report && typeof report === 'object'
+          ? report.reportId ?? report.id ?? '(no id)'
+          : report,
+      );
     } catch (e) {}
     if (!report) return null;
-    const possible = report.clusterId ?? report.cluster_id ?? report.cluster?.id ?? report.cluster?.cluster_id ?? report.cluster_id;
+    const possible =
+      report.clusterId ??
+      report.cluster_id ??
+      report.cluster?.id ??
+      report.cluster?.cluster_id ??
+      report.cluster_id;
     if (possible) {
-      try { console.log('resolveClusterId: found direct cluster id:', possible); } catch (e) {}
+      try {
+        console.log('resolveClusterId: found direct cluster id:', possible);
+      } catch (e) {}
       return String(possible);
     }
 
     // try matching by coordinates against reportsData
-    const rlat = Number(report.locationLat ?? report.location_lat ?? report.__lat ?? report.lat ?? report.latitude ?? 0);
-    const rlon = Number(report.locationLng ?? report.location_lng ?? report.__lon ?? report.lon ?? report.longitude ?? 0);
+    const rlat = Number(
+      report.locationLat ??
+        report.location_lat ??
+        report.__lat ??
+        report.lat ??
+        report.latitude ??
+        0,
+    );
+    const rlon = Number(
+      report.locationLng ??
+        report.location_lng ??
+        report.__lon ??
+        report.lon ??
+        report.longitude ??
+        0,
+    );
     if (!rlat || !rlon) return null;
 
     // find closest in reportsData within small threshold (meters)
@@ -361,21 +442,44 @@ export default function SafeRouteScreen() {
     let best: any = null;
     let bestDist = Infinity;
     for (const r of reportsData) {
-      const lat2 = Number(r.locationLat ?? r.location_lat ?? r.__lat ?? r.lat ?? r.latitude ?? 0);
-      const lon2 = Number(r.locationLng ?? r.location_lng ?? r.__lon ?? r.lon ?? r.longitude ?? 0);
+      const lat2 = Number(
+        r.locationLat ?? r.location_lat ?? r.__lat ?? r.lat ?? r.latitude ?? 0,
+      );
+      const lon2 = Number(
+        r.locationLng ?? r.location_lng ?? r.__lon ?? r.lon ?? r.longitude ?? 0,
+      );
       if (!lat2 || !lon2) continue;
       const dLat = toRad(lat2 - rlat);
       const dLon = toRad(lon2 - rlon);
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(rlat)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(rlat)) *
+          Math.cos(toRad(lat2)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const d = earthRadius * c;
-      if (d < bestDist) { bestDist = d; best = r; }
+      if (d < bestDist) {
+        bestDist = d;
+        best = r;
+      }
     }
 
     // threshold 100m
     if (best && bestDist <= 100) {
-      const pc = best.clusterId ?? best.cluster_id ?? best.cluster?.id ?? best.cluster?.cluster_id ?? best.cluster_id;
-      try { console.log('resolveClusterId: nearest report match', { id: best.reportId ?? best.id, dist: bestDist, candidateCluster: pc }); } catch (e) {}
+      const pc =
+        best.clusterId ??
+        best.cluster_id ??
+        best.cluster?.id ??
+        best.cluster?.cluster_id ??
+        best.cluster_id;
+      try {
+        console.log('resolveClusterId: nearest report match', {
+          id: best.reportId ?? best.id,
+          dist: bestDist,
+          candidateCluster: pc,
+        });
+      } catch (e) {}
       if (pc) return String(pc);
     }
 
@@ -406,7 +510,12 @@ export default function SafeRouteScreen() {
       },
       onPanResponderMove: (_evt, gs) => {
         // user drags up: dy is negative; we want to increase height accordingly
-        const desired = Math.round(Math.max(COLLAPSED_HEIGHT, Math.min(MAX_HEIGHT, COLLAPSED_HEIGHT - gs.dy)));
+        const desired = Math.round(
+          Math.max(
+            COLLAPSED_HEIGHT,
+            Math.min(MAX_HEIGHT, COLLAPSED_HEIGHT - gs.dy),
+          ),
+        );
         modalHeight.setValue(desired);
       },
       onPanResponderRelease: (_evt, gs) => {
@@ -414,7 +523,18 @@ export default function SafeRouteScreen() {
         // Use refs to read the latest state values (avoid stale closure capture)
         const currentDetailOpen = detailOpenRef.current;
         const currentSelected = selectedReportRef.current;
-        try { console.log('panRelease: modalHeight value check, vy:', gs.vy, 'detailOpen:', currentDetailOpen, 'selectedReport:', currentSelected ? (currentSelected.reportId ?? currentSelected.id ?? '(has id)') : null); } catch (e) {}
+        try {
+          console.log(
+            'panRelease: modalHeight value check, vy:',
+            gs.vy,
+            'detailOpen:',
+            currentDetailOpen,
+            'selectedReport:',
+            currentSelected
+              ? currentSelected.reportId ?? currentSelected.id ?? '(has id)'
+              : null,
+          );
+        } catch (e) {}
 
         modalHeight.stopAnimation((value: number) => {
           const shouldOpen = value > screenHeight * 0.5 || gs.vy < -0.8;
@@ -422,12 +542,22 @@ export default function SafeRouteScreen() {
             // If selectedReport is missing at this timing, abort opening the cluster list and
             // snap back; this prevents the '클러스터 정보 없음' alert caused by timing issues.
             if (!currentSelected) {
-              try { console.warn('panRelease aborted: selectedReport is null'); } catch (e) {}
-              Animated.timing(modalHeight, { toValue: COLLAPSED_HEIGHT, duration: 200, useNativeDriver: false }).start();
+              try {
+                console.warn('panRelease aborted: selectedReport is null');
+              } catch (e) {}
+              Animated.timing(modalHeight, {
+                toValue: COLLAPSED_HEIGHT,
+                duration: 200,
+                useNativeDriver: false,
+              }).start();
               return;
             }
             // animate to full height then open cluster list
-              Animated.timing(modalHeight, { toValue: MAX_HEIGHT, duration: 220, useNativeDriver: false }).start(() => {
+            Animated.timing(modalHeight, {
+              toValue: MAX_HEIGHT,
+              duration: 220,
+              useNativeDriver: false,
+            }).start(() => {
               const cid = resolveClusterId(currentSelected);
               if (cid) {
                 setClusterIdForList(String(cid));
@@ -444,20 +574,58 @@ export default function SafeRouteScreen() {
               // Fallback: try to find nearby reports within 100m and show them
               try {
                 const sr = currentSelected as any;
-                const rlat = Number(sr.locationLat ?? sr.location_lat ?? sr.__lat ?? sr.lat ?? sr.latitude ?? 0);
-                const rlon = Number(sr.locationLng ?? sr.location_lng ?? sr.__lon ?? sr.lon ?? sr.longitude ?? 0);
-                if (rlat && rlon && Array.isArray(reportsData) && reportsData.length > 0) {
+                const rlat = Number(
+                  sr.locationLat ??
+                    sr.location_lat ??
+                    sr.__lat ??
+                    sr.lat ??
+                    sr.latitude ??
+                    0,
+                );
+                const rlon = Number(
+                  sr.locationLng ??
+                    sr.location_lng ??
+                    sr.__lon ??
+                    sr.lon ??
+                    sr.longitude ??
+                    0,
+                );
+                if (
+                  rlat &&
+                  rlon &&
+                  Array.isArray(reportsData) &&
+                  reportsData.length > 0
+                ) {
                   const toRad = (deg: number) => (deg * Math.PI) / 180;
                   const earthRadius = 6371000;
                   const nearby: any[] = [];
                   for (const r of reportsData) {
-                    const lat2 = Number(r.locationLat ?? r.location_lat ?? r.__lat ?? r.lat ?? r.latitude ?? 0);
-                    const lon2 = Number(r.locationLng ?? r.location_lng ?? r.__lon ?? r.lon ?? r.longitude ?? 0);
+                    const lat2 = Number(
+                      r.locationLat ??
+                        r.location_lat ??
+                        r.__lat ??
+                        r.lat ??
+                        r.latitude ??
+                        0,
+                    );
+                    const lon2 = Number(
+                      r.locationLng ??
+                        r.location_lng ??
+                        r.__lon ??
+                        r.lon ??
+                        r.longitude ??
+                        0,
+                    );
                     if (!lat2 || !lon2) continue;
                     const dLat = toRad(lat2 - rlat);
                     const dLon = toRad(lon2 - rlon);
-                    const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(rlat)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
-                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    const a =
+                      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(toRad(rlat)) *
+                        Math.cos(toRad(lat2)) *
+                        Math.sin(dLon / 2) *
+                        Math.sin(dLon / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                     const d = earthRadius * c;
                     if (d <= 100) nearby.push(r);
                   }
@@ -479,16 +647,27 @@ export default function SafeRouteScreen() {
               }
 
               // if still nothing, inform user and revert height
-              openAlert('클러스터 정보 없음', '이 제보에 대한 클러스터 ID가 없습니다.');
-              Animated.timing(modalHeight, { toValue: COLLAPSED_HEIGHT, duration: 200, useNativeDriver: false }).start();
+              openAlert(
+                '클러스터 정보 없음',
+                '이 제보에 대한 클러스터 ID가 없습니다.',
+              );
+              Animated.timing(modalHeight, {
+                toValue: COLLAPSED_HEIGHT,
+                duration: 200,
+                useNativeDriver: false,
+              }).start();
             });
           } else {
             // snap back to collapsed
-            Animated.spring(modalHeight, { toValue: COLLAPSED_HEIGHT, useNativeDriver: false, bounciness: 8 }).start();
+            Animated.spring(modalHeight, {
+              toValue: COLLAPSED_HEIGHT,
+              useNativeDriver: false,
+              bounciness: 8,
+            }).start();
           }
         });
       },
-    })
+    }),
   ).current;
 
   // 출발/도착 + preview 경로 + GPS 추적 (기능 merge)
@@ -497,18 +676,18 @@ export default function SafeRouteScreen() {
 
     // 출발지 & 도착지 마커 표시
     if (start) {
-      map.addMarker(start.lat, start.lon, "출발지");
+      map.addMarker(start.lat, start.lon, '출발지');
       map.animateTo(start.lat, start.lon, 16);
     }
     if (end) {
-      map.addMarker(end.lat, end.lon, "도착지");
+      map.addMarker(end.lat, end.lon, '도착지');
     }
 
     const fetchRoute = async () => {
       if (!start || !end) return;
 
       try {
-        console.log("🚀 API 요청:", start, "→", end);
+        console.log('🚀 API 요청:', start, '→', end);
         const route = await fetchPreviewRoute({
           origin_lat: start.lat,
           origin_lng: start.lon,
@@ -516,7 +695,7 @@ export default function SafeRouteScreen() {
           dest_lng: end.lon,
         });
 
-        console.log("📦 /routes/preview 응답:", route);
+        console.log('📦 /routes/preview 응답:', route);
 
         if (route?.path?.length > 0) {
           const pathCoords = route.path.map((p: any) => ({
@@ -541,11 +720,11 @@ export default function SafeRouteScreen() {
           // GPS 추적 시작
           startTracking(setUserPositions);
         } else {
-          openAlert("경로를 찾을 수 없습니다.");
+          openAlert('경로를 찾을 수 없습니다.');
         }
       } catch (err) {
-        console.error("❌ 경로 요청 실패:", err);
-        openAlert("서버 연결 실패", "잠시 후 다시 시도해주세요.");
+        console.error('❌ 경로 요청 실패:', err);
+        openAlert('서버 연결 실패', '잠시 후 다시 시도해주세요.');
       }
     };
 
@@ -556,7 +735,7 @@ export default function SafeRouteScreen() {
   useEffect(() => {
     if (userPositions.length === 0) return;
     const latest = userPositions[userPositions.length - 1];
-    setCurrentPosition({ lat: latest.lat, lon: latest.lon });
+    setCurrentPosition({lat: latest.lat, lon: latest.lon});
 
     if (!end) return;
 
@@ -567,7 +746,7 @@ export default function SafeRouteScreen() {
 
     // 30m 이내 도착으로 판단
     if (distToDest <= 30) {
-      console.log("🎉 목적지 도착!(<=30m)");
+      console.log('🎉 목적지 도착!(<=30m)');
       reachedRef.current = true;
       stopTracking();
       saveRouteToServer();
@@ -590,7 +769,7 @@ export default function SafeRouteScreen() {
         }
 
         const reports = await fetchReports(tokenToUse ?? undefined);
-        console.log("📍 전체 제보 불러옴:", reports);
+        console.log('📍 전체 제보 불러옴:', reports);
 
         if (Array.isArray(reports)) {
           setReportsData(reports);
@@ -608,11 +787,18 @@ export default function SafeRouteScreen() {
             // 0,0 좌표는 무시
             if (!lat || !lon || (lat === 0 && lon === 0)) return;
 
-            validReports.push({ ...r, __lat: Number(lat), __lon: Number(lon) });
+            validReports.push({...r, __lat: Number(lat), __lon: Number(lon)});
           });
 
           // 디버그 로그: 불러온 유효 제보
-          console.log(`🔎 유효 제보 수: ${validReports.length}`, validReports.map((p) => ({ id: p.reportId ?? p.id, lat: p.__lat, lon: p.__lon })));
+          console.log(
+            `🔎 유효 제보 수: ${validReports.length}`,
+            validReports.map(p => ({
+              id: p.reportId ?? p.id,
+              lat: p.__lat,
+              lon: p.__lon,
+            })),
+          );
 
           // ===== 마커 추가 =====
           // 간단한 보완: 각 클러스터의 aggregated `total_count`를 얻기 위해
@@ -622,31 +808,56 @@ export default function SafeRouteScreen() {
           try {
             const clusterIds = new Set<string>();
             validReports.forEach((r: any) => {
-              const cid = r.clusterId ?? r.cluster_id ?? (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ?? null;
+              const cid =
+                r.clusterId ??
+                r.cluster_id ??
+                (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ??
+                null;
               if (cid) clusterIds.add(String(cid));
             });
 
             if (clusterIds.size > 0) {
               // 병렬로 요청하되 모든 요청이 실패해도 흐름을 멈추지 않습니다.
-              await Promise.all(Array.from(clusterIds).map(async (cid) => {
-                try {
-                  const clusterResp: any = await fetchReportsByCluster(cid, tokenToUse ?? undefined);
-                  let cnt = 0;
-                  if (clusterResp && typeof clusterResp === 'object') {
-                    if (typeof clusterResp.total_count === 'number') cnt = clusterResp.total_count;
-                    else if (typeof clusterResp.totalCount === 'number') cnt = clusterResp.totalCount;
-                    else if (Array.isArray(clusterResp)) cnt = clusterResp.length;
-                    else if (Array.isArray(clusterResp.reports)) cnt = clusterResp.reports.length;
-                    else if (Array.isArray(clusterResp.results)) cnt = clusterResp.results.length;
-                    else if (Array.isArray(clusterResp.data)) cnt = clusterResp.data.length;
+              await Promise.all(
+                Array.from(clusterIds).map(async cid => {
+                  try {
+                    const clusterResp: any = await fetchReportsByCluster(
+                      cid,
+                      tokenToUse ?? undefined,
+                    );
+                    let cnt = 0;
+                    if (clusterResp && typeof clusterResp === 'object') {
+                      if (typeof clusterResp.total_count === 'number')
+                        cnt = clusterResp.total_count;
+                      else if (typeof clusterResp.totalCount === 'number')
+                        cnt = clusterResp.totalCount;
+                      else if (Array.isArray(clusterResp))
+                        cnt = clusterResp.length;
+                      else if (Array.isArray(clusterResp.reports))
+                        cnt = clusterResp.reports.length;
+                      else if (Array.isArray(clusterResp.results))
+                        cnt = clusterResp.results.length;
+                      else if (Array.isArray(clusterResp.data))
+                        cnt = clusterResp.data.length;
+                    }
+                    clusterCounts[String(cid)] = Number(cnt) || 0;
+                    try {
+                      console.log(
+                        '[SafeRoute] cluster total_count',
+                        cid,
+                        clusterCounts[String(cid)],
+                      );
+                    } catch (e) {}
+                  } catch (e) {
+                    console.warn(
+                      '[SafeRoute] fetchReportsByCluster failed for',
+                      cid,
+                      e,
+                    );
+                    clusterCounts[String(cid)] = 0;
                   }
-                  clusterCounts[String(cid)] = Number(cnt) || 0;
-                  try { console.log('[SafeRoute] cluster total_count', cid, clusterCounts[String(cid)]); } catch (e) {}
-                } catch (e) {
-                  console.warn('[SafeRoute] fetchReportsByCluster failed for', cid, e);
-                  clusterCounts[String(cid)] = 0;
-                }
-              }));
+                }),
+              );
             }
           } catch (e) {
             console.warn('[SafeRoute] cluster count aggregation failed', e);
@@ -659,35 +870,47 @@ export default function SafeRouteScreen() {
           let sosoPingUri: string | undefined;
           let goodPingUri: string | undefined;
           try {
-            const resolvedDefault = Image.resolveAssetSource(require("../asset/good_ping.png"));
+            const resolvedDefault = Image.resolveAssetSource(
+              require('../asset/good_ping.png'),
+            );
             defaultAssetUri = resolvedDefault?.uri;
           } catch (e) {
-            console.warn("에셋 resolve 실패 (default good_ping):", e);
+            console.warn('에셋 resolve 실패 (default good_ping):', e);
           }
           try {
-            const resolvedBad = Image.resolveAssetSource(require("../asset/bad_ping.png"));
+            const resolvedBad = Image.resolveAssetSource(
+              require('../asset/bad_ping.png'),
+            );
             badPingUri = resolvedBad?.uri;
           } catch (e) {
-            console.warn("에셋 resolve 실패 (bad_ping):", e);
+            console.warn('에셋 resolve 실패 (bad_ping):', e);
           }
           try {
-            const resolvedSoso = Image.resolveAssetSource(require("../asset/soso_ping.png"));
+            const resolvedSoso = Image.resolveAssetSource(
+              require('../asset/soso_ping.png'),
+            );
             sosoPingUri = resolvedSoso?.uri;
           } catch (e) {
-            console.warn("에셋 resolve 실패 (soso_ping):", e);
+            console.warn('에셋 resolve 실패 (soso_ping):', e);
           }
           try {
-            const resolvedGood = Image.resolveAssetSource(require("../asset/good_ping.png"));
+            const resolvedGood = Image.resolveAssetSource(
+              require('../asset/good_ping.png'),
+            );
             goodPingUri = resolvedGood?.uri;
           } catch (e) {
-            console.warn("에셋 resolve 실패 (good_ping):", e);
+            console.warn('에셋 resolve 실패 (good_ping):', e);
           }
 
           validReports.forEach((r: any) => {
-            const title = r.category ?? r.description ?? "제보";
+            const title = r.category ?? r.description ?? '제보';
             try {
               // Prefer cluster-level aggregated count if we fetched it above
-              const cid = r.clusterId ?? r.cluster_id ?? (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ?? null;
+              const cid =
+                r.clusterId ??
+                r.cluster_id ??
+                (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ??
+                null;
               let usedCountSource = 'item';
               let rawCount: any = 0;
               if (cid && typeof clusterCounts[String(cid)] !== 'undefined') {
@@ -695,14 +918,33 @@ export default function SafeRouteScreen() {
                 usedCountSource = 'cluster';
               } else {
                 // fallback: try multiple possible locations/names for an aggregated count on the item
-                rawCount = r.total_count ?? r.totalCount ?? r.count ?? r.cluster_count ?? (r.cluster && (r.cluster.total_count ?? r.cluster.totalCount ?? r.cluster.count)) ?? 0;
+                rawCount =
+                  r.total_count ??
+                  r.totalCount ??
+                  r.count ??
+                  r.cluster_count ??
+                  (r.cluster &&
+                    (r.cluster.total_count ??
+                      r.cluster.totalCount ??
+                      r.cluster.count)) ??
+                  0;
                 usedCountSource = 'item';
               }
 
               const cnt = Number(rawCount) || 0;
               // If count is zero, log the full object once for debugging so we can see available keys
               if (cnt === 0) {
-                try { console.debug('SafeRoute: report item (no count):', JSON.stringify(r)); } catch (e) { console.debug('SafeRoute: report item (no count, non-serializable)', r); }
+                try {
+                  console.debug(
+                    'SafeRoute: report item (no count):',
+                    JSON.stringify(r),
+                  );
+                } catch (e) {
+                  console.debug(
+                    'SafeRoute: report item (no count, non-serializable)',
+                    r,
+                  );
+                }
               }
               let iconUri: string | undefined;
               if (cnt >= 5) iconUri = badPingUri ?? defaultAssetUri;
@@ -710,15 +952,31 @@ export default function SafeRouteScreen() {
               else if (cnt >= 1) iconUri = goodPingUri ?? defaultAssetUri;
               else iconUri = defaultAssetUri;
 
-              console.log("➕ 마커 추가 시도:", r.__lat, r.__lon, title, "count=", cnt, "source=", usedCountSource, "icon=", iconUri ? '(asset)' : '(default)');
+              console.log(
+                '➕ 마커 추가 시도:',
+                r.__lat,
+                r.__lon,
+                title,
+                'count=',
+                cnt,
+                'source=',
+                usedCountSource,
+                'icon=',
+                iconUri ? '(asset)' : '(default)',
+              );
               if (iconUri && (map as any).addMarkerWithIcon) {
-                (map as any).addMarkerWithIcon(r.__lat, r.__lon, title, iconUri);
+                (map as any).addMarkerWithIcon(
+                  r.__lat,
+                  r.__lon,
+                  title,
+                  iconUri,
+                );
               } else {
                 // fall back to default marker provided by the native map
                 map.addMarker(r.__lat, r.__lon, title);
               }
             } catch (e) {
-              console.warn("마커 추가 실패", e);
+              console.warn('마커 추가 실패', e);
             }
           });
 
@@ -728,12 +986,12 @@ export default function SafeRouteScreen() {
             try {
               map.animateTo(first.__lat, first.__lon, 15);
             } catch (e) {
-              console.warn("초기 제보 위치로 이동 실패", e);
+              console.warn('초기 제보 위치로 이동 실패', e);
             }
           }
         }
       } catch (err) {
-        console.warn("/reports 조회 실패:", err);
+        console.warn('/reports 조회 실패:', err);
       }
     };
 
@@ -757,19 +1015,24 @@ export default function SafeRouteScreen() {
   useEffect(() => {
     if (reportsFromStore.length > 0) {
       setReportsData(reportsFromStore);
-      console.log('📡 [SafeRouteScreen] reportStore 업데이트 감지, 제보 수:', reportsFromStore.length);
+      console.log(
+        '📡 [SafeRouteScreen] reportStore 업데이트 감지, 제보 수:',
+        reportsFromStore.length,
+      );
     }
   }, [reportsFromStore]);
 
   // 보고된 제보 리스트에서 항목을 탭하면 지도로 이동
   const onSelectReport = (item: any) => {
-    const lat = item.locationLat ?? item.location_lat ?? item.lat ?? item.latitude;
-    const lon = item.locationLng ?? item.location_lng ?? item.lon ?? item.longitude;
+    const lat =
+      item.locationLat ?? item.location_lat ?? item.lat ?? item.latitude;
+    const lon =
+      item.locationLng ?? item.location_lng ?? item.lon ?? item.longitude;
     if (!lat || !lon || (lat === 0 && lon === 0)) return;
     try {
       map.animateTo(lat, lon, 17);
     } catch (e) {
-      console.warn("지도 이동 실패", e);
+      console.warn('지도 이동 실패', e);
     }
   };
 
@@ -781,10 +1044,19 @@ export default function SafeRouteScreen() {
     try {
       // try to use stored token or dev token in dev mode
       let tokenToUse: string | null = null;
-      try { tokenToUse = await AsyncStorage.getItem('access_token'); } catch (e) { console.warn('token read failed', e); }
-      if (!tokenToUse && __DEV__) tokenToUse = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLOUtDV0o5UjNIUFMyOFI4WDBKVFlTSFAiLCJ1c2VyX3R5cGUiOiJjaGlsZCIsInJvbGUiOiJVU0VSIiwiZXhwIjoxNzYyNzA2MzA2fQ.-SQQv889CeTroepb1PBst2Cb3p3NTBI2bF-Pi992j9Q";
+      try {
+        tokenToUse = await AsyncStorage.getItem('access_token');
+      } catch (e) {
+        console.warn('token read failed', e);
+      }
+      if (!tokenToUse && __DEV__)
+        tokenToUse =
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDFLOUtDV0o5UjNIUFMyOFI4WDBKVFlTSFAiLCJ1c2VyX3R5cGUiOiJjaGlsZCIsInJvbGUiOiJVU0VSIiwiZXhwIjoxNzYyNzA2MzA2fQ.-SQQv889CeTroepb1PBst2Cb3p3NTBI2bF-Pi992j9Q';
 
-      const detail = await fetchReportById(String(reportId), tokenToUse ?? undefined);
+      const detail = await fetchReportById(
+        String(reportId),
+        tokenToUse ?? undefined,
+      );
       // Debug: show full detail returned by backend so we can inspect image fields
       try {
         console.log('DEBUG /reports/{id} detail:', JSON.stringify(detail));
@@ -793,9 +1065,16 @@ export default function SafeRouteScreen() {
       }
       // Try to fetch comments for this report; non-fatal if it fails.
       try {
-        const comments = await fetchReportComments(String(reportId), tokenToUse ?? undefined);
+        const comments = await fetchReportComments(
+          String(reportId),
+          tokenToUse ?? undefined,
+        );
         // attach comments in normalized shape
-        detail.comments = Array.isArray(comments) ? comments : (comments ? [comments] : []);
+        detail.comments = Array.isArray(comments)
+          ? comments
+          : comments
+          ? [comments]
+          : [];
       } catch (e) {
         console.warn('댓글 불러오기 실패', e);
         detail.comments = detail.comments ?? [];
@@ -870,31 +1149,44 @@ export default function SafeRouteScreen() {
       return;
     }
 
-  const tokenCheck = await AsyncStorage.getItem("access_token");
-  if (!tokenCheck) {
-    openAlert("알림", "체험해보기 상태에서는 댓글 작성이 불가능해요!");
-    return;
-  }
+    const tokenCheck = await AsyncStorage.getItem('access_token');
+    if (!tokenCheck) {
+      openAlert('알림', '체험해보기 상태에서는 댓글 작성이 불가능해요!');
+      return;
+    }
 
     setPostingComment(true);
     try {
       let tokenToUse: string | null = null;
-      try { tokenToUse = await AsyncStorage.getItem('access_token'); } catch (e) { /* ignore */ }
+      try {
+        tokenToUse = await AsyncStorage.getItem('access_token');
+      } catch (e) {
+        /* ignore */
+      }
       if (!tokenToUse && __DEV__) tokenToUse = null; // dev token not required for comments by default
-      const created = await postReportComment(String(selectedReport.reportId ?? selectedReport.id), text, tokenToUse ?? undefined);
+      const created = await postReportComment(
+        String(selectedReport.reportId ?? selectedReport.id),
+        text,
+        tokenToUse ?? undefined,
+      );
       // append to local comment list
-      const next = { ...selectedReport } as any;
+      const next = {...selectedReport} as any;
       next.comments = Array.isArray(next.comments) ? [...next.comments] : [];
       next.comments.unshift(created);
       setSelectedReport(next);
       setNewComment('');
       showToast('댓글이 추가되었습니다.');
-    } catch (e:any) {
+    } catch (e: any) {
       console.warn('댓글 전송 실패', e);
       const serverBody = e?.response?.data;
       if (serverBody) {
-        const maybeMsg = typeof serverBody === 'string' ? serverBody : (serverBody.message || serverBody.error || JSON.stringify(serverBody));
-        openAlert('댓글 추가 실패', String(maybeMsg).slice(0,200));
+        const maybeMsg =
+          typeof serverBody === 'string'
+            ? serverBody
+            : serverBody.message ||
+              serverBody.error ||
+              JSON.stringify(serverBody);
+        openAlert('댓글 추가 실패', String(maybeMsg).slice(0, 200));
       } else {
         openAlert('댓글 추가 실패', String(e?.message || '서버 오류'));
       }
@@ -906,21 +1198,21 @@ export default function SafeRouteScreen() {
   // 경로 저장 → 평가 모달 열기
   const saveRouteToServer = async () => {
     if (!start || !end || userPositions.length < 2) {
-      console.log("⚠ route 저장 불가");
+      console.log('⚠ route 저장 불가');
       return;
     }
 
-    type PathPoint = { lat: number; lon: number; timestamp: number };
+    type PathPoint = {lat: number; lon: number; timestamp: number};
     const path_data: PathPoint[] = [];
 
     for (let i = 0; i < userPositions.length; i++) {
       const p = userPositions[i];
       const ts =
-        typeof p.timestamp === "number" && Number.isFinite(p.timestamp)
+        typeof p.timestamp === 'number' && Number.isFinite(p.timestamp)
           ? p.timestamp
           : Date.now();
 
-      const point: PathPoint = { lat: p.lat, lon: p.lon, timestamp: ts };
+      const point: PathPoint = {lat: p.lat, lon: p.lon, timestamp: ts};
 
       const last = path_data[path_data.length - 1];
       if (last && last.lat === point.lat && last.lon === point.lon) continue;
@@ -929,7 +1221,7 @@ export default function SafeRouteScreen() {
     }
 
     if (path_data.length < 2) {
-      console.log("⚠ path_data 부족");
+      console.log('⚠ path_data 부족');
       return;
     }
 
@@ -952,20 +1244,20 @@ export default function SafeRouteScreen() {
       setRouteId(res.routeId);
       setShowRating(true);
     } catch (err) {
-      console.log("❌ 경로 저장 실패:", err);
+      console.log('❌ 경로 저장 실패:', err);
     }
   };
 
   // 평가 제출
   const handleSubmitRating = (rating: number) => {
     if (!routeId) {
-      console.log("❌ routeId 없음 → 평가 불가");
+      console.log('❌ routeId 없음 → 평가 불가');
       return;
     }
 
     evaluateRoute(routeId, Number(rating))
-      .then(() => console.log("⭐ 평가 저장 성공"))
-      .catch(() => console.log("❌ 평가 저장 실패"));
+      .then(() => console.log('⭐ 평가 저장 성공'))
+      .catch(() => console.log('❌ 평가 저장 실패'));
   };
 
   // (더이상 애니메이션 토글 필요 없음)
@@ -978,62 +1270,80 @@ export default function SafeRouteScreen() {
         onClose={() => setShowRating(false)}
         onSubmit={handleSubmitRating}
       />
-
-      <TMapView
-        ref={map.ref}
-        style={styles.map}
-        apiKey="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy"
-        zoomLevel={15}
-        centerLat={37.5665}
-        centerLon={126.9780}
-        onMapReady={() => {
-          console.log("🗺️ 지도 로드 완료!");
-          setIsReady(true);
-        }}
-        onPress={(e: any) => {
-          // e.nativeEvent: { lat, lon }
-          const lat = e?.nativeEvent?.lat;
-          const lon = e?.nativeEvent?.lon;
-          if (typeof lat !== 'number' || typeof lon !== 'number') return;
-          // find nearest report within ~50 meters
-          if (!reportsData || reportsData.length === 0) return;
-          const toRad = (deg: number) => (deg * Math.PI) / 180;
-          const earthRadius = 6371000; // meters
-          let best: any = null;
-          let bestDist = Infinity;
-          for (const r of reportsData) {
-            const rlat = Number(r.locationLat ?? r.location_lat ?? r.__lat ?? 0);
-            const rlon = Number(r.locationLng ?? r.location_lng ?? r.__lon ?? 0);
-            if (!rlat || !rlon) continue;
-            const dLat = toRad(rlat - lat);
-            const dLon = toRad(rlon - lon);
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(lat)) * Math.cos(toRad(rlat)) * Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            const d = earthRadius * c;
-            if (d < bestDist) { bestDist = d; best = r; }
-          }
-          // threshold 50 meters
-          if (best && bestDist <= 50) {
-            onMarkerPress(best);
-          }
-        }}
-      />
+      <View style={{flex: 1, backgroundColor: 'white'}}>
+        <TMapView
+          ref={map.ref}
+          style={styles.map}
+          appKey="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy"
+          zoomLevel={15}
+          centerLat={37.5665}
+          centerLon={126.978}
+          onMapReady={() => {
+            console.log('🗺️ 지도 로드 완료!');
+            setIsReady(true);
+          }}
+          onPress={(e: any) => {
+            // e.nativeEvent: { lat, lon }
+            const lat = e?.nativeEvent?.lat;
+            const lon = e?.nativeEvent?.lon;
+            if (typeof lat !== 'number' || typeof lon !== 'number') return;
+            // find nearest report within ~50 meters
+            if (!reportsData || reportsData.length === 0) return;
+            const toRad = (deg: number) => (deg * Math.PI) / 180;
+            const earthRadius = 6371000; // meters
+            let best: any = null;
+            let bestDist = Infinity;
+            for (const r of reportsData) {
+              const rlat = Number(
+                r.locationLat ?? r.location_lat ?? r.__lat ?? 0,
+              );
+              const rlon = Number(
+                r.locationLng ?? r.location_lng ?? r.__lon ?? 0,
+              );
+              if (!rlat || !rlon) continue;
+              const dLat = toRad(rlat - lat);
+              const dLon = toRad(rlon - lon);
+              const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(toRad(lat)) *
+                  Math.cos(toRad(rlat)) *
+                  Math.sin(dLon / 2) *
+                  Math.sin(dLon / 2);
+              const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+              const d = earthRadius * c;
+              if (d < bestDist) {
+                bestDist = d;
+                best = r;
+              }
+            }
+            // threshold 50 meters
+            if (best && bestDist <= 50) {
+              onMarkerPress(best);
+            }
+          }}
+        />
+      </View>
 
       {__DEV__ && showDevUI && (
-        <View style={{ position: 'absolute', right: 16, top: Platform.select({ android: 60, ios: 80 }), flexDirection: 'column', gap: 8 }}>
+        <View
+          style={{
+            position: 'absolute',
+            right: 16,
+            top: Platform.select({android: 60, ios: 80}),
+            flexDirection: 'column',
+            gap: 8,
+          }}>
           <TouchableOpacity
             style={extraStyles.devBtn}
             onPress={() => setDevToken()}
-            accessibilityLabel="set-dev-token"
-          >
-            <Text style={{ color: '#fff', fontWeight: '700' }}>DEV TOKEN</Text>
+            accessibilityLabel="set-dev-token">
+            <Text style={{color: '#fff', fontWeight: '700'}}>DEV TOKEN</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[extraStyles.devBtn, { backgroundColor: '#4C9F70' }]}
+            style={[extraStyles.devBtn, {backgroundColor: '#4C9F70'}]}
             onPress={() => showToken()}
-            accessibilityLabel="show-token"
-          >
-            <Text style={{ color: '#fff', fontWeight: '700' }}>SHOW TOKEN</Text>
+            accessibilityLabel="show-token">
+            <Text style={{color: '#fff', fontWeight: '700'}}>SHOW TOKEN</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -1045,8 +1355,7 @@ export default function SafeRouteScreen() {
           <TouchableOpacity
             style={extraStyles.debugCircle}
             onPress={() => navigation.navigate('DevSettings')}
-            accessibilityLabel="dev-settings-test"
-          >
+            accessibilityLabel="dev-settings-test">
             <Text style={extraStyles.debugCircleText}>test</Text>
           </TouchableOpacity>
         )}
@@ -1055,9 +1364,12 @@ export default function SafeRouteScreen() {
           onPress={async () => {
             try {
               // 🔥 0) 체험 모드(토큰 없음) 체크
-              const token = await AsyncStorage.getItem("access_token");
+              const token = await AsyncStorage.getItem('access_token');
               if (!token) {
-                openAlert("알림", "체험해보기 상태에서는 제보 기능을 사용할 수 없어요!");
+                openAlert(
+                  '알림',
+                  '체험해보기 상태에서는 제보 기능을 사용할 수 없어요!',
+                );
                 return;
               }
 
@@ -1070,15 +1382,16 @@ export default function SafeRouteScreen() {
 
               // 2) 매칭된 경우에만 안전 안내 모달 표시
               setSafetyOpen(true);
-
             } catch (e) {
               console.warn('GET /users/me 실패', e);
-              openAlert('알림', '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.');
+              openAlert(
+                '알림',
+                '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.',
+              );
             }
           }}
           accessibilityRole="button"
-          accessibilityLabel="긴 제보하기 버튼"
-        >
+          accessibilityLabel="긴 제보하기 버튼">
           <Text style={extraStyles.longReportText}>제보하기</Text>
         </TouchableOpacity>
       </View>
@@ -1087,58 +1400,59 @@ export default function SafeRouteScreen() {
         visible={safetyOpen}
         onClose={() => setSafetyOpen(false)}
         onConfirm={async () => {
-            // Before opening report modal, ensure user is matched with a parent
-            try {
-              setSafetyOpen(false);
-              const me = await getMe();
-              // backend returns { matched: true } when parent match exists
-              if (!me || !me.matched) {
-                setUnmatchedOpen(true);
-                return;
-              }
-            } catch (e) {
-              console.warn('GET /users/me 실패', e);
-              // If we cannot verify, be conservative and block report with a user-facing alert
-              openAlert('알림', '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.');
+          // Before opening report modal, ensure user is matched with a parent
+          try {
+            setSafetyOpen(false);
+            const me = await getMe();
+            // backend returns { matched: true } when parent match exists
+            if (!me || !me.matched) {
+              setUnmatchedOpen(true);
               return;
             }
+          } catch (e) {
+            console.warn('GET /users/me 실패', e);
+            // If we cannot verify, be conservative and block report with a user-facing alert
+            openAlert(
+              '알림',
+              '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.',
+            );
+            return;
+          }
 
-            // open report modal and pass a sensible location (prefer start, fallback to end)
-            const loc = start
-              ? { location_lat: start.lat, location_lng: start.lon }
-              : end
-              ? { location_lat: end.lat, location_lng: end.lon }
-              : undefined;
-            setReportLocation(loc);
-            setReportOpen(true);
-          }}
+          // open report modal and pass a sensible location (prefer start, fallback to end)
+          const loc = start
+            ? {location_lat: start.lat, location_lng: start.lon}
+            : end
+            ? {location_lat: end.lat, location_lng: end.lon}
+            : undefined;
+          setReportLocation(loc);
+          setReportOpen(true);
+        }}
       />
 
-        {/* 부모 미매칭 안내 — SafetyNoticeModal 디자인을 재사용 */}
-        <SafetyNoticeModal
-          visible={unmatchedOpen}
-          onClose={() => setUnmatchedOpen(false)}
-          onConfirm={() => setUnmatchedOpen(false)}
-          title="알림"
-          body={
-            ((): string => {
-              const role = getCurrentUserRole();
-              if (role === 'parent') {
-                return '아직 자녀와 매칭되지 않은 계정입니다.\n자녀 계정 가입 후 다시 시도하세요.';
-              }
-              // child (or default) case: instruct to sign up parent account
-              return '아직 부모와 매칭되지 않은 계정입니다.\n부모 계정 가입 후 다시 시도하세요.';
-            })()
+      {/* 부모 미매칭 안내 — SafetyNoticeModal 디자인을 재사용 */}
+      <SafetyNoticeModal
+        visible={unmatchedOpen}
+        onClose={() => setUnmatchedOpen(false)}
+        onConfirm={() => setUnmatchedOpen(false)}
+        title="알림"
+        body={((): string => {
+          const role = getCurrentUserRole();
+          if (role === 'parent') {
+            return '아직 자녀와 매칭되지 않은 계정입니다.\n자녀 계정 가입 후 다시 시도하세요.';
           }
-          ctaText="확인"
-        />
+          // child (or default) case: instruct to sign up parent account
+          return '아직 부모와 매칭되지 않은 계정입니다.\n부모 계정 가입 후 다시 시도하세요.';
+        })()}
+        ctaText="확인"
+      />
 
       {/* Report modal: 렌더링은 reportOpen으로 제어 */}
       {reportOpen && (
         <ReportModal
           location={reportLocation}
           onClose={() => setReportOpen(false)}
-          onSubmitted={(payload) => {
+          onSubmitted={payload => {
             console.log('제보 완료:', payload);
             setReportOpen(false);
           }}
@@ -1146,14 +1460,33 @@ export default function SafeRouteScreen() {
       )}
 
       {/* 상세 제보 하단 카드 */}
-      <Modal visible={detailOpen} transparent animationType="slide" onRequestClose={() => { detailOpenRef.current = false; setDetailOpen(false); }}>
-        <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} onPress={() => { detailOpenRef.current = false; setDetailOpen(false); }}>
-          <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+      <Modal
+        visible={detailOpen}
+        transparent
+        animationType="slide"
+        onRequestClose={() => {
+          detailOpenRef.current = false;
+          setDetailOpen(false);
+        }}>
+        <Pressable
+          style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
+          onPress={() => {
+            detailOpenRef.current = false;
+            setDetailOpen(false);
+          }}>
+          <View style={{flex: 1, justifyContent: 'flex-end'}}>
             {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
             <Animated.View
               {...panResponder.panHandlers}
-              style={[{ backgroundColor: '#fff', borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 16 }, { height: modalHeight }]}
-            >
+              style={[
+                {
+                  backgroundColor: '#fff',
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
+                  padding: 16,
+                },
+                {height: modalHeight},
+              ]}>
               {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
               <TouchableOpacity
                 style={{
@@ -1170,7 +1503,9 @@ export default function SafeRouteScreen() {
                   shadowOpacity: 0,
                 }}
                 onPress={async () => {
-                  const rid = String(selectedReport?.reportId ?? selectedReport?.id ?? '');
+                  const rid = String(
+                    selectedReport?.reportId ?? selectedReport?.id ?? '',
+                  );
                   if (!rid) {
                     detailOpenRef.current = false;
                     setDetailOpen(false);
@@ -1185,7 +1520,10 @@ export default function SafeRouteScreen() {
                     console.warn('token read failed', e);
                   }
                   if (!token) {
-                    openAlert('알림', '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!');
+                    openAlert(
+                      '알림',
+                      '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
+                    );
                     return;
                   }
 
@@ -1195,9 +1533,20 @@ export default function SafeRouteScreen() {
                   setAlertHideCancel(false);
                   setAlertConfirm(() => async () => {
                     try {
-                      try { console.log('[NotThere] map modal send for reportId=', rid, 'category=', selectedReport?.category ?? selectedReport?.title ?? '제보'); } catch (logErr) {}
+                      try {
+                        console.log(
+                          '[NotThere] map modal send for reportId=',
+                          rid,
+                          'category=',
+                          selectedReport?.category ??
+                            selectedReport?.title ??
+                            '제보',
+                        );
+                      } catch (logErr) {}
                       let tokenToUse: string | null = null;
-                      try { tokenToUse = await AsyncStorage.getItem('access_token'); } catch (e) {}
+                      try {
+                        tokenToUse = await AsyncStorage.getItem('access_token');
+                      } catch (e) {}
                       await postReportNotThere(rid, tokenToUse ?? undefined);
                       // on success: close alert
                       setAlertVisible(false);
@@ -1211,50 +1560,117 @@ export default function SafeRouteScreen() {
                       setAlertHideCancel(true);
                     }
                     // 닫기 modal
-                    detailOpenRef.current = false; setDetailOpen(false);
+                    detailOpenRef.current = false;
+                    setDetailOpen(false);
                   });
                   setAlertVisible(true);
-                }}
-              >
-                <Text style={{ fontWeight: '700', color: '#000' }}>이제 없어요</Text>
+                }}>
+                <Text style={{fontWeight: '700', color: '#000'}}>
+                  이제 없어요
+                </Text>
               </TouchableOpacity>
 
               {loadingDetail ? (
-                <Text style={{ color: '#000' }}>불러오는 중...</Text>
+                <Text style={{color: '#000'}}>불러오는 중...</Text>
               ) : selectedReport ? (
                 <View>
-                  <Text style={{ fontSize: 20, fontWeight: '800', marginBottom: 8, color: '#000' }}>{selectedReport.category ?? selectedReport.description ?? '제보'}</Text>
-                  <Text style={{ color: '#000', marginBottom: 12 }}>{selectedReport.description ?? selectedReport.content ?? ''}</Text>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: '800',
+                      marginBottom: 8,
+                      color: '#000',
+                    }}>
+                    {selectedReport.category ??
+                      selectedReport.description ??
+                      '제보'}
+                  </Text>
+                  <Text style={{color: '#000', marginBottom: 12}}>
+                    {selectedReport.description ?? selectedReport.content ?? ''}
+                  </Text>
                   {(() => {
                     // Normalize common image fields from backend: support camelCase and snake_case
                     const sr: any = selectedReport as any;
-                    const imageUrl = sr.imageUrl ?? sr.image_url ?? sr.photoUrl ?? sr.photo_url ?? sr.file_url ?? sr.object_url ?? null;
+                    const imageUrl =
+                      sr.imageUrl ??
+                      sr.image_url ??
+                      sr.photoUrl ??
+                      sr.photo_url ??
+                      sr.file_url ??
+                      sr.object_url ??
+                      null;
                     if (!imageUrl) return null;
 
                     if (selectedImageStatus === 'unknown') {
                       // check in background if not checked yet
                       checkSelectedImage(imageUrl);
-                      return <ActivityIndicator style={{ width: '100%', height: 180, marginBottom: 12 }} />;
+                      return (
+                        <ActivityIndicator
+                          style={{width: '100%', height: 180, marginBottom: 12}}
+                        />
+                      );
                     }
 
                     if (selectedImageStatus === 'ok') {
-                      return <Image source={{ uri: imageUrl }} style={{ width: '100%', height: 180, borderRadius: 10, marginBottom: 12 }} resizeMode="cover" />;
+                      return (
+                        <Image
+                          source={{uri: imageUrl}}
+                          style={{
+                            width: '100%',
+                            height: 180,
+                            borderRadius: 10,
+                            marginBottom: 12,
+                          }}
+                          resizeMode="cover"
+                        />
+                      );
                     }
 
                     // error state: show placeholder and allow retry
                     return (
-                      <View style={{ width: '100%', height: 180, borderRadius: 10, marginBottom: 12, backgroundColor: '#F2F3F5', alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ color: '#666', marginBottom: 8 }}>이미지를 불러올 수 없습니다.</Text>
-                        <TouchableOpacity onPress={() => checkSelectedImage(imageUrl)} style={{ backgroundColor: '#FFD44C', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 }}>
-                          <Text style={{ fontWeight: '700' }}>재시도</Text>
+                      <View
+                        style={{
+                          width: '100%',
+                          height: 180,
+                          borderRadius: 10,
+                          marginBottom: 12,
+                          backgroundColor: '#F2F3F5',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Text style={{color: '#666', marginBottom: 8}}>
+                          이미지를 불러올 수 없습니다.
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => checkSelectedImage(imageUrl)}
+                          style={{
+                            backgroundColor: '#FFD44C',
+                            paddingHorizontal: 12,
+                            paddingVertical: 8,
+                            borderRadius: 8,
+                          }}>
+                          <Text style={{fontWeight: '700'}}>재시도</Text>
                         </TouchableOpacity>
                       </View>
                     );
                   })()}
 
-                  <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontWeight: '700', marginBottom: 8, color: '#000' }}>댓글</Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'flex-start',
+                      justifyContent: 'space-between',
+                      marginBottom: 6,
+                    }}>
+                    <View style={{flex: 1}}>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          marginBottom: 8,
+                          color: '#000',
+                        }}>
+                        댓글
+                      </Text>
                       {/* Render actual comment(s). Backend may return a single string field or an array of comments
                           with different property names; handle common shapes defensively. */}
                       {(() => {
@@ -1262,23 +1678,47 @@ export default function SafeRouteScreen() {
                         // Only show comments returned from the comments endpoint.
                         // Do NOT fall back to report content — that caused report text
                         // to appear where comment list is expected.
-                        const list: string[] = Array.isArray(sr.comments) && sr.comments.length > 0
-                          ? sr.comments.map((c: any) => (typeof c === 'string' ? c : c.content ?? c.text ?? c.comment ?? c.body ?? c.message ?? JSON.stringify(c)))
-                          : [];
+                        const list: string[] =
+                          Array.isArray(sr.comments) && sr.comments.length > 0
+                            ? sr.comments.map((c: any) =>
+                                typeof c === 'string'
+                                  ? c
+                                  : c.content ??
+                                    c.text ??
+                                    c.comment ??
+                                    c.body ??
+                                    c.message ??
+                                    JSON.stringify(c),
+                              )
+                            : [];
 
                         if (list.length === 0) {
-                          return <Text style={{ color: '#666', marginBottom: 12 }}>아직 댓글이 없습니다.</Text>;
+                          return (
+                            <Text style={{color: '#666', marginBottom: 12}}>
+                              아직 댓글이 없습니다.
+                            </Text>
+                          );
                         }
 
                         // Show up to 4 comments only
                         const toShow = list.slice(0, 3);
                         return (
-                          <View style={{ marginBottom: 8 }}>
+                          <View style={{marginBottom: 8}}>
                             {toShow.map((txt: string, idx: number) => (
-                              <Text key={idx} style={{ color: '#000', marginBottom: 8, fontSize: 14 }}>{txt}</Text>
+                              <Text
+                                key={idx}
+                                style={{
+                                  color: '#000',
+                                  marginBottom: 8,
+                                  fontSize: 14,
+                                }}>
+                                {txt}
+                              </Text>
                             ))}
                             {list.length > 4 ? (
-                              <Text style={{ color: '#666', fontSize: 12 }}>외 {list.length - 4}개의 댓글</Text>
+                              <Text style={{color: '#666', fontSize: 12}}>
+                                외 {list.length - 4}개의 댓글
+                              </Text>
                             ) : null}
                           </View>
                         );
@@ -1287,51 +1727,118 @@ export default function SafeRouteScreen() {
                       {/* 댓글 입력 UI는 하단 좌측 고정으로 이동함 */}
                     </View>
 
-                          <View style={{ alignItems: 'flex-end', marginLeft: 12 }}>
-                            {/* 위로 끌어올리면 전체보기(풀스크린)로 전환됩니다. */}
-                      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                    <View style={{alignItems: 'flex-end', marginLeft: 12}}>
+                      {/* 위로 끌어올리면 전체보기(풀스크린)로 전환됩니다. */}
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'flex-end',
+                          alignItems: 'flex-end',
+                        }}>
                         {/* 좋음(라벨) → bad 평가 키 */}
                         {(() => {
                           const role = getCurrentUserRole();
                           if (role === 'parent') {
                             return (
-                              <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
-                                <Image source={require('../asset/emoji_good.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
-                                <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'bad' ? '700' : '400', color: selectedReport?.userEvaluation === 'bad' ? '#000' : '#666' }}>
+                              <View
+                                style={{
+                                  alignItems: 'center',
+                                  marginHorizontal: 2,
+                                }}>
+                                <Image
+                                  source={require('../asset/emoji_good.png')}
+                                  style={{width: 24, height: 24}}
+                                  resizeMode="contain"
+                                />
+                                <Text
+                                  style={{
+                                    marginTop: 4,
+                                    fontWeight:
+                                      selectedReport?.userEvaluation === 'bad'
+                                        ? '700'
+                                        : '400',
+                                    color:
+                                      selectedReport?.userEvaluation === 'bad'
+                                        ? '#000'
+                                        : '#666',
+                                  }}>
                                   좋음 {Number(selectedReport?.badCount ?? 0)}
                                 </Text>
                               </View>
                             );
                           }
-                            return (
-                              <View style={{ alignItems: 'center', marginLeft: 2, marginRight: 6 }}>
+                          return (
+                            <View
+                              style={{
+                                alignItems: 'center',
+                                marginLeft: 2,
+                                marginRight: 6,
+                              }}>
                               <TouchableOpacity
-                                style={{ padding: 6 }}
+                                style={{padding: 6}}
                                 disabled={evaluating}
                                 onPress={async () => {
                                   if (!selectedReport || evaluating) return;
 
-                                  const token = await AsyncStorage.getItem("access_token");
+                                  const token = await AsyncStorage.getItem(
+                                    'access_token',
+                                  );
                                   if (!token) {
-                                      openAlert("알림", "체험해보기 상태에서는 평가 기능을 사용할 수 없어요!");
-                                      return;
+                                    openAlert(
+                                      '알림',
+                                      '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                                    );
+                                    return;
                                   }
 
                                   try {
                                     setEvaluating(true);
                                     let token: string | null = null;
-                                    try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                                    await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'bad', token ?? undefined);
+                                    try {
+                                      token = await AsyncStorage.getItem(
+                                        'access_token',
+                                      );
+                                    } catch (e) {}
+                                    await postReportEvaluation(
+                                      String(
+                                        selectedReport.reportId ??
+                                          selectedReport.id,
+                                      ),
+                                      'bad',
+                                      token ?? undefined,
+                                    );
                                     applyOptimisticEvaluation('bad');
                                   } catch (e) {
-                                    console.warn('evaluation failed (좋음->bad)', e);
-                                    openAlert('전송 실패', '피드백 전송에 실패했습니다.');
-                                  } finally { setEvaluating(false); }
-                                }}
-                              >
-                                <Image source={require('../asset/emoji_good.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
+                                    console.warn(
+                                      'evaluation failed (좋음->bad)',
+                                      e,
+                                    );
+                                    openAlert(
+                                      '전송 실패',
+                                      '피드백 전송에 실패했습니다.',
+                                    );
+                                  } finally {
+                                    setEvaluating(false);
+                                  }
+                                }}>
+                                <Image
+                                  source={require('../asset/emoji_good.png')}
+                                  style={{width: 24, height: 24}}
+                                  resizeMode="contain"
+                                />
                               </TouchableOpacity>
-                              <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'bad' ? '700' : '400', color: selectedReport?.userEvaluation === 'bad' ? '#000' : '#666' }}>
+                              <Text
+                                style={{
+                                  marginTop: 4,
+                                  fontWeight:
+                                    selectedReport?.userEvaluation === 'bad'
+                                      ? '700'
+                                      : '400',
+                                  color:
+                                    selectedReport?.userEvaluation === 'bad'
+                                      ? '#000'
+                                      : '#666',
+                                }}>
                                 좋음 {Number(selectedReport?.badCount ?? 0)}
                               </Text>
                             </View>
@@ -1342,43 +1849,107 @@ export default function SafeRouteScreen() {
                           const role = getCurrentUserRole();
                           if (role === 'parent') {
                             return (
-                              <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
-                                <Image source={require('../asset/emoji_soso.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
-                                <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'normal' ? '700' : '400', color: selectedReport?.userEvaluation === 'normal' ? '#000' : '#666' }}>
-                                  보통 {Number(selectedReport?.normalCount ?? 0)}
+                              <View
+                                style={{
+                                  alignItems: 'center',
+                                  marginHorizontal: 2,
+                                }}>
+                                <Image
+                                  source={require('../asset/emoji_soso.png')}
+                                  style={{width: 24, height: 24}}
+                                  resizeMode="contain"
+                                />
+                                <Text
+                                  style={{
+                                    marginTop: 4,
+                                    fontWeight:
+                                      selectedReport?.userEvaluation ===
+                                      'normal'
+                                        ? '700'
+                                        : '400',
+                                    color:
+                                      selectedReport?.userEvaluation ===
+                                      'normal'
+                                        ? '#000'
+                                        : '#666',
+                                  }}>
+                                  보통{' '}
+                                  {Number(selectedReport?.normalCount ?? 0)}
                                 </Text>
                               </View>
                             );
                           }
                           return (
-                            <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
+                            <View
+                              style={{
+                                alignItems: 'center',
+                                marginHorizontal: 2,
+                              }}>
                               <TouchableOpacity
-                                style={{ padding: 6 }}
+                                style={{padding: 6}}
                                 disabled={evaluating}
                                 onPress={async () => {
                                   if (!selectedReport || evaluating) return;
 
-                                  const token = await AsyncStorage.getItem("access_token");
+                                  const token = await AsyncStorage.getItem(
+                                    'access_token',
+                                  );
                                   if (!token) {
-                                      openAlert("알림", "체험해보기 상태에서는 평가 기능을 사용할 수 없어요!");
-                                      return;
+                                    openAlert(
+                                      '알림',
+                                      '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                                    );
+                                    return;
                                   }
 
                                   try {
                                     setEvaluating(true);
                                     let token: string | null = null;
-                                    try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                                    await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'normal', token ?? undefined);
+                                    try {
+                                      token = await AsyncStorage.getItem(
+                                        'access_token',
+                                      );
+                                    } catch (e) {}
+                                    await postReportEvaluation(
+                                      String(
+                                        selectedReport.reportId ??
+                                          selectedReport.id,
+                                      ),
+                                      'normal',
+                                      token ?? undefined,
+                                    );
                                     applyOptimisticEvaluation('normal');
                                   } catch (e) {
-                                    console.warn('evaluation failed (보통->normal)', e);
-                                    openAlert('전송 실패', '피드백 전송에 실패했습니다.');
-                                  } finally { setEvaluating(false); }
-                                }}
-                              >
-                                <Image source={require('../asset/emoji_soso.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
+                                    console.warn(
+                                      'evaluation failed (보통->normal)',
+                                      e,
+                                    );
+                                    openAlert(
+                                      '전송 실패',
+                                      '피드백 전송에 실패했습니다.',
+                                    );
+                                  } finally {
+                                    setEvaluating(false);
+                                  }
+                                }}>
+                                <Image
+                                  source={require('../asset/emoji_soso.png')}
+                                  style={{width: 24, height: 24}}
+                                  resizeMode="contain"
+                                />
                               </TouchableOpacity>
-                              <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'normal' ? '700' : '400', color: selectedReport?.userEvaluation === 'normal' ? '#000' : '#666' }}>
+                              <Text
+                                style={{
+                                  marginTop: 4,
+                                  fontWeight:
+                                    selectedReport?.userEvaluation === 'normal'
+                                      ? '700'
+                                      : '400',
+                                  color:
+                                    selectedReport?.userEvaluation === 'normal'
+                                      ? '#000'
+                                      : '#666',
+                                }}>
                                 보통 {Number(selectedReport?.normalCount ?? 0)}
                               </Text>
                             </View>
@@ -1389,57 +1960,118 @@ export default function SafeRouteScreen() {
                           const role = getCurrentUserRole();
                           if (role === 'parent') {
                             return (
-                              <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
-                                <Image source={require('../asset/emoji_bad.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
-                                <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'good' ? '700' : '400', color: selectedReport?.userEvaluation === 'good' ? '#000' : '#666' }}>
-                                  아쉬움 {Number(selectedReport?.goodCount ?? 0)}
+                              <View
+                                style={{
+                                  alignItems: 'center',
+                                  marginHorizontal: 2,
+                                }}>
+                                <Image
+                                  source={require('../asset/emoji_bad.png')}
+                                  style={{width: 24, height: 24}}
+                                  resizeMode="contain"
+                                />
+                                <Text
+                                  style={{
+                                    marginTop: 4,
+                                    fontWeight:
+                                      selectedReport?.userEvaluation === 'good'
+                                        ? '700'
+                                        : '400',
+                                    color:
+                                      selectedReport?.userEvaluation === 'good'
+                                        ? '#000'
+                                        : '#666',
+                                  }}>
+                                  아쉬움{' '}
+                                  {Number(selectedReport?.goodCount ?? 0)}
                                 </Text>
                               </View>
                             );
                           }
                           return (
-                            <View style={{ alignItems: 'center', marginHorizontal: 2 }}>
+                            <View
+                              style={{
+                                alignItems: 'center',
+                                marginHorizontal: 2,
+                              }}>
                               <TouchableOpacity
-                                style={{ padding: 6 }}
+                                style={{padding: 6}}
                                 disabled={evaluating}
                                 onPress={async () => {
                                   if (!selectedReport || evaluating) return;
 
-                                  const token = await AsyncStorage.getItem("access_token");
+                                  const token = await AsyncStorage.getItem(
+                                    'access_token',
+                                  );
                                   if (!token) {
-                                      openAlert("알림", "체험해보기 상태에서는 평가 기능을 사용할 수 없어요!");
-                                      return;
+                                    openAlert(
+                                      '알림',
+                                      '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                                    );
+                                    return;
                                   }
 
                                   try {
                                     setEvaluating(true);
                                     let token: string | null = null;
-                                    try { token = await AsyncStorage.getItem('access_token'); } catch (e) {}
-                                    await postReportEvaluation(String(selectedReport.reportId ?? selectedReport.id), 'good', token ?? undefined);
+                                    try {
+                                      token = await AsyncStorage.getItem(
+                                        'access_token',
+                                      );
+                                    } catch (e) {}
+                                    await postReportEvaluation(
+                                      String(
+                                        selectedReport.reportId ??
+                                          selectedReport.id,
+                                      ),
+                                      'good',
+                                      token ?? undefined,
+                                    );
                                     applyOptimisticEvaluation('good');
                                   } catch (e) {
-                                    console.warn('evaluation failed (아쉬움->good)', e);
-                                    openAlert('전송 실패', '피드백 전송에 실패했습니다.');
-                                  } finally { setEvaluating(false); }
-                                }}
-                              >
-                                <Image source={require('../asset/emoji_bad.png')} style={{ width: 24, height: 24 }} resizeMode="contain" />
+                                    console.warn(
+                                      'evaluation failed (아쉬움->good)',
+                                      e,
+                                    );
+                                    openAlert(
+                                      '전송 실패',
+                                      '피드백 전송에 실패했습니다.',
+                                    );
+                                  } finally {
+                                    setEvaluating(false);
+                                  }
+                                }}>
+                                <Image
+                                  source={require('../asset/emoji_bad.png')}
+                                  style={{width: 24, height: 24}}
+                                  resizeMode="contain"
+                                />
                               </TouchableOpacity>
-                              <Text style={{ marginTop: 4, fontWeight: selectedReport?.userEvaluation === 'good' ? '700' : '400', color: selectedReport?.userEvaluation === 'good' ? '#000' : '#666' }}>
+                              <Text
+                                style={{
+                                  marginTop: 4,
+                                  fontWeight:
+                                    selectedReport?.userEvaluation === 'good'
+                                      ? '700'
+                                      : '400',
+                                  color:
+                                    selectedReport?.userEvaluation === 'good'
+                                      ? '#000'
+                                      : '#666',
+                                }}>
                                 아쉬움 {Number(selectedReport?.goodCount ?? 0)}
                               </Text>
                             </View>
                           );
                         })()}
                       </View>
-
                     </View>
                   </View>
 
                   {/* 버튼은 모달 콘텐츠 내부에서 제거하고, 아래에 절대 위치로 배치됩니다 */}
                 </View>
               ) : (
-                <Text style={{ color: '#000' }}>선택된 제보가 없습니다.</Text>
+                <Text style={{color: '#000'}}>선택된 제보가 없습니다.</Text>
               )}
             </Animated.View>
           </View>
@@ -1452,14 +2084,23 @@ export default function SafeRouteScreen() {
 
       {/* 클러스터 전체 리스트 풀스크린 보기 */}
       {clusterListOpen && (
-        <Modal visible={clusterListOpen} animationType="slide" onRequestClose={() => setClusterListOpen(false)}>
+        <Modal
+          visible={clusterListOpen}
+          animationType="slide"
+          onRequestClose={() => setClusterListOpen(false)}>
           <ClusterReportsScreen
             clusterId={clusterIdForList ?? ''}
             nearbyReports={clusterNearbyReports ?? undefined}
-            onClose={() => { setClusterListOpen(false); setClusterNearbyReports(null); }}
-            onSelect={(r) => {
+            onClose={() => {
+              setClusterListOpen(false);
+              setClusterNearbyReports(null);
+            }}
+            onSelect={r => {
               // close the cluster list and show the selected report on the map
-              try { setClusterListOpen(false); setClusterNearbyReports(null); } catch (e) {}
+              try {
+                setClusterListOpen(false);
+                setClusterNearbyReports(null);
+              } catch (e) {}
               try {
                 // reuse existing handler which fetches detail and opens the bottom modal
                 onMarkerPress(r);
@@ -1477,21 +2118,19 @@ export default function SafeRouteScreen() {
         <Text style={styles.logo}>NAVI</Text>
         {/* 🔥 우측 상단 햄버거 메뉴 추가 */}
         <TouchableOpacity
-          style={{ position: "absolute", left: 20, top: 22 }}
-          onPress={openMyPage}
-        >
+          style={{position: 'absolute', left: 20, top: 22}}
+          onPress={openMyPage}>
           <Icon name="menu" size={26} color="#333" />
         </TouchableOpacity>
         <View style={styles.topCard}>
           <TouchableOpacity
             style={styles.row}
             onPress={() =>
-              navigation.navigate("LocationSearch", { type: "start" })
-            }
-          >
+              navigation.navigate('LocationSearch', {type: 'start'})
+            }>
             <Text style={styles.circle}>●</Text>
             <Text style={styles.label}>출발지 :</Text>
-            <Text style={styles.value}>{start ? start.name : ""}</Text>
+            <Text style={styles.value}>{start ? start.name : ''}</Text>
             {!start && (
               <Icon
                 name="search-outline"
@@ -1507,12 +2146,11 @@ export default function SafeRouteScreen() {
           <TouchableOpacity
             style={styles.row}
             onPress={() =>
-              navigation.navigate("LocationSearch", { type: "end" })
-            }
-          >
+              navigation.navigate('LocationSearch', {type: 'end'})
+            }>
             <Text style={styles.circle}>●</Text>
             <Text style={styles.label}>도착지 :</Text>
-            <Text style={styles.value}>{end ? end.name : ""}</Text>
+            <Text style={styles.value}>{end ? end.name : ''}</Text>
             {!end && (
               <Icon
                 name="search-outline"
@@ -1528,39 +2166,36 @@ export default function SafeRouteScreen() {
       {myPageOpen && (
         <Pressable
           style={{
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.4)",
+            backgroundColor: 'rgba(0,0,0,0.4)',
           }}
-          onPress={closeMyPage}
-        >
+          onPress={closeMyPage}>
           <Animated.View
             style={{
-              position: "absolute",
+              position: 'absolute',
               top: 0,
               left: 0,
-              width: "55%",
-              height: "100%",
-              backgroundColor: "#fff",
+              width: '55%',
+              height: '100%',
+              backgroundColor: '#fff',
               padding: 20,
-              transform: [{ translateX: slideX }],
-              alignItems: "flex-start", // ← 전체 오른쪽 정렬
-            }}
-          >
+              transform: [{translateX: slideX}],
+              alignItems: 'flex-start', // ← 전체 오른쪽 정렬
+            }}>
             {/* 🔥 제목 */}
             <Text
               style={{
                 fontSize: 20,
-                fontWeight: "800",
+                fontWeight: '800',
                 marginBottom: 30,
-                color: "#000", // 검정색
-                textAlign: "left",
-                width: "100%",
-              }}
-            >
+                color: '#000', // 검정색
+                textAlign: 'left',
+                width: '100%',
+              }}>
               마이페이지
             </Text>
 
@@ -1569,19 +2204,18 @@ export default function SafeRouteScreen() {
                 {/* 🔥 로그인 상태 UI */}
                 <View
                   style={{
-                    width: 80,          // 80 + 테두리 두께*2
+                    width: 80, // 80 + 테두리 두께*2
                     height: 80,
                     borderRadius: 44,
                     borderWidth: 3,
-                    borderColor: "#FFDE59",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    borderColor: '#FFDE59',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     marginBottom: 12,
                     marginLeft: -5,
-                  }}
-                >
+                  }}>
                   <Image
-                    source={require("../asset/character.png")}
+                    source={require('../asset/character.png')}
                     style={{
                       width: 76,
                       height: 76,
@@ -1590,77 +2224,85 @@ export default function SafeRouteScreen() {
                     resizeMode="cover"
                   />
                 </View>
-                <Text style={{ marginBottom: 8, color: "#000" }}>
+                <Text style={{marginBottom: 8, color: '#000'}}>
                   이름: {myInfo.name}
                 </Text>
-                <Text style={{ marginBottom: 8, color: "#000" }}>
+                <Text style={{marginBottom: 8, color: '#000'}}>
                   이메일: {myInfo.email}
                 </Text>
-                <Text style={{ marginBottom: 8, color: "#000" }}>
+                <Text style={{marginBottom: 8, color: '#000'}}>
                   전화번호: {myInfo.phone}
                 </Text>
 
                 {/* 매칭 정보 */}
                 {myInfo.matched ? (
-                  <Text style={{ marginTop: 12, color: "#000", fontWeight: "600" }}>
-                    {myInfo.userType === "parent"
-                      ? "현재 자녀와 매칭된 상태예요!"
-                      : "현재 부모님과 매칭된 상태예요!"}
+                  <Text
+                    style={{marginTop: 12, color: '#000', fontWeight: '600'}}>
+                    {myInfo.userType === 'parent'
+                      ? '현재 자녀와 매칭된 상태예요!'
+                      : '현재 부모님과 매칭된 상태예요!'}
                   </Text>
                 ) : (
-                  <Text style={{ marginTop: 12, color: "#666" }}>
-                    {myInfo.userType === "parent"
-                      ? "아직 자녀와 매칭되지 않았어요."
-                      : "아직 부모님과 매칭되지 않았어요."}
+                  <Text style={{marginTop: 12, color: '#666'}}>
+                    {myInfo.userType === 'parent'
+                      ? '아직 자녀와 매칭되지 않았어요.'
+                      : '아직 부모님과 매칭되지 않았어요.'}
                   </Text>
                 )}
               </>
             ) : (
               /* 🔥 비로그인 체험 모드 UI */
-              <View style={{ width: "100%", alignItems: "flex-start" }}>
+              <View style={{width: '100%', alignItems: 'flex-start'}}>
                 <Text
                   style={{
                     fontSize: 14,
                     marginBottom: 20,
-                    color: "#000",
-                  }}
-                >
+                    color: '#000',
+                  }}>
                   '체험해보기' 상태입니다.
                 </Text>
 
                 <TouchableOpacity
                   style={{
-                    backgroundColor: "#FFDE59",
+                    backgroundColor: '#FFDE59',
                     paddingVertical: 12,
                     borderRadius: 8,
                     marginBottom: 12,
-                    width: "100%",
+                    width: '100%',
                   }}
                   onPress={() => {
                     closeMyPage();
-                    navigation.navigate("Login");
-                  }}
-                >
-                  <Text style={{ textAlign: "center", fontWeight: "700", color: "#000" }}>
+                    navigation.navigate('Login');
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontWeight: '700',
+                      color: '#000',
+                    }}>
                     로그인하기
                   </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={{
-                    backgroundColor: "#fff",
+                    backgroundColor: '#fff',
                     paddingVertical: 12,
                     borderRadius: 8,
                     borderWidth: 1,
-                    borderColor: "#ccc",
-                    width: "100%",
+                    borderColor: '#ccc',
+                    width: '100%',
                   }}
                   onPress={() => {
                     closeMyPage();
-                    navigation.navigate("SignupType");
-                  }}
-                >
-                  <Text style={{ textAlign: "center", fontWeight: "700", color: "#000" }}>
+                    navigation.navigate('SignupType');
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: 'center',
+                      fontWeight: '700',
+                      color: '#000',
+                    }}>
                     회원가입하기
                   </Text>
                 </TouchableOpacity>
@@ -1670,9 +2312,9 @@ export default function SafeRouteScreen() {
             {/* 🔥 구분선 */}
             <View
               style={{
-                width: "100%",
+                width: '100%',
                 height: 1,
-                backgroundColor: "#e0e0e0",
+                backgroundColor: '#e0e0e0',
                 marginTop: 40,
                 marginBottom: 10,
               }}
@@ -1682,48 +2324,48 @@ export default function SafeRouteScreen() {
             {myInfo && (
               <View
                 style={{
-                  flexDirection: "row",
+                  flexDirection: 'row',
                   marginTop: 0,
                   marginBottom: 50,
                   gap: 12,
-                }}
-              >
+                }}>
                 <TouchableOpacity onPress={handleLogout}>
-                  <Text style={{ color: "#000", fontWeight: "700", fontSize: 12 }}>
+                  <Text
+                    style={{color: '#000', fontWeight: '700', fontSize: 12}}>
                     로그아웃
                   </Text>
                 </TouchableOpacity>
 
-                <Text style={{ color: "#999", fontSize: 12 }}>|</Text>
+                <Text style={{color: '#999', fontSize: 12}}>|</Text>
 
                 <TouchableOpacity
                   onPress={() => {
                     openConfirm(
-                      "회원탈퇴",
-                      "탈퇴 시 회원정보가 즉시 파기됩니다.\n정말 탈퇴하시겠어요?",
+                      '회원탈퇴',
+                      '탈퇴 시 회원정보가 즉시 파기됩니다.\n정말 탈퇴하시겠어요?',
                       async () => {
                         try {
                           await deleteUser();
                           await AsyncStorage.multiRemove([
-                            "access_token",
-                            "user_role",
-                            "user_id",
-                            "fcm_token",
+                            'access_token',
+                            'user_role',
+                            'user_id',
+                            'fcm_token',
                           ]);
 
                           closeMyPage();
                           navigation.reset({
                             index: 0,
-                            routes: [{ name: "Login" }],
+                            routes: [{name: 'Login'}],
                           });
                         } catch (e: any) {
-                          openAlert("오류", e.message || "회원탈퇴 실패");
+                          openAlert('오류', e.message || '회원탈퇴 실패');
                         }
-                      }
+                      },
                     );
-                  }}
-                >
-                  <Text style={{ color: "#E53935", fontWeight: "700", fontSize: 12 }}>
+                  }}>
+                  <Text
+                    style={{color: '#E53935', fontWeight: '700', fontSize: 12}}>
                     회원탈퇴
                   </Text>
                 </TouchableOpacity>
@@ -1733,83 +2375,85 @@ export default function SafeRouteScreen() {
             {/* 🔥 닫기 버튼 */}
             <TouchableOpacity
               style={{
-                alignSelf: "flex-start",
+                alignSelf: 'flex-start',
                 paddingVertical: 10,
                 paddingHorizontal: 18,
-                backgroundColor: "#FFDE59",
+                backgroundColor: '#FFDE59',
                 borderRadius: 8,
               }}
-              onPress={closeMyPage}
-            >
-              <Text style={{ fontWeight: "700", color: "#000" }}>닫기</Text>
+              onPress={closeMyPage}>
+              <Text style={{fontWeight: '700', color: '#000'}}>닫기</Text>
             </TouchableOpacity>
           </Animated.View>
         </Pressable>
       )}
-    <CustomConfirm
-      visible={confirmVisible}
-      title={confirmTitle}
-      message={confirmMsg}
-      onCancel={() => setConfirmVisible(false)}
-      onConfirm={() => {
-        setConfirmVisible(false);
-        confirmCallback();
-      }}
-    />
-    <CustomAlert
-      visible={alertVisible}
-      title={alertTitle}
-      message={alertMsg}
-      onClose={() => { setAlertVisible(false); setAlertConfirm(null); }}
-      onConfirm={alertConfirm ?? undefined}
-      hideCancel={alertHideCancel}
-    />
+      <CustomConfirm
+        visible={confirmVisible}
+        title={confirmTitle}
+        message={confirmMsg}
+        onCancel={() => setConfirmVisible(false)}
+        onConfirm={() => {
+          setConfirmVisible(false);
+          confirmCallback();
+        }}
+      />
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMsg}
+        onClose={() => {
+          setAlertVisible(false);
+          setAlertConfirm(null);
+        }}
+        onConfirm={alertConfirm ?? undefined}
+        hideCancel={alertHideCancel}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  map: { flex: 1 },
+  container: {flex: 1, backgroundColor: '#fff'},
+  map: {flex: 1},
   topSection: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingTop: 18,
     paddingBottom: 6,
     paddingHorizontal: 20,
     elevation: 4,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowRadius: 4,
   },
   logo: {
     fontSize: 28,
-    fontWeight: "800",
-    color: "#f7d23e",
+    fontWeight: '800',
+    color: '#f7d23e',
     letterSpacing: 1,
     marginBottom: 6,
-    textAlign: "right",
+    textAlign: 'right',
   },
   topCard: {
-    backgroundColor: "#f6f6f6",
+    backgroundColor: '#f6f6f6',
     borderRadius: 12,
     paddingVertical: 6,
   },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
-  circle: { fontSize: 8, color: "#FFDE59", marginRight: 4, marginTop: 2 },
-  label: { fontSize: 15, fontWeight: "600", color: "#333", marginRight: 4 },
-  value: { color: "#111", flex: 1 },
-  line: { height: 1, backgroundColor: "#e0e0e0", marginHorizontal: 10 },
-  icon: { marginLeft: "auto" },
+  circle: {fontSize: 8, color: '#FFDE59', marginRight: 4, marginTop: 2},
+  label: {fontSize: 15, fontWeight: '600', color: '#333', marginRight: 4},
+  value: {color: '#111', flex: 1},
+  line: {height: 1, backgroundColor: '#e0e0e0', marginHorizontal: 10},
+  icon: {marginLeft: 'auto'},
 });
 
 // 하단 플로팅 버튼 스타일
@@ -1817,7 +2461,7 @@ const extraStyles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: 16,
-    bottom: Platform.select({ android: 24, ios: 34 }),
+    bottom: Platform.select({android: 24, ios: 34}),
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -1828,20 +2472,20 @@ const extraStyles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.12,
     shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
   },
   longReportWrap: {
     position: 'absolute',
     left: 16,
     right: 16,
-    bottom: Platform.select({ android: 24, ios: 34 }),
+    bottom: Platform.select({android: 24, ios: 34}),
     alignItems: 'stretch',
   },
   debugCircle: {
     position: 'absolute',
     right: 24,
     // place above the long report button
-    bottom: Platform.select({ android: 110, ios: 120 }),
+    bottom: Platform.select({android: 110, ios: 120}),
     width: 64,
     height: 64,
     borderRadius: 32,
@@ -1855,7 +2499,7 @@ const extraStyles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.25,
     shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
   },
   debugCircleText: {
     color: '#fff',
@@ -1871,7 +2515,7 @@ const extraStyles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1883,7 +2527,7 @@ const extraStyles = StyleSheet.create({
   devBtn: {
     position: 'absolute',
     right: 16,
-    top: Platform.select({ android: 60, ios: 80 }),
+    top: Platform.select({android: 60, ios: 80}),
     backgroundColor: '#FF6B6B',
     paddingHorizontal: 10,
     paddingVertical: 8,

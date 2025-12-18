@@ -1,4 +1,3 @@
-// SKTTMapViewManager.m
 #import "SKTTMapViewManager.h"
 #import "SKTTMapView.h"
 #import <React/RCTUIManager.h>
@@ -7,18 +6,19 @@
 
 RCT_EXPORT_MODULE(SKTTMapView)
 
-- (UIView *)view
-{
+- (UIView *)view {
     return [[SKTTMapView alloc] init];
 }
 
 #pragma mark - Props
 RCT_EXPORT_VIEW_PROPERTY(appKey, NSString)
+RCT_EXPORT_VIEW_PROPERTY(onMapReady, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPress, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onLongPress, RCTBubblingEventBlock)
 
-#pragma mark - JS → Native Commands
+#pragma mark - Commands
 
-- (NSDictionary *)constantsToExport
-{
+- (NSDictionary *)constantsToExport {
     return @{
         @"Commands": @{
             @"animateTo": @(0),
@@ -40,7 +40,6 @@ RCT_EXPORT_METHOD(dispatchCommand:(nonnull NSNumber *)reactTag
         if (!view || ![view isKindOfClass:[SKTTMapView class]]) return;
 
         switch (commandId.integerValue) {
-
             case 0:
                 [view animateToLat:[args[0] doubleValue]
                                lon:[args[1] doubleValue]
@@ -62,9 +61,6 @@ RCT_EXPORT_METHOD(dispatchCommand:(nonnull NSNumber *)reactTag
 
             case 3:
                 [view addPolyline:args[0]];
-                break;
-
-            default:
                 break;
         }
     }];
