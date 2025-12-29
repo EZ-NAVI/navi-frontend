@@ -16,7 +16,6 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { updateReport, getPresignedUrl } from '../api/reports';
-import { PermissionsAndroid } from 'react-native';
 import { WebSocketContext } from '../context/WebSocketContext';
 
 type RootStackParamList = {
@@ -63,24 +62,6 @@ export default function ReportEditScreen() {
   };
 
   const pickImage = async () => {
-    if (Platform.OS === 'android') {
-      try {
-        const sdkInt = Platform.constants?.Version || 0;
-        const readPermission = sdkInt >= 33 ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
-        const granted = await PermissionsAndroid.request(readPermission as any, {
-          title: '이미지 접근 권한',
-          message: '제보에 사진을 첨부하려면 이미지 접근 권한이 필요합니다.',
-          buttonPositive: '허용',
-        });
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          notify('이미지 접근 권한이 필요합니다.');
-          return;
-        }
-      } catch (e) {
-        console.warn('권한 요청 중 오류', e);
-      }
-    }
-
     let pickerMod: any;
     try {
       pickerMod = require('react-native-image-picker');

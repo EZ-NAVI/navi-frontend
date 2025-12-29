@@ -11,9 +11,9 @@ import {
   Platform,
   Alert,
   ToastAndroid,
+  PermissionsAndroid,
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { PermissionsAndroid } from 'react-native';
 
 import { sendReport, ReportPayload, ReportResponse, getPresignedUrl } from '../api/reports';
 import { getMe } from '../api/auth';
@@ -202,25 +202,6 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
   }, []);
 
   const pickImage = async () => {
-    // Request Android runtime permission for images if needed
-    if (Platform.OS === 'android') {
-      try {
-        // Android 13+ uses READ_MEDIA_IMAGES, older uses READ_EXTERNAL_STORAGE
-        const sdkInt = Platform.constants?.Version || 0;
-        const readPermission = sdkInt >= 33 ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
-        const granted = await PermissionsAndroid.request(readPermission as any, {
-          title: '이미지 접근 권한',
-          message: '제보에 사진을 첨부하려면 이미지 접근 권한이 필요합니다.',
-          buttonPositive: '허용',
-        });
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          notify('이미지 접근 권한이 필요합니다. 설정에서 권한을 허용해주세요.');
-          return;
-        }
-      } catch (e) {
-        console.warn('권한 요청 중 오류', e);
-      }
-    }
     // dynamic require so project doesn't fail if package isn't installed
     let pickerMod: any;
     try {
