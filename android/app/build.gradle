@@ -30,8 +30,8 @@ android {
 
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "7.0"
+        versionCode 9
+        versionName "9.0"
     }
 
     signingConfigs {
@@ -59,12 +59,6 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
-    }
-
-    packaging {
-        jniLibs {
-            useLegacyPackaging = true
         }
     }
 }
