@@ -29,25 +29,55 @@ export default function SafetyNoticeModal({ visible, onConfirm, onClose, title, 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={s.dim}>
-        <View style={s.card} accessibilityViewIsModal>
-          <Text style={s.title}>{title ?? '잠시만요!'}</Text>
-          {renderBody()}
-
-          <View style={s.illust}>
-            <MaterialIcons name="warning-amber" size={64} color="#f5a623" />
+        <View 
+          style={s.card} 
+          accessibilityViewIsModal
+        >
+          <Text 
+            style={s.title}
+            accessible={true}
+            accessibilityRole="alert"
+            accessibilityLabel={title?.replace(/[❌✅]/g, '').trim() ?? '잠시만요!'}
+          >
+            {title ?? '잠시만요!'}
+          </Text>
+          <View accessible={true} accessibilityRole="text" style={{ alignSelf: 'stretch' }}>
+            {renderBody()}
           </View>
 
+          <View style={s.illust} accessible={true} accessibilityRole="image" accessibilityLabel="경고">         
+            <MaterialIcons name="warning-amber" size={64} color="#f5a623" />
+            </View>
+          
           {onCancel ? (
             <View style={s.rowButtons}>
-              <TouchableOpacity style={[s.cta, s.cancelBtn]} onPress={onCancel} accessibilityLabel={cancelText ?? '취소'}>
+              <TouchableOpacity 
+                style={[s.cta, s.cancelBtn]} 
+                onPress={onCancel} 
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel={cancelText ?? '취소'}
+              >
                 <Text style={s.cancelText}>{cancelText ?? '취소'}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[s.cta, s.confirmBtn]} onPress={onConfirm} accessibilityLabel={ctaText ?? '확인'}>
+              <TouchableOpacity 
+                style={[s.cta, s.confirmBtn]} 
+                onPress={onConfirm} 
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel={ctaText ?? '확인'}
+              >
                 <Text style={s.ctaText}>{ctaText ?? '확인'}</Text>
               </TouchableOpacity>
             </View>
           ) : (
-            <TouchableOpacity style={s.cta} onPress={onConfirm} accessibilityLabel={ctaText ?? '확인했어요'}>
+            <TouchableOpacity 
+              style={s.cta} 
+              onPress={onConfirm} 
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={ctaText ?? '확인했어요'}
+            >
               <Text style={s.ctaText}>{ctaText ?? '확인했어요'}</Text>
             </TouchableOpacity>
           )}

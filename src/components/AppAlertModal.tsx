@@ -5,6 +5,8 @@ import { useAppAlertStore } from '../stores/appAlertStore';
 export default function AppAlertModal() {
   const { isVisible, title, body, ctaText, cancelText, onConfirm, onCancel, hide } = useAppAlertStore();
 
+  console.log('[AppAlertModal] onCancel:', onCancel, 'cancelText:', cancelText);
+
   const handleConfirm = () => {
     try {
       if (onConfirm) onConfirm();

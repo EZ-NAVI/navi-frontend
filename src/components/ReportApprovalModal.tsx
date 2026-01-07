@@ -60,7 +60,7 @@ export default function ReportApprovalModal({
           <View style={styles.header}>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitle}>
-                {isUpdated ? '✏️ 수정된 제보' : '🔔 새로운 제보'}
+                {isUpdated ? '알림: 수정된 제보' : '알림: 새로운 제보'}
               </Text>
               {isUpdated && (
                 <View style={styles.updatedBadge}>
@@ -68,7 +68,13 @@ export default function ReportApprovalModal({
                 </View>
               )}
             </View>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <TouchableOpacity 
+              onPress={onClose} 
+              style={styles.closeButton}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="나가기"
+            >
               <MaterialIcons name="close" size={24} color="#666" />
             </TouchableOpacity>
           </View>
@@ -76,7 +82,7 @@ export default function ReportApprovalModal({
           <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
             {/* 카테고리 */}
             <View style={styles.categoryBadge}>
-              <Text style={styles.categoryText}>{category}</Text>
+              <Text style={styles.categoryText}>카테고리: {category}</Text>
             </View>
 
             {/* 사진 */}
@@ -85,6 +91,9 @@ export default function ReportApprovalModal({
                 source={{ uri: imageUrl }}
                 style={styles.image}
                 resizeMode="cover"
+                accessible={true}
+                accessibilityRole="image"
+                accessibilityLabel="자녀 제보"
               />
             ) : (
               <View style={styles.noImage}>
@@ -113,21 +122,27 @@ export default function ReportApprovalModal({
           {/* 버튼 영역 */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, styles.approveButton]}
-              onPress={onApprove}
-              activeOpacity={0.8}
-            >
-              <MaterialIcons name="check" size={20} color="#fff" />
-              <Text style={styles.buttonText}>승인</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
               style={[styles.button, styles.rejectButton]}
               onPress={onReject}
               activeOpacity={0.8}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="반려"
             >
               <MaterialIcons name="close" size={20} color="#fff" />
               <Text style={styles.buttonText}>반려</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, styles.approveButton]}
+              onPress={onApprove}
+              activeOpacity={0.8}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="승인"
+            >
+              <MaterialIcons name="check" size={20} color="#fff" />
+              <Text style={styles.buttonText}>승인</Text>
             </TouchableOpacity>
           </View>
         </View>

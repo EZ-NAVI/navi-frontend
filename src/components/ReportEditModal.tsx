@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     lineHeight: 24,
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 20,
   },
   infoRow: {
