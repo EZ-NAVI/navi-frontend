@@ -210,7 +210,7 @@ export default function LoginScreen() {
             disabled={loading}
             accessible={true}
             accessibilityRole="button"
-            accessibilityLabel="로그인">
+            accessibilityLabel="로그인하기">
             {loading ? (
               <ActivityIndicator />
             ) : (

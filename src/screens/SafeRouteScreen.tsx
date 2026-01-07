@@ -2261,7 +2261,10 @@ export default function SafeRouteScreen() {
 
       {/* 제보 카드 리스트(디버그용) 제거됨 */}
 
-      <View style={styles.topSection}>
+      <View
+        style={styles.topSection}
+        pointerEvents={myPageOpen ? 'none' : 'auto'}
+        importantForAccessibility={myPageOpen ? 'no-hide-descendants' : 'yes'}>
         <Text style={styles.logo}>NAVI</Text>
         {/* 🔥 우측 상단 햄버거 메뉴 추가 */}
         <TouchableOpacity
@@ -2340,6 +2343,7 @@ export default function SafeRouteScreen() {
             bottom: 0,
             backgroundColor: 'rgba(0,0,0,0.4)',
           }}
+          pointerEvents="auto"
           onPress={closeMyPage}>
           <Animated.View
             style={{
@@ -2440,7 +2444,10 @@ export default function SafeRouteScreen() {
                   onPress={() => {
                     closeMyPage();
                     navigation.navigate('Login');
-                  }}>
+                  }}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={'로그인하기'}>
                   <Text
                     style={{
                       textAlign: 'center',
@@ -2463,7 +2470,10 @@ export default function SafeRouteScreen() {
                   onPress={() => {
                     closeMyPage();
                     navigation.navigate('SignupType');
-                  }}>
+                  }}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={'회원가입하기'}>
                   <Text
                     style={{
                       textAlign: 'center',
@@ -2496,7 +2506,11 @@ export default function SafeRouteScreen() {
                   marginBottom: 50,
                   gap: 12,
                 }}>
-                <TouchableOpacity onPress={handleLogout}>
+                <TouchableOpacity
+                  onPress={handleLogout}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={'로그아웃'}>
                   <Text
                     style={{color: '#000', fontWeight: '700', fontSize: 12}}>
                     로그아웃
@@ -2530,7 +2544,10 @@ export default function SafeRouteScreen() {
                         }
                       },
                     );
-                  }}>
+                  }}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={'회원탈퇴'}>
                   <Text
                     style={{color: '#E53935', fontWeight: '700', fontSize: 12}}>
                     회원탈퇴
@@ -2548,7 +2565,10 @@ export default function SafeRouteScreen() {
                 backgroundColor: '#FFDE59',
                 borderRadius: 8,
               }}
-              onPress={closeMyPage}>
+              onPress={closeMyPage}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={'닫기'}>
               <Text style={{fontWeight: '700', color: '#000'}}>닫기</Text>
             </TouchableOpacity>
           </Animated.View>
