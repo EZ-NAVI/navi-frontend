@@ -1470,7 +1470,7 @@ export default function SafeRouteScreen() {
             }
           }}
           accessibilityRole="button"
-          accessibilityLabel="긴 제보하기 버튼">
+          accessibilityLabel="제보하기">
           <Text style={extraStyles.longReportText}>제보하기</Text>
         </TouchableOpacity>
       </View>
