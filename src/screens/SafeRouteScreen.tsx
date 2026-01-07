@@ -12,6 +12,8 @@ import {
   Pressable,
   TextInput,
   ActivityIndicator,
+  AccessibilityInfo,
+  findNodeHandle,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -159,6 +161,31 @@ export default function SafeRouteScreen() {
   const [myPageOpen, setMyPageOpen] = useState(false);
   const [myInfo, setMyInfo] = useState<any | null>(null);
   const slideX = useRef(new Animated.Value(-300)).current;
+
+  const a11yTitleRef = useRef<any>(null);
+  const a11yMenuBtnRef = useRef<any>(null);
+
+  useEffect(() => {
+    let timer: any;
+    if (myPageOpen) {
+      // 패널 오픈 애니메이션이 끝난 뒤 제목으로 포커스
+      timer = setTimeout(() => {
+        const node = findNodeHandle(a11yTitleRef.current);
+        if (node) {
+          AccessibilityInfo.setAccessibilityFocus(node);
+        }
+      }, 320);
+    } else {
+      // 패널 닫힌 뒤 햄버거 버튼으로 포커스 복귀
+      timer = setTimeout(() => {
+        const node = findNodeHandle(a11yMenuBtnRef.current);
+        if (node) {
+          AccessibilityInfo.setAccessibilityFocus(node);
+        }
+      }, 260);
+    }
+    return () => clearTimeout(timer);
+  }, [myPageOpen]);
 
   // CustomAlert 상태
   const [alertVisible, setAlertVisible] = useState(false);
@@ -1338,509 +1365,610 @@ export default function SafeRouteScreen() {
 
   return (
     <View style={styles.container}>
-      {/* ⭐ 별점 모달 */}
-      <RouteRatingModal
-        visible={showRating}
-        onClose={() => setShowRating(false)}
-        onSubmit={handleSubmitRating}
-      />
+      <View
+        style={{flex: 1}}
+        pointerEvents={myPageOpen ? 'none' : 'auto'}
+        importantForAccessibility={myPageOpen ? 'no-hide-descendants' : 'yes'}>
+        {/* ⭐ 별점 모달 */}
+        <RouteRatingModal
+          visible={showRating}
+          onClose={() => setShowRating(false)}
+          onSubmit={handleSubmitRating}
+        />
 
-      <TMapView
-        ref={map.ref}
-        style={styles.map}
-        apiKey="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy"
-        zoomLevel={15}
-        centerLat={37.5665}
-        centerLon={126.978}
-        onMapReady={() => {
-          console.log('🗺️ 지도 로드 완료!');
-          setIsReady(true);
-        }}
-        onPress={(e: any) => {
-          // e.nativeEvent: { lat, lon }
-          const lat = e?.nativeEvent?.lat;
-          const lon = e?.nativeEvent?.lon;
-          if (typeof lat !== 'number' || typeof lon !== 'number') {
-            return;
-          }
-          // find nearest report within ~50 meters
-          if (!reportsData || reportsData.length === 0) {
-            return;
-          }
-          const toRad = (deg: number) => (deg * Math.PI) / 180;
-          const earthRadius = 6371000; // meters
-          let best: any = null;
-          let bestDist = Infinity;
-          for (const r of reportsData) {
-            const rlat = Number(
-              r.locationLat ?? r.location_lat ?? r.__lat ?? 0,
-            );
-            const rlon = Number(
-              r.locationLng ?? r.location_lng ?? r.__lon ?? 0,
-            );
-            if (!rlat || !rlon) {
-              continue;
+        <TMapView
+          ref={map.ref}
+          style={styles.map}
+          apiKey="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy"
+          zoomLevel={15}
+          centerLat={37.5665}
+          centerLon={126.978}
+          onMapReady={() => {
+            console.log('🗺️ 지도 로드 완료!');
+            setIsReady(true);
+          }}
+          onPress={(e: any) => {
+            // e.nativeEvent: { lat, lon }
+            const lat = e?.nativeEvent?.lat;
+            const lon = e?.nativeEvent?.lon;
+            if (typeof lat !== 'number' || typeof lon !== 'number') {
+              return;
             }
-            const dLat = toRad(rlat - lat);
-            const dLon = toRad(rlon - lon);
-            const a =
-              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(toRad(lat)) *
-                Math.cos(toRad(rlat)) *
-                Math.sin(dLon / 2) *
-                Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const d = earthRadius * c;
-            if (d < bestDist) {
-              bestDist = d;
-              best = r;
+            // find nearest report within ~50 meters
+            if (!reportsData || reportsData.length === 0) {
+              return;
             }
-          }
-          // threshold 50 meters
-          if (best && bestDist <= 50) {
-            onMarkerPress(best);
-          }
-        }}
-      />
+            const toRad = (deg: number) => (deg * Math.PI) / 180;
+            const earthRadius = 6371000; // meters
+            let best: any = null;
+            let bestDist = Infinity;
+            for (const r of reportsData) {
+              const rlat = Number(
+                r.locationLat ?? r.location_lat ?? r.__lat ?? 0,
+              );
+              const rlon = Number(
+                r.locationLng ?? r.location_lng ?? r.__lon ?? 0,
+              );
+              if (!rlat || !rlon) {
+                continue;
+              }
+              const dLat = toRad(rlat - lat);
+              const dLon = toRad(rlon - lon);
+              const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(toRad(lat)) *
+                  Math.cos(toRad(rlat)) *
+                  Math.sin(dLon / 2) *
+                  Math.sin(dLon / 2);
+              const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+              const d = earthRadius * c;
+              if (d < bestDist) {
+                bestDist = d;
+                best = r;
+              }
+            }
+            // threshold 50 meters
+            if (best && bestDist <= 50) {
+              onMarkerPress(best);
+            }
+          }}
+        />
 
-      {__DEV__ && showDevUI && (
-        <View
-          style={{
-            position: 'absolute',
-            right: 16,
-            top: Platform.select({android: 60, ios: 80}),
-            flexDirection: 'column',
-            gap: 8,
-          }}>
-          <TouchableOpacity
-            style={extraStyles.devBtn}
-            onPress={() => setDevToken()}
-            accessibilityLabel="set-dev-token">
-            <Text style={{color: '#fff', fontWeight: '700'}}>DEV TOKEN</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[extraStyles.devBtn, {backgroundColor: '#4C9F70'}]}
-            onPress={() => showToken()}
-            accessibilityLabel="show-token">
-            <Text style={{color: '#fff', fontWeight: '700'}}>SHOW TOKEN</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* 화면 하단에 항상 보이는 긴 제보 버튼 (맵 위에 고정) */}
-      <View style={extraStyles.longReportWrap} pointerEvents="box-none">
-        {/* 개발 디버그: DevSettings 이동 원형 버튼 (임시) */}
         {__DEV__ && showDevUI && (
-          <TouchableOpacity
-            style={extraStyles.debugCircle}
-            onPress={() => navigation.navigate('DevSettings')}
-            accessibilityLabel="dev-settings-test">
-            <Text style={extraStyles.debugCircleText}>test</Text>
-          </TouchableOpacity>
+          <View
+            style={{
+              position: 'absolute',
+              right: 16,
+              top: Platform.select({android: 60, ios: 80}),
+              flexDirection: 'column',
+              gap: 8,
+            }}>
+            <TouchableOpacity
+              style={extraStyles.devBtn}
+              onPress={() => setDevToken()}
+              accessibilityLabel="set-dev-token">
+              <Text style={{color: '#fff', fontWeight: '700'}}>DEV TOKEN</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[extraStyles.devBtn, {backgroundColor: '#4C9F70'}]}
+              onPress={() => showToken()}
+              accessibilityLabel="show-token">
+              <Text style={{color: '#fff', fontWeight: '700'}}>SHOW TOKEN</Text>
+            </TouchableOpacity>
+          </View>
         )}
-        <TouchableOpacity
-          style={extraStyles.longReportButton}
-          onPress={async () => {
-            try {
-              // 🔥 0) 체험 모드(토큰 없음) 체크
-              const token = await AsyncStorage.getItem('access_token');
-              if (!token) {
+
+        {/* 화면 하단에 항상 보이는 긴 제보 버튼 (맵 위에 고정) */}
+        <View style={extraStyles.longReportWrap} pointerEvents="box-none">
+          {/* 개발 디버그: DevSettings 이동 원형 버튼 (임시) */}
+          {__DEV__ && showDevUI && (
+            <TouchableOpacity
+              style={extraStyles.debugCircle}
+              onPress={() => navigation.navigate('DevSettings')}
+              accessibilityLabel="dev-settings-test">
+              <Text style={extraStyles.debugCircleText}>test</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={extraStyles.longReportButton}
+            onPress={async () => {
+              try {
+                // 🔥 0) 체험 모드(토큰 없음) 체크
+                const token = await AsyncStorage.getItem('access_token');
+                if (!token) {
+                  openAlert(
+                    '알림',
+                    '체험해보기 상태에서는 제보 기능을 사용할 수 없어요!',
+                  );
+                  return;
+                }
+
+                // 1) 먼저 서버에서 매칭 상태를 확인합니다.
+                const me = await getMe();
+                if (!me || !me.matched) {
+                  setUnmatchedOpen(true);
+                  return;
+                }
+
+                // 2) 매칭된 경우에만 안전 안내 모달 표시
+                setSafetyOpen(true);
+              } catch (e) {
+                console.warn('GET /users/me 실패', e);
                 openAlert(
                   '알림',
-                  '체험해보기 상태에서는 제보 기능을 사용할 수 없어요!',
+                  '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.',
                 );
-                return;
               }
+            }}
+            accessibilityRole="button"
+            accessibilityLabel="제보하기">
+            <Text style={extraStyles.longReportText}>제보하기</Text>
+          </TouchableOpacity>
+        </View>
 
-              // 1) 먼저 서버에서 매칭 상태를 확인합니다.
+        <SafetyNoticeModal
+          visible={safetyOpen}
+          onClose={() => setSafetyOpen(false)}
+          onConfirm={async () => {
+            // Before opening report modal, ensure user is matched with a parent
+            try {
+              setSafetyOpen(false);
               const me = await getMe();
+              // backend returns { matched: true } when parent match exists
               if (!me || !me.matched) {
                 setUnmatchedOpen(true);
                 return;
               }
-
-              // 2) 매칭된 경우에만 안전 안내 모달 표시
-              setSafetyOpen(true);
             } catch (e) {
               console.warn('GET /users/me 실패', e);
+              // If we cannot verify, be conservative and block report with a user-facing alert
               openAlert(
                 '알림',
                 '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.',
               );
-            }
-          }}
-          accessibilityRole="button"
-          accessibilityLabel="제보하기">
-          <Text style={extraStyles.longReportText}>제보하기</Text>
-        </TouchableOpacity>
-      </View>
-
-      <SafetyNoticeModal
-        visible={safetyOpen}
-        onClose={() => setSafetyOpen(false)}
-        onConfirm={async () => {
-          // Before opening report modal, ensure user is matched with a parent
-          try {
-            setSafetyOpen(false);
-            const me = await getMe();
-            // backend returns { matched: true } when parent match exists
-            if (!me || !me.matched) {
-              setUnmatchedOpen(true);
               return;
             }
-          } catch (e) {
-            console.warn('GET /users/me 실패', e);
-            // If we cannot verify, be conservative and block report with a user-facing alert
-            openAlert(
-              '알림',
-              '사용자 정보를 확인할 수 없습니다. 네트워크를 확인한 뒤 다시 시도하세요.',
-            );
-            return;
-          }
 
-          // open report modal and pass a sensible location (prefer start, fallback to end)
-          const loc = start
-            ? {location_lat: start.lat, location_lng: start.lon}
-            : end
-            ? {location_lat: end.lat, location_lng: end.lon}
-            : undefined;
-          setReportLocation(loc);
-          setReportOpen(true);
-        }}
-      />
-
-      {/* 부모 미매칭 안내 — SafetyNoticeModal 디자인을 재사용 */}
-      <SafetyNoticeModal
-        visible={unmatchedOpen}
-        onClose={() => setUnmatchedOpen(false)}
-        onConfirm={() => setUnmatchedOpen(false)}
-        title="알림"
-        body={((): string => {
-          const role = getCurrentUserRole();
-          if (role === 'parent') {
-            return '아직 자녀와 매칭되지 않은 계정입니다.\n자녀 계정 가입 후 다시 시도하세요.';
-          }
-          // child (or default) case: instruct to sign up parent account
-          return '아직 부모와 매칭되지 않은 계정입니다.\n부모 계정 가입 후 다시 시도하세요.';
-        })()}
-        ctaText="확인"
-      />
-
-      {/* Report modal: 렌더링은 reportOpen으로 제어 */}
-      {reportOpen && (
-        <ReportModal
-          location={reportLocation}
-          onClose={() => setReportOpen(false)}
-          onSubmitted={payload => {
-            console.log('제보 완료:', payload);
-            setReportOpen(false);
+            // open report modal and pass a sensible location (prefer start, fallback to end)
+            const loc = start
+              ? {location_lat: start.lat, location_lng: start.lon}
+              : end
+              ? {location_lat: end.lat, location_lng: end.lon}
+              : undefined;
+            setReportLocation(loc);
+            setReportOpen(true);
           }}
         />
-      )}
 
-      {/* 상세 제보 하단 카드 */}
-      <Modal
-        visible={detailOpen}
-        transparent
-        animationType="slide"
-        onRequestClose={() => {
-          detailOpenRef.current = false;
-          setDetailOpen(false);
-        }}>
-        <Pressable
-          style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
-          onPress={() => {
+        {/* 부모 미매칭 안내 — SafetyNoticeModal 디자인을 재사용 */}
+        <SafetyNoticeModal
+          visible={unmatchedOpen}
+          onClose={() => setUnmatchedOpen(false)}
+          onConfirm={() => setUnmatchedOpen(false)}
+          title="알림"
+          body={((): string => {
+            const role = getCurrentUserRole();
+            if (role === 'parent') {
+              return '아직 자녀와 매칭되지 않은 계정입니다.\n자녀 계정 가입 후 다시 시도하세요.';
+            }
+            // child (or default) case: instruct to sign up parent account
+            return '아직 부모와 매칭되지 않은 계정입니다.\n부모 계정 가입 후 다시 시도하세요.';
+          })()}
+          ctaText="확인"
+        />
+
+        {/* Report modal: 렌더링은 reportOpen으로 제어 */}
+        {reportOpen && (
+          <ReportModal
+            location={reportLocation}
+            onClose={() => setReportOpen(false)}
+            onSubmitted={payload => {
+              console.log('제보 완료:', payload);
+              setReportOpen(false);
+            }}
+          />
+        )}
+
+        {/* 상세 제보 하단 카드 */}
+        <Modal
+          visible={detailOpen}
+          transparent
+          animationType="slide"
+          onRequestClose={() => {
             detailOpenRef.current = false;
             setDetailOpen(false);
           }}>
-          <View style={{flex: 1, justifyContent: 'flex-end'}}>
-            {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
-            <Animated.View
-              {...panResponder.panHandlers}
-              style={[
-                {
-                  backgroundColor: '#fff',
-                  borderTopLeftRadius: 16,
-                  borderTopRightRadius: 16,
-                  padding: 16,
-                },
-                {height: modalHeight},
-              ]}>
-              {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
-              <TouchableOpacity
-                style={{
-                  position: 'absolute',
-                  right: 16,
-                  top: 16,
-                  backgroundColor: '#FFD44C',
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  borderRadius: 18,
-                  zIndex: 1000,
-                  elevation: 0,
-                  shadowColor: 'transparent',
-                  shadowOpacity: 0,
-                }}
-                onPress={async () => {
-                  const rid = String(
-                    selectedReport?.reportId ?? selectedReport?.id ?? '',
-                  );
-                  if (!rid) {
-                    detailOpenRef.current = false;
-                    setDetailOpen(false);
-                    return;
-                  }
-
-                  // 토큰 확인: 체험 모드면 CustomAlert로 안내
-                  let token: string | null = null;
-                  try {
-                    token = await AsyncStorage.getItem('access_token');
-                  } catch (e) {
-                    console.warn('token read failed', e);
-                  }
-                  if (!token) {
-                    openAlert(
-                      '알림',
-                      '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
+          <Pressable
+            style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
+            onPress={() => {
+              detailOpenRef.current = false;
+              setDetailOpen(false);
+            }}>
+            <View style={{flex: 1, justifyContent: 'flex-end'}}>
+              {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
+              <Animated.View
+                {...panResponder.panHandlers}
+                style={[
+                  {
+                    backgroundColor: '#fff',
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16,
+                    padding: 16,
+                  },
+                  {height: modalHeight},
+                ]}>
+                {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    right: 16,
+                    top: 16,
+                    backgroundColor: '#FFD44C',
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: 18,
+                    zIndex: 1000,
+                    elevation: 0,
+                    shadowColor: 'transparent',
+                    shadowOpacity: 0,
+                  }}
+                  onPress={async () => {
+                    const rid = String(
+                      selectedReport?.reportId ?? selectedReport?.id ?? '',
                     );
-                    return;
-                  }
+                    if (!rid) {
+                      detailOpenRef.current = false;
+                      setDetailOpen(false);
+                      return;
+                    }
 
-                  // Use local CustomAlert confirm (consistent with Cluster behavior)
-                  setAlertTitle('이제 없어요');
-                  setAlertMsg('정말 더 이상 존재하지 않나요?');
-                  setAlertHideCancel(false);
-                  setAlertConfirm(() => async () => {
+                    // 토큰 확인: 체험 모드면 CustomAlert로 안내
+                    let token: string | null = null;
                     try {
-                      try {
-                        console.log(
-                          '[NotThere] map modal send for reportId=',
-                          rid,
-                          'category=',
-                          selectedReport?.category ??
-                            selectedReport?.title ??
-                            '제보',
-                        );
-                      } catch (logErr) {}
-                      let tokenToUse: string | null = null;
-                      try {
-                        tokenToUse = await AsyncStorage.getItem('access_token');
-                      } catch (e) {}
-                      await postReportNotThere(rid, tokenToUse ?? undefined);
-                      // on success: close alert
-                      setAlertVisible(false);
-                      setAlertConfirm(null);
-                    } catch (e: any) {
-                      console.warn('not-there failed', e);
-                      // Standardize to single dismissible message
-                      setAlertTitle('안내');
-                      setAlertMsg('이미 누른 제보입니다.');
-                      setAlertConfirm(null);
-                      setAlertHideCancel(true);
+                      token = await AsyncStorage.getItem('access_token');
+                    } catch (e) {
+                      console.warn('token read failed', e);
                     }
-                    // 닫기 modal
-                    detailOpenRef.current = false;
-                    setDetailOpen(false);
-                  });
-                  setAlertVisible(true);
-                }}>
-                <Text style={{fontWeight: '700', color: '#000'}}>
-                  이제 없어요
-                </Text>
-              </TouchableOpacity>
-
-              {loadingDetail ? (
-                <Text style={{color: '#000'}}>불러오는 중...</Text>
-              ) : selectedReport ? (
-                <View>
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: '800',
-                      marginBottom: 8,
-                      color: '#000',
-                    }}>
-                    {selectedReport.category ??
-                      selectedReport.description ??
-                      '제보'}
-                  </Text>
-                  <Text style={{color: '#000', marginBottom: 12}}>
-                    {selectedReport.description ?? selectedReport.content ?? ''}
-                  </Text>
-                  {(() => {
-                    // Normalize common image fields from backend: support camelCase and snake_case
-                    const sr: any = selectedReport as any;
-                    const imageUrl =
-                      sr.imageUrl ??
-                      sr.image_url ??
-                      sr.photoUrl ??
-                      sr.photo_url ??
-                      sr.file_url ??
-                      sr.object_url ??
-                      null;
-                    if (!imageUrl) {
-                      return null;
-                    }
-
-                    if (selectedImageStatus === 'unknown') {
-                      // check in background if not checked yet
-                      checkSelectedImage(imageUrl);
-                      return (
-                        <ActivityIndicator
-                          style={{width: '100%', height: 180, marginBottom: 12}}
-                        />
+                    if (!token) {
+                      openAlert(
+                        '알림',
+                        '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
                       );
+                      return;
                     }
 
-                    if (selectedImageStatus === 'ok') {
+                    // Use local CustomAlert confirm (consistent with Cluster behavior)
+                    setAlertTitle('이제 없어요');
+                    setAlertMsg('정말 더 이상 존재하지 않나요?');
+                    setAlertHideCancel(false);
+                    setAlertConfirm(() => async () => {
+                      try {
+                        try {
+                          console.log(
+                            '[NotThere] map modal send for reportId=',
+                            rid,
+                            'category=',
+                            selectedReport?.category ??
+                              selectedReport?.title ??
+                              '제보',
+                          );
+                        } catch (logErr) {}
+                        let tokenToUse: string | null = null;
+                        try {
+                          tokenToUse = await AsyncStorage.getItem(
+                            'access_token',
+                          );
+                        } catch (e) {}
+                        await postReportNotThere(rid, tokenToUse ?? undefined);
+                        // on success: close alert
+                        setAlertVisible(false);
+                        setAlertConfirm(null);
+                      } catch (e: any) {
+                        console.warn('not-there failed', e);
+                        // Standardize to single dismissible message
+                        setAlertTitle('안내');
+                        setAlertMsg('이미 누른 제보입니다.');
+                        setAlertConfirm(null);
+                        setAlertHideCancel(true);
+                      }
+                      // 닫기 modal
+                      detailOpenRef.current = false;
+                      setDetailOpen(false);
+                    });
+                    setAlertVisible(true);
+                  }}>
+                  <Text style={{fontWeight: '700', color: '#000'}}>
+                    이제 없어요
+                  </Text>
+                </TouchableOpacity>
+
+                {loadingDetail ? (
+                  <Text style={{color: '#000'}}>불러오는 중...</Text>
+                ) : selectedReport ? (
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: '800',
+                        marginBottom: 8,
+                        color: '#000',
+                      }}>
+                      {selectedReport.category ??
+                        selectedReport.description ??
+                        '제보'}
+                    </Text>
+                    <Text style={{color: '#000', marginBottom: 12}}>
+                      {selectedReport.description ??
+                        selectedReport.content ??
+                        ''}
+                    </Text>
+                    {(() => {
+                      // Normalize common image fields from backend: support camelCase and snake_case
+                      const sr: any = selectedReport as any;
+                      const imageUrl =
+                        sr.imageUrl ??
+                        sr.image_url ??
+                        sr.photoUrl ??
+                        sr.photo_url ??
+                        sr.file_url ??
+                        sr.object_url ??
+                        null;
+                      if (!imageUrl) {
+                        return null;
+                      }
+
+                      if (selectedImageStatus === 'unknown') {
+                        // check in background if not checked yet
+                        checkSelectedImage(imageUrl);
+                        return (
+                          <ActivityIndicator
+                            style={{
+                              width: '100%',
+                              height: 180,
+                              marginBottom: 12,
+                            }}
+                          />
+                        );
+                      }
+
+                      if (selectedImageStatus === 'ok') {
+                        return (
+                          <Image
+                            source={{uri: imageUrl}}
+                            style={{
+                              width: '100%',
+                              height: 180,
+                              borderRadius: 10,
+                              marginBottom: 12,
+                            }}
+                            resizeMode="cover"
+                          />
+                        );
+                      }
+
+                      // error state: show placeholder and allow retry
                       return (
-                        <Image
-                          source={{uri: imageUrl}}
+                        <View
                           style={{
                             width: '100%',
                             height: 180,
                             borderRadius: 10,
                             marginBottom: 12,
-                          }}
-                          resizeMode="cover"
-                        />
-                      );
-                    }
-
-                    // error state: show placeholder and allow retry
-                    return (
-                      <View
-                        style={{
-                          width: '100%',
-                          height: 180,
-                          borderRadius: 10,
-                          marginBottom: 12,
-                          backgroundColor: '#F2F3F5',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                        <Text style={{color: '#666', marginBottom: 8}}>
-                          이미지를 불러올 수 없습니다.
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() => checkSelectedImage(imageUrl)}
-                          style={{
-                            backgroundColor: '#FFD44C',
-                            paddingHorizontal: 12,
-                            paddingVertical: 8,
-                            borderRadius: 8,
+                            backgroundColor: '#F2F3F5',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                           }}>
-                          <Text style={{fontWeight: '700'}}>재시도</Text>
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  })()}
+                          <Text style={{color: '#666', marginBottom: 8}}>
+                            이미지를 불러올 수 없습니다.
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => checkSelectedImage(imageUrl)}
+                            style={{
+                              backgroundColor: '#FFD44C',
+                              paddingHorizontal: 12,
+                              paddingVertical: 8,
+                              borderRadius: 8,
+                            }}>
+                            <Text style={{fontWeight: '700'}}>재시도</Text>
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    })()}
 
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'flex-start',
-                      justifyContent: 'space-between',
-                      marginBottom: 6,
-                    }}>
-                    <View style={{flex: 1}}>
-                      <Text
-                        style={{
-                          fontWeight: '700',
-                          marginBottom: 8,
-                          color: '#000',
-                        }}>
-                        댓글
-                      </Text>
-                      {/* Render actual comment(s). Backend may return a single string field or an array of comments
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'flex-start',
+                        justifyContent: 'space-between',
+                        marginBottom: 6,
+                      }}>
+                      <View style={{flex: 1}}>
+                        <Text
+                          style={{
+                            fontWeight: '700',
+                            marginBottom: 8,
+                            color: '#000',
+                          }}>
+                          댓글
+                        </Text>
+                        {/* Render actual comment(s). Backend may return a single string field or an array of comments
                           with different property names; handle common shapes defensively. */}
-                      {(() => {
-                        const sr: any = selectedReport as any;
-                        // Only show comments returned from the comments endpoint.
-                        // Do NOT fall back to report content — that caused report text
-                        // to appear where comment list is expected.
-                        const list: string[] =
-                          Array.isArray(sr.comments) && sr.comments.length > 0
-                            ? sr.comments.map((c: any) =>
-                                typeof c === 'string'
-                                  ? c
-                                  : c.content ??
-                                    c.text ??
-                                    c.comment ??
-                                    c.body ??
-                                    c.message ??
-                                    JSON.stringify(c),
-                              )
-                            : [];
-
-                        if (list.length === 0) {
-                          return (
-                            <Text style={{color: '#666', marginBottom: 12}}>
-                              아직 댓글이 없습니다.
-                            </Text>
-                          );
-                        }
-
-                        // Show up to 4 comments only
-                        const toShow = list.slice(0, 3);
-                        return (
-                          <View style={{marginBottom: 8}}>
-                            {toShow.map((txt: string, idx: number) => (
-                              <Text
-                                key={idx}
-                                style={{
-                                  color: '#000',
-                                  marginBottom: 8,
-                                  fontSize: 14,
-                                }}>
-                                {txt}
-                              </Text>
-                            ))}
-                            {list.length > 4 ? (
-                              <Text style={{color: '#666', fontSize: 12}}>
-                                외 {list.length - 4}개의 댓글
-                              </Text>
-                            ) : null}
-                          </View>
-                        );
-                      })()}
-
-                      {/* 댓글 입력 UI는 하단 좌측 고정으로 이동함 */}
-                    </View>
-
-                    <View style={{alignItems: 'flex-end', marginLeft: 12}}>
-                      {/* 위로 끌어올리면 전체보기(풀스크린)로 전환됩니다. */}
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'flex-end',
-                          alignItems: 'flex-end',
-                        }}>
-                        {/* 좋음(라벨) → bad 평가 키 */}
                         {(() => {
-                          const role = getCurrentUserRole();
-                          if (role === 'parent') {
+                          const sr: any = selectedReport as any;
+                          // Only show comments returned from the comments endpoint.
+                          // Do NOT fall back to report content — that caused report text
+                          // to appear where comment list is expected.
+                          const list: string[] =
+                            Array.isArray(sr.comments) && sr.comments.length > 0
+                              ? sr.comments.map((c: any) =>
+                                  typeof c === 'string'
+                                    ? c
+                                    : c.content ??
+                                      c.text ??
+                                      c.comment ??
+                                      c.body ??
+                                      c.message ??
+                                      JSON.stringify(c),
+                                )
+                              : [];
+
+                          if (list.length === 0) {
+                            return (
+                              <Text style={{color: '#666', marginBottom: 12}}>
+                                아직 댓글이 없습니다.
+                              </Text>
+                            );
+                          }
+
+                          // Show up to 4 comments only
+                          const toShow = list.slice(0, 3);
+                          return (
+                            <View style={{marginBottom: 8}}>
+                              {toShow.map((txt: string, idx: number) => (
+                                <Text
+                                  key={idx}
+                                  style={{
+                                    color: '#000',
+                                    marginBottom: 8,
+                                    fontSize: 14,
+                                  }}>
+                                  {txt}
+                                </Text>
+                              ))}
+                              {list.length > 4 ? (
+                                <Text style={{color: '#666', fontSize: 12}}>
+                                  외 {list.length - 4}개의 댓글
+                                </Text>
+                              ) : null}
+                            </View>
+                          );
+                        })()}
+
+                        {/* 댓글 입력 UI는 하단 좌측 고정으로 이동함 */}
+                      </View>
+
+                      <View style={{alignItems: 'flex-end', marginLeft: 12}}>
+                        {/* 위로 끌어올리면 전체보기(풀스크린)로 전환됩니다. */}
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                            alignItems: 'flex-end',
+                          }}>
+                          {/* 좋음(라벨) → bad 평가 키 */}
+                          {(() => {
+                            const role = getCurrentUserRole();
+                            if (role === 'parent') {
+                              return (
+                                <View
+                                  style={{
+                                    alignItems: 'center',
+                                    marginHorizontal: 2,
+                                  }}
+                                  accessible={true}
+                                  accessibilityRole="button"
+                                  accessibilityLabel={`좋음 ${Number(
+                                    selectedReport?.badCount ?? 0,
+                                  )}개`}
+                                  accessibilityHint="자녀만 선택 가능"
+                                  accessibilityState={{
+                                    selected:
+                                      selectedReport?.userEvaluation === 'bad',
+                                  }}>
+                                  <Image
+                                    source={require('../asset/emoji_good.png')}
+                                    style={{width: 24, height: 24}}
+                                    resizeMode="contain"
+                                  />
+                                  <Text
+                                    style={{
+                                      marginTop: 4,
+                                      fontWeight:
+                                        selectedReport?.userEvaluation === 'bad'
+                                          ? '700'
+                                          : '400',
+                                      color:
+                                        selectedReport?.userEvaluation === 'bad'
+                                          ? '#000'
+                                          : '#666',
+                                    }}>
+                                    좋음 {Number(selectedReport?.badCount ?? 0)}
+                                  </Text>
+                                </View>
+                              );
+                            }
                             return (
                               <View
                                 style={{
                                   alignItems: 'center',
-                                  marginHorizontal: 2,
+                                  marginLeft: 2,
+                                  marginRight: 6,
                                 }}
                                 accessible={true}
                                 accessibilityRole="button"
                                 accessibilityLabel={`좋음 ${Number(
                                   selectedReport?.badCount ?? 0,
                                 )}개`}
-                                accessibilityHint="자녀만 선택 가능"
+                                accessibilityHint="선택하면 이 제보에 좋음 공감 표시가 됩니다"
                                 accessibilityState={{
                                   selected:
                                     selectedReport?.userEvaluation === 'bad',
                                 }}>
-                                <Image
-                                  source={require('../asset/emoji_good.png')}
-                                  style={{width: 24, height: 24}}
-                                  resizeMode="contain"
-                                />
+                                <TouchableOpacity
+                                  style={{padding: 6}}
+                                  disabled={evaluating}
+                                  onPress={async () => {
+                                    if (!selectedReport || evaluating) {
+                                      return;
+                                    }
+
+                                    const token = await AsyncStorage.getItem(
+                                      'access_token',
+                                    );
+                                    if (!token) {
+                                      openAlert(
+                                        '알림',
+                                        '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                                      );
+                                      return;
+                                    }
+
+                                    try {
+                                      setEvaluating(true);
+                                      let token: string | null = null;
+                                      try {
+                                        token = await AsyncStorage.getItem(
+                                          'access_token',
+                                        );
+                                      } catch (e) {}
+                                      await postReportEvaluation(
+                                        String(
+                                          selectedReport.reportId ??
+                                            selectedReport.id,
+                                        ),
+                                        'bad',
+                                        token ?? undefined,
+                                      );
+                                      applyOptimisticEvaluation('bad');
+                                    } catch (e) {
+                                      console.warn(
+                                        'evaluation failed (좋음->bad)',
+                                        e,
+                                      );
+                                      openAlert(
+                                        '전송 실패',
+                                        '피드백 전송에 실패했습니다.',
+                                      );
+                                    } finally {
+                                      setEvaluating(false);
+                                    }
+                                  }}>
+                                  <Image
+                                    source={require('../asset/emoji_good.png')}
+                                    style={{width: 24, height: 24}}
+                                    resizeMode="contain"
+                                  />
+                                </TouchableOpacity>
                                 <Text
                                   style={{
                                     marginTop: 4,
@@ -1857,100 +1985,53 @@ export default function SafeRouteScreen() {
                                 </Text>
                               </View>
                             );
-                          }
-                          return (
-                            <View
-                              style={{
-                                alignItems: 'center',
-                                marginLeft: 2,
-                                marginRight: 6,
-                              }}
-                              accessible={true}
-                              accessibilityRole="button"
-                              accessibilityLabel={`좋음 ${Number(
-                                selectedReport?.badCount ?? 0,
-                              )}개`}
-                              accessibilityHint="선택하면 이 제보에 좋음 공감 표시가 됩니다"
-                              accessibilityState={{
-                                selected:
-                                  selectedReport?.userEvaluation === 'bad',
-                              }}>
-                              <TouchableOpacity
-                                style={{padding: 6}}
-                                disabled={evaluating}
-                                onPress={async () => {
-                                  if (!selectedReport || evaluating) {
-                                    return;
-                                  }
-
-                                  const token = await AsyncStorage.getItem(
-                                    'access_token',
-                                  );
-                                  if (!token) {
-                                    openAlert(
-                                      '알림',
-                                      '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
-                                    );
-                                    return;
-                                  }
-
-                                  try {
-                                    setEvaluating(true);
-                                    let token: string | null = null;
-                                    try {
-                                      token = await AsyncStorage.getItem(
-                                        'access_token',
-                                      );
-                                    } catch (e) {}
-                                    await postReportEvaluation(
-                                      String(
-                                        selectedReport.reportId ??
-                                          selectedReport.id,
-                                      ),
-                                      'bad',
-                                      token ?? undefined,
-                                    );
-                                    applyOptimisticEvaluation('bad');
-                                  } catch (e) {
-                                    console.warn(
-                                      'evaluation failed (좋음->bad)',
-                                      e,
-                                    );
-                                    openAlert(
-                                      '전송 실패',
-                                      '피드백 전송에 실패했습니다.',
-                                    );
-                                  } finally {
-                                    setEvaluating(false);
-                                  }
-                                }}>
-                                <Image
-                                  source={require('../asset/emoji_good.png')}
-                                  style={{width: 24, height: 24}}
-                                  resizeMode="contain"
-                                />
-                              </TouchableOpacity>
-                              <Text
-                                style={{
-                                  marginTop: 4,
-                                  fontWeight:
-                                    selectedReport?.userEvaluation === 'bad'
-                                      ? '700'
-                                      : '400',
-                                  color:
-                                    selectedReport?.userEvaluation === 'bad'
-                                      ? '#000'
-                                      : '#666',
-                                }}>
-                                좋음 {Number(selectedReport?.badCount ?? 0)}
-                              </Text>
-                            </View>
-                          );
-                        })()}
-                        {/* 보통 → normal */}
-                        {(() => {
-                          const role = getCurrentUserRole();
-                          if (role === 'parent') {
+                          })()}
+                          {/* 보통 → normal */}
+                          {(() => {
+                            const role = getCurrentUserRole();
+                            if (role === 'parent') {
+                              return (
+                                <View
+                                  style={{
+                                    alignItems: 'center',
+                                    marginHorizontal: 2,
+                                  }}
+                                  accessible={true}
+                                  accessibilityRole="button"
+                                  accessibilityLabel={`보통 ${Number(
+                                    selectedReport?.badCount ?? 0,
+                                  )}개`}
+                                  accessibilityHint="자녀만 선택 가능"
+                                  accessibilityState={{
+                                    selected:
+                                      selectedReport?.userEvaluation ===
+                                      'normal',
+                                  }}>
+                                  <Image
+                                    source={require('../asset/emoji_soso.png')}
+                                    style={{width: 24, height: 24}}
+                                    resizeMode="contain"
+                                  />
+                                  <Text
+                                    style={{
+                                      marginTop: 4,
+                                      fontWeight:
+                                        selectedReport?.userEvaluation ===
+                                        'normal'
+                                          ? '700'
+                                          : '400',
+                                      color:
+                                        selectedReport?.userEvaluation ===
+                                        'normal'
+                                          ? '#000'
+                                          : '#666',
+                                    }}>
+                                    보통{' '}
+                                    {Number(selectedReport?.normalCount ?? 0)}
+                                  </Text>
+                                </View>
+                              );
+                            }
                             return (
                               <View
                                 style={{
@@ -1962,16 +2043,66 @@ export default function SafeRouteScreen() {
                                 accessibilityLabel={`보통 ${Number(
                                   selectedReport?.badCount ?? 0,
                                 )}개`}
-                                accessibilityHint="자녀만 선택 가능"
+                                accessibilityHint="선택하면 이 제보에 보통 공감 표시가 됩니다"
                                 accessibilityState={{
                                   selected:
                                     selectedReport?.userEvaluation === 'normal',
                                 }}>
-                                <Image
-                                  source={require('../asset/emoji_soso.png')}
-                                  style={{width: 24, height: 24}}
-                                  resizeMode="contain"
-                                />
+                                <TouchableOpacity
+                                  style={{padding: 6}}
+                                  disabled={evaluating}
+                                  onPress={async () => {
+                                    if (!selectedReport || evaluating) {
+                                      return;
+                                    }
+
+                                    const token = await AsyncStorage.getItem(
+                                      'access_token',
+                                    );
+                                    if (!token) {
+                                      openAlert(
+                                        '알림',
+                                        '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                                      );
+                                      return;
+                                    }
+
+                                    try {
+                                      setEvaluating(true);
+                                      let token: string | null = null;
+                                      try {
+                                        token = await AsyncStorage.getItem(
+                                          'access_token',
+                                        );
+                                      } catch (e) {}
+                                      await postReportEvaluation(
+                                        String(
+                                          selectedReport.reportId ??
+                                            selectedReport.id,
+                                        ),
+                                        'normal',
+                                        token ?? undefined,
+                                      );
+                                      applyOptimisticEvaluation('normal');
+                                    } catch (e) {
+                                      console.warn(
+                                        'evaluation failed (보통->normal)',
+                                        e,
+                                      );
+                                      openAlert(
+                                        '전송 실패',
+                                        '피드백 전송에 실패했습니다.',
+                                      );
+                                    } finally {
+                                      setEvaluating(false);
+                                    }
+                                  }}>
+                                  <Image
+                                    source={require('../asset/emoji_soso.png')}
+                                    style={{width: 24, height: 24}}
+                                    resizeMode="contain"
+                                  />
+                                </TouchableOpacity>
                                 <Text
                                   style={{
                                     marginTop: 4,
@@ -1991,99 +2122,52 @@ export default function SafeRouteScreen() {
                                 </Text>
                               </View>
                             );
-                          }
-                          return (
-                            <View
-                              style={{
-                                alignItems: 'center',
-                                marginHorizontal: 2,
-                              }}
-                              accessible={true}
-                              accessibilityRole="button"
-                              accessibilityLabel={`보통 ${Number(
-                                selectedReport?.badCount ?? 0,
-                              )}개`}
-                              accessibilityHint="선택하면 이 제보에 보통 공감 표시가 됩니다"
-                              accessibilityState={{
-                                selected:
-                                  selectedReport?.userEvaluation === 'normal',
-                              }}>
-                              <TouchableOpacity
-                                style={{padding: 6}}
-                                disabled={evaluating}
-                                onPress={async () => {
-                                  if (!selectedReport || evaluating) {
-                                    return;
-                                  }
-
-                                  const token = await AsyncStorage.getItem(
-                                    'access_token',
-                                  );
-                                  if (!token) {
-                                    openAlert(
-                                      '알림',
-                                      '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
-                                    );
-                                    return;
-                                  }
-
-                                  try {
-                                    setEvaluating(true);
-                                    let token: string | null = null;
-                                    try {
-                                      token = await AsyncStorage.getItem(
-                                        'access_token',
-                                      );
-                                    } catch (e) {}
-                                    await postReportEvaluation(
-                                      String(
-                                        selectedReport.reportId ??
-                                          selectedReport.id,
-                                      ),
-                                      'normal',
-                                      token ?? undefined,
-                                    );
-                                    applyOptimisticEvaluation('normal');
-                                  } catch (e) {
-                                    console.warn(
-                                      'evaluation failed (보통->normal)',
-                                      e,
-                                    );
-                                    openAlert(
-                                      '전송 실패',
-                                      '피드백 전송에 실패했습니다.',
-                                    );
-                                  } finally {
-                                    setEvaluating(false);
-                                  }
-                                }}>
-                                <Image
-                                  source={require('../asset/emoji_soso.png')}
-                                  style={{width: 24, height: 24}}
-                                  resizeMode="contain"
-                                />
-                              </TouchableOpacity>
-                              <Text
-                                style={{
-                                  marginTop: 4,
-                                  fontWeight:
-                                    selectedReport?.userEvaluation === 'normal'
-                                      ? '700'
-                                      : '400',
-                                  color:
-                                    selectedReport?.userEvaluation === 'normal'
-                                      ? '#000'
-                                      : '#666',
-                                }}>
-                                보통 {Number(selectedReport?.normalCount ?? 0)}
-                              </Text>
-                            </View>
-                          );
-                        })()}
-                        {/* 아쉬움 → good */}
-                        {(() => {
-                          const role = getCurrentUserRole();
-                          if (role === 'parent') {
+                          })()}
+                          {/* 아쉬움 → good */}
+                          {(() => {
+                            const role = getCurrentUserRole();
+                            if (role === 'parent') {
+                              return (
+                                <View
+                                  style={{
+                                    alignItems: 'center',
+                                    marginHorizontal: 2,
+                                  }}
+                                  accessible={true}
+                                  accessibilityRole="button"
+                                  accessibilityLabel={`아쉬움 ${Number(
+                                    selectedReport?.badCount ?? 0,
+                                  )}개`}
+                                  accessibilityHint="자녀만 선택 가능"
+                                  accessibilityState={{
+                                    selected:
+                                      selectedReport?.userEvaluation === 'good',
+                                  }}>
+                                  <Image
+                                    source={require('../asset/emoji_bad.png')}
+                                    style={{width: 24, height: 24}}
+                                    resizeMode="contain"
+                                  />
+                                  <Text
+                                    style={{
+                                      marginTop: 4,
+                                      fontWeight:
+                                        selectedReport?.userEvaluation ===
+                                        'good'
+                                          ? '700'
+                                          : '400',
+                                      color:
+                                        selectedReport?.userEvaluation ===
+                                        'good'
+                                          ? '#000'
+                                          : '#666',
+                                    }}>
+                                    아쉬움{' '}
+                                    {Number(selectedReport?.goodCount ?? 0)}
+                                  </Text>
+                                </View>
+                              );
+                            }
                             return (
                               <View
                                 style={{
@@ -2095,16 +2179,66 @@ export default function SafeRouteScreen() {
                                 accessibilityLabel={`아쉬움 ${Number(
                                   selectedReport?.badCount ?? 0,
                                 )}개`}
-                                accessibilityHint="자녀만 선택 가능"
+                                accessibilityHint="선택하면 이 제보에 아쉬움 공감 표시가 됩니다"
                                 accessibilityState={{
                                   selected:
                                     selectedReport?.userEvaluation === 'good',
                                 }}>
-                                <Image
-                                  source={require('../asset/emoji_bad.png')}
-                                  style={{width: 24, height: 24}}
-                                  resizeMode="contain"
-                                />
+                                <TouchableOpacity
+                                  style={{padding: 6}}
+                                  disabled={evaluating}
+                                  onPress={async () => {
+                                    if (!selectedReport || evaluating) {
+                                      return;
+                                    }
+
+                                    const token = await AsyncStorage.getItem(
+                                      'access_token',
+                                    );
+                                    if (!token) {
+                                      openAlert(
+                                        '알림',
+                                        '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                                      );
+                                      return;
+                                    }
+
+                                    try {
+                                      setEvaluating(true);
+                                      let token: string | null = null;
+                                      try {
+                                        token = await AsyncStorage.getItem(
+                                          'access_token',
+                                        );
+                                      } catch (e) {}
+                                      await postReportEvaluation(
+                                        String(
+                                          selectedReport.reportId ??
+                                            selectedReport.id,
+                                        ),
+                                        'good',
+                                        token ?? undefined,
+                                      );
+                                      applyOptimisticEvaluation('good');
+                                    } catch (e) {
+                                      console.warn(
+                                        'evaluation failed (아쉬움->good)',
+                                        e,
+                                      );
+                                      openAlert(
+                                        '전송 실패',
+                                        '피드백 전송에 실패했습니다.',
+                                      );
+                                    } finally {
+                                      setEvaluating(false);
+                                    }
+                                  }}>
+                                  <Image
+                                    source={require('../asset/emoji_bad.png')}
+                                    style={{width: 24, height: 24}}
+                                    resizeMode="contain"
+                                  />
+                                </TouchableOpacity>
                                 <Text
                                   style={{
                                     marginTop: 4,
@@ -2122,216 +2256,135 @@ export default function SafeRouteScreen() {
                                 </Text>
                               </View>
                             );
-                          }
-                          return (
-                            <View
-                              style={{
-                                alignItems: 'center',
-                                marginHorizontal: 2,
-                              }}
-                              accessible={true}
-                              accessibilityRole="button"
-                              accessibilityLabel={`아쉬움 ${Number(
-                                selectedReport?.badCount ?? 0,
-                              )}개`}
-                              accessibilityHint="선택하면 이 제보에 아쉬움 공감 표시가 됩니다"
-                              accessibilityState={{
-                                selected:
-                                  selectedReport?.userEvaluation === 'good',
-                              }}>
-                              <TouchableOpacity
-                                style={{padding: 6}}
-                                disabled={evaluating}
-                                onPress={async () => {
-                                  if (!selectedReport || evaluating) {
-                                    return;
-                                  }
-
-                                  const token = await AsyncStorage.getItem(
-                                    'access_token',
-                                  );
-                                  if (!token) {
-                                    openAlert(
-                                      '알림',
-                                      '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
-                                    );
-                                    return;
-                                  }
-
-                                  try {
-                                    setEvaluating(true);
-                                    let token: string | null = null;
-                                    try {
-                                      token = await AsyncStorage.getItem(
-                                        'access_token',
-                                      );
-                                    } catch (e) {}
-                                    await postReportEvaluation(
-                                      String(
-                                        selectedReport.reportId ??
-                                          selectedReport.id,
-                                      ),
-                                      'good',
-                                      token ?? undefined,
-                                    );
-                                    applyOptimisticEvaluation('good');
-                                  } catch (e) {
-                                    console.warn(
-                                      'evaluation failed (아쉬움->good)',
-                                      e,
-                                    );
-                                    openAlert(
-                                      '전송 실패',
-                                      '피드백 전송에 실패했습니다.',
-                                    );
-                                  } finally {
-                                    setEvaluating(false);
-                                  }
-                                }}>
-                                <Image
-                                  source={require('../asset/emoji_bad.png')}
-                                  style={{width: 24, height: 24}}
-                                  resizeMode="contain"
-                                />
-                              </TouchableOpacity>
-                              <Text
-                                style={{
-                                  marginTop: 4,
-                                  fontWeight:
-                                    selectedReport?.userEvaluation === 'good'
-                                      ? '700'
-                                      : '400',
-                                  color:
-                                    selectedReport?.userEvaluation === 'good'
-                                      ? '#000'
-                                      : '#666',
-                                }}>
-                                아쉬움 {Number(selectedReport?.goodCount ?? 0)}
-                              </Text>
-                            </View>
-                          );
-                        })()}
+                          })()}
+                        </View>
                       </View>
                     </View>
+
+                    {/* 버튼은 모달 콘텐츠 내부에서 제거하고, 아래에 절대 위치로 배치됩니다 */}
                   </View>
+                ) : (
+                  <Text style={{color: '#000'}}>선택된 제보가 없습니다.</Text>
+                )}
+              </Animated.View>
+            </View>
+          </Pressable>
+          {/* 상세 모달이 열려있을 때 화면 오른쪽 아래에 고정된 '이제 없어요' 버튼 */}
+          {/* moved '이제 없어요' button inside modal content */}
+          {/* 댓글 입력창: 모달 하단 왼쪽에 고정 */}
+          {/* 댓글 입력창은 ReportDetail 화면(전체 페이지)로 이동했습니다. 핀을 눌렀을 때 뜨는 하단 모달에서는 댓글 입력을 표시하지 않습니다. */}
+        </Modal>
 
-                  {/* 버튼은 모달 콘텐츠 내부에서 제거하고, 아래에 절대 위치로 배치됩니다 */}
-                </View>
-              ) : (
-                <Text style={{color: '#000'}}>선택된 제보가 없습니다.</Text>
-              )}
-            </Animated.View>
-          </View>
-        </Pressable>
-        {/* 상세 모달이 열려있을 때 화면 오른쪽 아래에 고정된 '이제 없어요' 버튼 */}
-        {/* moved '이제 없어요' button inside modal content */}
-        {/* 댓글 입력창: 모달 하단 왼쪽에 고정 */}
-        {/* 댓글 입력창은 ReportDetail 화면(전체 페이지)로 이동했습니다. 핀을 눌렀을 때 뜨는 하단 모달에서는 댓글 입력을 표시하지 않습니다. */}
-      </Modal>
-
-      {/* 클러스터 전체 리스트 풀스크린 보기 */}
-      {clusterListOpen && (
-        <Modal
-          visible={clusterListOpen}
-          animationType="slide"
-          onRequestClose={() => setClusterListOpen(false)}>
-          <ClusterReportsScreen
-            clusterId={clusterIdForList ?? ''}
-            nearbyReports={clusterNearbyReports ?? undefined}
-            onClose={() => {
-              setClusterListOpen(false);
-              setClusterNearbyReports(null);
-            }}
-            onSelect={r => {
-              // close the cluster list and show the selected report on the map
-              try {
+        {/* 클러스터 전체 리스트 풀스크린 보기 */}
+        {clusterListOpen && (
+          <Modal
+            visible={clusterListOpen}
+            animationType="slide"
+            onRequestClose={() => setClusterListOpen(false)}>
+            <ClusterReportsScreen
+              clusterId={clusterIdForList ?? ''}
+              nearbyReports={clusterNearbyReports ?? undefined}
+              onClose={() => {
                 setClusterListOpen(false);
                 setClusterNearbyReports(null);
-              } catch (e) {}
-              try {
-                // reuse existing handler which fetches detail and opens the bottom modal
-                onMarkerPress(r);
-              } catch (e) {
-                console.warn('Cluster select -> onMarkerPress failed', e);
+              }}
+              onSelect={r => {
+                // close the cluster list and show the selected report on the map
+                try {
+                  setClusterListOpen(false);
+                  setClusterNearbyReports(null);
+                } catch (e) {}
+                try {
+                  // reuse existing handler which fetches detail and opens the bottom modal
+                  onMarkerPress(r);
+                } catch (e) {
+                  console.warn('Cluster select -> onMarkerPress failed', e);
+                }
+              }}
+            />
+          </Modal>
+        )}
+
+        {/* 제보 카드 리스트(디버그용) 제거됨 */}
+
+        <View
+          style={styles.topSection}
+          pointerEvents={myPageOpen ? 'none' : 'auto'}
+          importantForAccessibility={
+            myPageOpen ? 'no-hide-descendants' : 'yes'
+          }>
+          <Text style={styles.logo}>NAVI</Text>
+          {/* 🔥 우측 상단 햄버거 메뉴 추가 */}
+          <TouchableOpacity
+            ref={a11yMenuBtnRef}
+            style={{position: 'absolute', left: 20, top: 22}}
+            onPress={openMyPage}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="마이페이지 열기">
+            <Icon name="menu" size={26} color="#333" accessible={false} />
+          </TouchableOpacity>
+
+          <View style={styles.topCard}>
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() =>
+                navigation.navigate('LocationSearch', {type: 'start'})
               }
-            }}
-          />
-        </Modal>
-      )}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={
+                start ? `출발지 ${start.name}` : '출발지 지정 안 됨'
+              }
+              accessibilityHint={
+                start ? '눌러서 출발지를 변경' : '눌러서 출발지를 지정'
+              }>
+              <Text style={styles.circle}>●</Text>
+              <Text style={styles.label}>출발지 :</Text>
+              <Text style={styles.value}>{start ? start.name : ''}</Text>
+              {!start && (
+                <Icon
+                  name="search-outline"
+                  size={18}
+                  color="#555"
+                  style={styles.icon}
+                  accessible={false}
+                />
+              )}
+            </TouchableOpacity>
 
-      {/* 제보 카드 리스트(디버그용) 제거됨 */}
+            <View style={styles.line} />
 
-      <View
-        style={styles.topSection}
-        pointerEvents={myPageOpen ? 'none' : 'auto'}
-        importantForAccessibility={myPageOpen ? 'no-hide-descendants' : 'yes'}>
-        <Text style={styles.logo}>NAVI</Text>
-        {/* 🔥 우측 상단 햄버거 메뉴 추가 */}
-        <TouchableOpacity
-          style={{position: 'absolute', left: 20, top: 22}}
-          onPress={openMyPage}
-          accessible={true}
-          accessibilityRole="button"
-          accessibilityLabel="마이페이지 열기">
-          <Icon name="menu" size={26} color="#333" accessible={false} />
-        </TouchableOpacity>
-
-        <View style={styles.topCard}>
-          <TouchableOpacity
-            style={styles.row}
-            onPress={() =>
-              navigation.navigate('LocationSearch', {type: 'start'})
-            }
-            accessible={true}
-            accessibilityRole="button"
-            accessibilityLabel={
-              start ? `출발지 ${start.name}` : '출발지 지정 안 됨'
-            }
-            accessibilityHint={
-              start ? '눌러서 출발지를 변경' : '눌러서 출발지를 지정'
-            }>
-            <Text style={styles.circle}>●</Text>
-            <Text style={styles.label}>출발지 :</Text>
-            <Text style={styles.value}>{start ? start.name : ''}</Text>
-            {!start && (
-              <Icon
-                name="search-outline"
-                size={18}
-                color="#555"
-                style={styles.icon}
-                accessible={false}
-              />
-            )}
-          </TouchableOpacity>
-
-          <View style={styles.line} />
-
-          <TouchableOpacity
-            style={styles.row}
-            onPress={() => navigation.navigate('LocationSearch', {type: 'end'})}
-            accessible={true}
-            accessibilityRole="button"
-            accessibilityLabel={
-              end ? `도착지 ${end.name}` : '도착지 지정 안 됨'
-            }
-            accessibilityHint={
-              end ? '눌러서 도착지를 변경' : '눌러서 도착지를 지정'
-            }>
-            <Text style={styles.circle}>●</Text>
-            <Text style={styles.label}>도착지 :</Text>
-            <Text style={styles.value}>{end ? end.name : ''}</Text>
-            {!end && (
-              <Icon
-                name="search-outline"
-                size={18}
-                color="#555"
-                style={styles.icon}
-                accessible={false}
-              />
-            )}
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() =>
+                navigation.navigate('LocationSearch', {type: 'end'})
+              }
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={
+                end ? `도착지 ${end.name}` : '도착지 지정 안 됨'
+              }
+              accessibilityHint={
+                end ? '눌러서 도착지를 변경' : '눌러서 도착지를 지정'
+              }>
+              <Text style={styles.circle}>●</Text>
+              <Text style={styles.label}>도착지 :</Text>
+              <Text style={styles.value}>{end ? end.name : ''}</Text>
+              {!end && (
+                <Icon
+                  name="search-outline"
+                  size={18}
+                  color="#555"
+                  style={styles.icon}
+                  accessible={false}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
+
       {/* ⭐ 오른쪽 슬라이드 패널 */}
       {myPageOpen && (
         <Pressable
@@ -2343,9 +2396,10 @@ export default function SafeRouteScreen() {
             bottom: 0,
             backgroundColor: 'rgba(0,0,0,0.4)',
           }}
-          pointerEvents="auto"
           onPress={closeMyPage}>
           <Animated.View
+            pointerEvents="auto"
+            accessibilityViewIsModal={true}
             style={{
               position: 'absolute',
               top: 0,
@@ -2359,6 +2413,8 @@ export default function SafeRouteScreen() {
             }}>
             {/* 🔥 제목 */}
             <Text
+              ref={a11yTitleRef}
+              accessibilityRole="header"
               style={{
                 fontSize: 20,
                 fontWeight: '800',
