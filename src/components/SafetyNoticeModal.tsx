@@ -12,8 +12,9 @@ interface Props {
   ctaText?: string;
   cancelText?: string;
   onCancel?: () => void;
+  hideCancel?: boolean;
 }
-export default function SafetyNoticeModal({ visible, onConfirm, onClose, title, body, ctaText, cancelText, onCancel }: Props) {
+export default function SafetyNoticeModal({ visible, onConfirm, onClose, title, body, ctaText, cancelText, onCancel, hideCancel }: Props) {
   const renderBody = () => {
     if (body) return typeof body === 'string' ? <Text style={s.body}>{body}</Text> : <View style={{ alignSelf: 'stretch' }}>{body}</View>;
 
@@ -49,11 +50,21 @@ export default function SafetyNoticeModal({ visible, onConfirm, onClose, title, 
             <MaterialIcons name="warning-amber" size={64} color="#f5a623" />
             </View>
           
-          {onCancel ? (
+          {hideCancel ? (
+            <TouchableOpacity 
+              style={[s.cta, s.singleCta]} 
+              onPress={onConfirm} 
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={ctaText ?? '확인'}
+            >
+              <Text style={s.ctaText}>{ctaText ?? '확인'}</Text>
+            </TouchableOpacity>
+          ) : (
             <View style={s.rowButtons}>
               <TouchableOpacity 
                 style={[s.cta, s.cancelBtn]} 
-                onPress={onCancel} 
+                onPress={onCancel ?? onClose} 
                 accessible={true}
                 accessibilityRole="button"
                 accessibilityLabel={cancelText ?? '취소'}
@@ -70,16 +81,6 @@ export default function SafetyNoticeModal({ visible, onConfirm, onClose, title, 
                 <Text style={s.ctaText}>{ctaText ?? '확인'}</Text>
               </TouchableOpacity>
             </View>
-          ) : (
-            <TouchableOpacity 
-              style={s.cta} 
-              onPress={onConfirm} 
-              accessible={true}
-              accessibilityRole="button"
-              accessibilityLabel={ctaText ?? '확인했어요'}
-            >
-              <Text style={s.ctaText}>{ctaText ?? '확인했어요'}</Text>
-            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -101,8 +102,8 @@ const s = StyleSheet.create({
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 6 },
   },
-  title: { fontSize: 20, fontWeight: '800', alignSelf: 'flex-start', marginBottom: 6 },
-  body: { fontSize: 16, lineHeight: 24, alignSelf: 'flex-start' },
+  title: { fontSize: 20, fontWeight: '800', alignSelf: 'flex-start', marginBottom: 6, color: '#000' },
+  body: { fontSize: 16, lineHeight: 24, alignSelf: 'flex-start', color: '#000' },
   illust: {
     width: 160,
     height: 120,
@@ -120,11 +121,26 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',
+    flex: 1,
+    minWidth: 140,
     paddingHorizontal: 12,
     marginTop: 4,
   },
+  singleCta: {
+    width: '100%',
+    flex: 0,
+    alignSelf: 'stretch',
+    marginTop: 12,
+  },
   ctaText: { fontWeight: '800', color: '#000' },
-  rowButtons: { flexDirection: 'row', alignSelf: 'stretch', marginTop: 8, gap: 8 },
+  rowButtons: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    gap: 12,
+  },
   cancelBtn: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd' },
   confirmBtn: { backgroundColor: '#FFD44C' },
   cancelText: { color: '#333', fontWeight: '700' },

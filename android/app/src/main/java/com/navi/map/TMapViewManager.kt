@@ -2,8 +2,15 @@ package com.eznavi.app.map
 
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
+import android.graphics.Rect
+import android.os.Bundle
 import android.util.Log
 import android.graphics.PointF
+import android.view.View
+import android.view.accessibility.AccessibilityEvent
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import androidx.customview.widget.ExploreByTouchHelper
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReactMethod
@@ -20,7 +27,94 @@ import com.skt.tmap.overlay.TMapMarkerItem
 import com.skt.tmap.overlay.TMapPolyLine
 import com.skt.tmap.poi.TMapPOIItem
 
+// 마커 정보를 저장하는 데이터 클래스
+data class MarkerInfo(
+    val id: String,
+    val lat: Double,
+    val lon: Double,
+    val label: String
+)
+
+// TMapView에 접근성 지원을 추가하는 Helper
+class TMapAccessibilityHelper(
+    private val view: TMapView,
+    private val getMarkers: () -> List<MarkerInfo>,
+    private val getScreenBounds: (MarkerInfo) -> Rect
+) : ExploreByTouchHelper(view) {
+
+    override fun getVirtualViewAt(x: Float, y: Float): Int {
+        val markers = getMarkers()
+        for ((index, marker) in markers.withIndex()) {
+            val bounds = getScreenBounds(marker)
+            if (bounds.contains(x.toInt(), y.toInt())) {
+                return index
+            }
+        }
+        return INVALID_ID
+    }
+
+    override fun getVisibleVirtualViews(virtualViewIds: MutableList<Int>) {
+        val markers = getMarkers()
+        for (i in markers.indices) {
+            virtualViewIds.add(i)
+        }
+    }
+
+    override fun onPopulateNodeForVirtualView(
+        virtualViewId: Int,
+        node: AccessibilityNodeInfoCompat
+    ) {
+        val markers = getMarkers()
+        if (virtualViewId < 0 || virtualViewId >= markers.size) {
+            return
+        }
+
+        val marker = markers[virtualViewId]
+        val bounds = getScreenBounds(marker)
+
+        node.text = marker.label
+        node.contentDescription = marker.label
+        node.className = "android.view.View"
+        node.addAction(AccessibilityNodeInfoCompat.ACTION_CLICK)
+        node.isClickable = true
+        node.isFocusable = true
+        node.setBoundsInParent(bounds)
+    }
+
+    override fun onPopulateEventForVirtualView(
+        virtualViewId: Int,
+        event: AccessibilityEvent
+    ) {
+        val markers = getMarkers()
+        if (virtualViewId < 0 || virtualViewId >= markers.size) {
+            return
+        }
+
+        val marker = markers[virtualViewId]
+        event.className = "android.view.View"
+        event.contentDescription = marker.label
+        event.text.clear()
+        event.text.add(marker.label)
+    }
+
+    override fun onPerformActionForVirtualView(
+        virtualViewId: Int,
+        action: Int,
+        arguments: Bundle?
+    ): Boolean {
+        if (action == AccessibilityNodeInfoCompat.ACTION_CLICK) {
+            // 마커 클릭 이벤트는 TMapView의 기존 onPress에서 처리됨
+            return true
+        }
+        return false
+    }
+}
+
 class TMapViewManager : SimpleViewManager<TMapView>() {
+
+    // 각 TMapView 인스턴스별로 마커 리스트 저장
+    private val markersMap = mutableMapOf<TMapView, MutableList<MarkerInfo>>()
+    private val accessibilityHelperMap = mutableMapOf<TMapView, TMapAccessibilityHelper>()
 
     override fun getName() = "SKTTMapView"
 
@@ -32,8 +126,39 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
         view.setIconVisibility(true)
         view.setCompassMode(false)
         view.setSightVisible(false)
-        Log.d("TMapViewManager", "✅ TMapView instance created")
+        
+        // 마커 리스트 초기화
+        markersMap[view] = mutableListOf()
+        
+        // 접근성 헬퍼 설정
+        val helper = TMapAccessibilityHelper(
+            view = view,
+            getMarkers = { markersMap[view] ?: emptyList() },
+            getScreenBounds = { marker -> getMarkerScreenBounds(view, marker) }
+        )
+        accessibilityHelperMap[view] = helper
+        ViewCompat.setAccessibilityDelegate(view, helper)
+        view.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        
+        Log.d("TMapViewManager", "✅ TMapView instance created with accessibility")
         return view
+    }
+    
+    // 마커의 화면 좌표를 계산 (뷰 전체 영역으로 노출)
+    private fun getMarkerScreenBounds(view: TMapView, marker: MarkerInfo): Rect {
+        // TMap SDK가 좌표 변환 API를 노출하지 않아, 최소한 TalkBack이 포커스를 줄 수 있도록
+        // 뷰의 가시 영역 전체를 터치 영역으로 사용합니다.
+        val width = if (view.width > 0) view.width else view.resources.displayMetrics.widthPixels
+        val height = if (view.height > 0) view.height else view.resources.displayMetrics.heightPixels
+        val safeWidth = if (width > 0) width else 1
+        val safeHeight = if (height > 0) height else 1
+        return Rect(0, 0, safeWidth, safeHeight)
+    }
+    
+    override fun onDropViewInstance(view: TMapView) {
+        super.onDropViewInstance(view)
+        markersMap.remove(view)
+        accessibilityHelperMap.remove(view)
     }
 
     /* ==== Props ==== */
@@ -146,6 +271,15 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                     setIcon(scaledBitmap)
                 }
                 view.addTMapMarkerItem(marker)
+                
+                // 마커 리스트에 추가
+                val markersList = markersMap[view]
+                if (markersList != null) {
+                    markersList.add(MarkerInfo("marker_${lat}_${lon}", lat, lon, title))
+                    // 접근성 헬퍼 업데이트
+                    accessibilityHelperMap[view]?.invalidateRoot()
+                }
+                
                 view.setCenterPoint(lon, lat)
             }
 
@@ -293,6 +427,16 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                         setIcon(scaledBitmap)
                 }
                 view.addTMapMarkerItem(marker)
+                
+                // 마커 리스트에 추가 (5번째 파라미터가 접근성 레이블)
+                val markersList = markersMap[view]
+                if (markersList != null) {
+                    // 5번째 파라미터로 접근성 레이블을 받을 수 있도록 확장
+                    val accessibilityLabel = if (args.size() >= 5) args.getString(4) ?: title else title
+                    markersList.add(MarkerInfo("marker_${lat}_${lon}", lat, lon, accessibilityLabel))
+                    // 접근성 헬퍼 업데이트
+                    accessibilityHelperMap[view]?.invalidateRoot()
+                }
             }
         }
     }

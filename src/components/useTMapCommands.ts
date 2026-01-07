@@ -23,8 +23,9 @@ export function useTMapCommands() {
       lat: number,
       lon: number,
       title: string,
-      iconName: string
-    ) => dispatch("addMarkerWithIcon", [lat, lon, title, iconName]),
+      iconName: string,
+      accessibilityLabel?: string
+    ) => dispatch("addMarkerWithIcon", [lat, lon, title, iconName, accessibilityLabel || title]),
     addPolyline: (points: { lat: number; lon: number }[]) => {
       // ✅ Kotlin 쪽 args.getArray(0) 대응을 위해 [ [lon, lat], [lon, lat], ... ] 형태로 전달
       const coords = points.map((p) => [p.lon, p.lat]);

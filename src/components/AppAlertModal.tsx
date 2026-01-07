@@ -3,7 +3,7 @@ import SafetyNoticeModal from './SafetyNoticeModal';
 import { useAppAlertStore } from '../stores/appAlertStore';
 
 export default function AppAlertModal() {
-  const { isVisible, title, body, ctaText, cancelText, onConfirm, onCancel, hide } = useAppAlertStore();
+  const { isVisible, title, body, ctaText, cancelText, hideCancel, onConfirm, onCancel, hide } = useAppAlertStore();
 
   console.log('[AppAlertModal] onCancel:', onCancel, 'cancelText:', cancelText);
 
@@ -31,6 +31,7 @@ export default function AppAlertModal() {
       onClose={hide}
       onConfirm={handleConfirm}
       onCancel={onCancel ? handleCancel : undefined}
+      hideCancel={hideCancel ?? undefined}
       title={title ?? undefined}
       body={body ?? undefined}
       ctaText={ctaText ?? undefined}

@@ -1032,14 +1032,19 @@ export default function SafeRouteScreen() {
                 }
               }
               let iconUri: string | undefined;
+              let accessibilityLabel: string;
               if (cnt >= 5) {
                 iconUri = badPingUri ?? defaultAssetUri;
+                accessibilityLabel = '상태 불량 핀';
               } else if (cnt >= 3) {
                 iconUri = sosoPingUri ?? defaultAssetUri;
+                accessibilityLabel = '상태 보통 핀';
               } else if (cnt >= 1) {
                 iconUri = goodPingUri ?? defaultAssetUri;
+                accessibilityLabel = '상태 양호 핀';
               } else {
                 iconUri = defaultAssetUri;
+                accessibilityLabel = '제보 핀';
               }
 
               console.log(
@@ -1053,6 +1058,8 @@ export default function SafeRouteScreen() {
                 usedCountSource,
                 'icon=',
                 iconUri ? '(asset)' : '(default)',
+                'a11y=',
+                accessibilityLabel,
               );
               if (iconUri && (map as any).addMarkerWithIcon) {
                 (map as any).addMarkerWithIcon(
@@ -1060,6 +1067,7 @@ export default function SafeRouteScreen() {
                   r.__lon,
                   title,
                   iconUri,
+                  accessibilityLabel,
                 );
               } else {
                 // fall back to default marker provided by the native map
@@ -1427,8 +1435,8 @@ export default function SafeRouteScreen() {
                 best = r;
               }
             }
-            // threshold 50 meters
-            if (best && bestDist <= 50) {
+            // threshold 20 meters (더 정확한 클릭만 인식)
+            if (best && bestDist <= 20) {
               onMarkerPress(best);
             }
           }}
@@ -1574,12 +1582,15 @@ export default function SafeRouteScreen() {
           visible={detailOpen}
           transparent
           animationType="slide"
+          accessible={true}
+          accessibilityViewIsModal={true}
           onRequestClose={() => {
             detailOpenRef.current = false;
             setDetailOpen(false);
           }}>
           <Pressable
             style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
+            accessible={false}
             onPress={() => {
               detailOpenRef.current = false;
               setDetailOpen(false);
@@ -1596,7 +1607,9 @@ export default function SafeRouteScreen() {
                     padding: 16,
                   },
                   {height: modalHeight},
-                ]}>
+                ]}
+                accessible={true}
+                accessibilityViewIsModal={true}>
                 {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
                 <TouchableOpacity
                   style={{
@@ -1612,27 +1625,84 @@ export default function SafeRouteScreen() {
                     shadowColor: 'transparent',
                     shadowOpacity: 0,
                   }}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel="이제 없어요"
                   onPress={async () => {
                     const rid = String(
                       selectedReport?.reportId ?? selectedReport?.id ?? '',
-                    );
-                    if (!rid) {
-                      detailOpenRef.current = false;
-                      setDetailOpen(false);
-                      return;
-                    }
+      {/* 상세 제보 하단 카드 */}
+      <Modal
+        visible={detailOpen}
+        transparent
+        animationType="slide"
+        accessible={true}
+        accessibilityViewIsModal={true}
+        onRequestClose={() => {
+          detailOpenRef.current = false;
+          setDetailOpen(false);
+        }}>
+        <Pressable
+          style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
+          accessible={false}
+          onPress={() => {
+            detailOpenRef.current = false;
+            setDetailOpen(false);
+          }}>
+          <View style={{flex: 1, justifyContent: 'flex-end'}}>
+            {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
+            <Animated.View
+              {...panResponder.panHandlers}
+              style={[
+                {
+                  backgroundColor: '#fff',
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
+                  padding: 16,
+                },
+                {height: modalHeight},
+              ]}
+              accessible={true}
+              accessibilityViewIsModal={true}>
+              {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  right: 16,
+                  top: 16,
+                  backgroundColor: '#FFD44C',
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderRadius: 18,
+                  zIndex: 1000,
+                  elevation: 0,
+                  shadowColor: 'transparent',
+                  shadowOpacity: 0,
+                }}
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="이제 없어요"
+                onPress={async () => {
+                  const rid = String(
+                    selectedReport?.reportId ?? selectedReport?.id ?? '',
+                  );
+                  if (!rid) {
+                    detailOpenRef.current = false;
+                    setDetailOpen(false);
+                    return;
+                  }
 
-                    // 토큰 확인: 체험 모드면 CustomAlert로 안내
-                    let token: string | null = null;
-                    try {
-                      token = await AsyncStorage.getItem('access_token');
-                    } catch (e) {
-                      console.warn('token read failed', e);
-                    }
-                    if (!token) {
-                      openAlert(
-                        '알림',
-                        '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
+                  // 토큰 확인: 체험 모드면 CustomAlert로 안내
+                  let token: string | null = null;
+                  try {
+                    token = await AsyncStorage.getItem('access_token');
+                  } catch (e) {
+                    console.warn('token read failed', e);
+                  }
+                  if (!token) {
+                    openAlert(
+                      '알림',
+                      '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
                       );
                       return;
                     }

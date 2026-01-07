@@ -824,7 +824,12 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
               </Text>
 
               <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
+                <TouchableOpacity 
+                  style={styles.cancelBtn} 
+                  onPress={onClose}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel="취소">
                   <Text style={{fontWeight: 'bold'}}>취소</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -833,7 +838,10 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
                     !canSubmit() || submitting ? {opacity: 0.6} : null,
                   ]}
                   onPress={() => handleSend(true)}
-                  disabled={!canSubmit() || submitting}>
+                  disabled={!canSubmit() || submitting}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel={submitting ? '보내는 중' : '보내기'}>
                   <Text style={{fontWeight: 'bold'}}>
                     {submitting ? '보내는 중…' : '보내기'}
                   </Text>
@@ -883,12 +891,17 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
                 onRequestClose={() => setPickerOptionsOpen(false)}>
                 <View style={styles.pickerDim}>
                   <View style={styles.pickerModal}>
-                    <Text style={styles.pickerTitle}>
+                    <Text
+                      style={styles.pickerTitle}
+                      accessible={true}
+                      accessibilityRole="alert"
+                    >
                       사진을 추가할 방법을 선택하세요
                     </Text>
                     <View style={styles.pickerButtons}>
                       <TouchableOpacity
                         style={[styles.pickerBtn, styles.pickerBtnPrimary]}
+                        accessibilityRole="button"
                         onPress={async () => {
                           setPickerOptionsOpen(false);
                           await pickImage();
@@ -903,6 +916,7 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={[styles.pickerBtn, styles.pickerBtnPrimary]}
+                        accessibilityRole="button"
                         onPress={async () => {
                           setPickerOptionsOpen(false);
                           await takePhoto();
@@ -918,7 +932,10 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
                     </View>
                     <TouchableOpacity
                       style={styles.pickerCancel}
-                      onPress={() => setPickerOptionsOpen(false)}>
+                      onPress={() => setPickerOptionsOpen(false)}
+                      accessible={true}
+                      accessibilityRole="button"
+                      accessibilityLabel="취소">
                       <Text style={styles.pickerCancelText}>취소</Text>
                     </TouchableOpacity>
                   </View>
@@ -1118,6 +1135,16 @@ const styles = StyleSheet.create({
   pickerBtnPrimary: {backgroundColor: '#FFD44C'},
   pickerBtnText: {color: '#111', fontWeight: '700'},
   pickerBtnTextPrimary: {color: '#000'},
-  pickerCancel: {marginTop: 4, paddingVertical: 10},
-  pickerCancelText: {color: '#666'},
+  pickerCancel: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    height: 48,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+  },
+  pickerCancelText: {color: '#333', fontWeight: '700'},
 });

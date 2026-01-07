@@ -353,7 +353,10 @@ export default function ClusterReportsScreen({
                   }
                 });
                 setAlertVisible(true);
-              }}>
+              }}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="이제 없어요">
               <Text style={{fontWeight: '700', color: '#000'}}>
                 이제 없어요
               </Text>
@@ -612,7 +615,11 @@ export default function ClusterReportsScreen({
               style={[
                 styles.tabBtn,
                 selectedCategory === c ? styles.tabBtnActive : null,
-              ]}>
+              ]}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={`${c} 카테고리, ${selectedCategory === c ? '선택됨' : '미선택'}`}
+              >
               <Text
                 style={[
                   styles.tabText,

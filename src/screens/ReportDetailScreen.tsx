@@ -266,7 +266,10 @@ export default function ReportDetailScreen() {
                   });
                   setAlertVisible(true);
                 })();
-              }}>
+              }}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="이제 없어요">
               <Text style={{fontWeight: '700', color: '#000'}}>
                 이제 없어요
               </Text>
@@ -712,7 +715,7 @@ export default function ReportDetailScreen() {
                             useAppAlertStore.getState().show({
                               title: '댓글 삭제',
                               body: '정말 댓글을 삭제하시겠습니까?',
-                              ctaText: '삭제',
+                              ctaText: '확인',
                               cancelText: '취소',
                               onConfirm: async () => {
                                 try {
@@ -768,6 +771,7 @@ export default function ReportDetailScreen() {
                                           detail ||
                                           '본인이 작성한 댓글만 삭제할 수 있습니다.',
                                         ctaText: '확인',
+                                        hideCancel: true,
                                       });
                                     } catch (e) {
                                       Alert.alert(
@@ -784,6 +788,7 @@ export default function ReportDetailScreen() {
                                         title: '삭제 실패',
                                         body: '댓글 삭제에 실패했습니다.',
                                         ctaText: '확인',
+                                        hideCancel: true,
                                       });
                                     } catch (e) {
                                       Alert.alert(
