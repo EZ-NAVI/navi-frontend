@@ -10,5 +10,12 @@
     <!-- 특정 도메인에 대해 HTTP 통신 허용 -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">3.37.169.176</domain>
+
+        <!-- Metro dev server (adb reverse 사용 시 로컬호스트로 접근) -->
+        <domain includeSubdomains="false">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+
+        <!-- 에뮬레이터에서 호스트 PC 접근 시 사용 -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
     </domain-config>
 </network-security-config>
