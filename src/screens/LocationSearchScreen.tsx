@@ -137,7 +137,14 @@ export default function LocationSearchScreen() {
 
         {query.length > 0 && (
           <TouchableOpacity onPress={clearQuery} style={{marginRight: 8}}>
-            <Icon name="close-circle" size={20} color="#777" />
+            <Icon
+              name="close-circle"
+              size={20}
+              color="#777"
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="검색어 제거"
+            />
           </TouchableOpacity>
         )}
 

@@ -2281,7 +2281,12 @@ export default function SafeRouteScreen() {
             }
             accessible={true}
             accessibilityRole="button"
-            accessibilityLabel="출발지 지정">
+            accessibilityLabel={
+              start ? `출발지 ${start.name}` : '출발지 지정 안 됨'
+            }
+            accessibilityHint={
+              start ? '눌러서 출발지를 변경' : '눌러서 출발지를 지정'
+            }>
             <Text style={styles.circle}>●</Text>
             <Text style={styles.label}>출발지 :</Text>
             <Text style={styles.value}>{start ? start.name : ''}</Text>
@@ -2291,6 +2296,7 @@ export default function SafeRouteScreen() {
                 size={18}
                 color="#555"
                 style={styles.icon}
+                accessible={false}
               />
             )}
           </TouchableOpacity>
@@ -2302,7 +2308,12 @@ export default function SafeRouteScreen() {
             onPress={() => navigation.navigate('LocationSearch', {type: 'end'})}
             accessible={true}
             accessibilityRole="button"
-            accessibilityLabel="도착지 지정">
+            accessibilityLabel={
+              end ? `도착지 ${end.name}` : '도착지 지정 안 됨'
+            }
+            accessibilityHint={
+              end ? '눌러서 도착지를 변경' : '눌러서 도착지를 지정'
+            }>
             <Text style={styles.circle}>●</Text>
             <Text style={styles.label}>도착지 :</Text>
             <Text style={styles.value}>{end ? end.name : ''}</Text>
@@ -2312,6 +2323,7 @@ export default function SafeRouteScreen() {
                 size={18}
                 color="#555"
                 style={styles.icon}
+                accessible={false}
               />
             )}
           </TouchableOpacity>
