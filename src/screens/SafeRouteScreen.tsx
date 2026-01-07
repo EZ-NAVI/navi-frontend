@@ -1577,93 +1577,39 @@ export default function SafeRouteScreen() {
           />
         )}
 
-        {/* 상세 제보 하단 카드 */}
-        <Modal
-          visible={detailOpen}
-          transparent
-          animationType="slide"
-          accessible={true}
-          accessibilityViewIsModal={true}
-          onRequestClose={() => {
-            detailOpenRef.current = false;
-            setDetailOpen(false);
-          }}>
-          <Pressable
-            style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
-            accessible={false}
-            onPress={() => {
+          {/* 상세 제보 하단 카드 */}
+          <Modal
+            visible={detailOpen}
+            transparent
+            animationType="slide"
+            accessible={true}
+            accessibilityViewIsModal={true}
+            onRequestClose={() => {
               detailOpenRef.current = false;
               setDetailOpen(false);
             }}>
-            <View style={{flex: 1, justifyContent: 'flex-end'}}>
-              {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
-              <Animated.View
-                {...panResponder.panHandlers}
-                style={[
-                  {
-                    backgroundColor: '#fff',
-                    borderTopLeftRadius: 16,
-                    borderTopRightRadius: 16,
-                    padding: 16,
-                  },
-                  {height: modalHeight},
-                ]}
-                accessible={true}
-                accessibilityViewIsModal={true}>
-                {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    right: 16,
-                    top: 16,
-                    backgroundColor: '#FFD44C',
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    borderRadius: 18,
-                    zIndex: 1000,
-                    elevation: 0,
-                    shadowColor: 'transparent',
-                    shadowOpacity: 0,
-                  }}
+            <Pressable
+              style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
+              accessible={false}
+              onPress={() => {
+                detailOpenRef.current = false;
+                setDetailOpen(false);
+              }}>
+              <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
+                <Animated.View
+                  {...panResponder.panHandlers}
+                  style={[
+                    {
+                      backgroundColor: '#fff',
+                      borderTopLeftRadius: 16,
+                      borderTopRightRadius: 16,
+                      padding: 16,
+                    },
+                    {height: modalHeight},
+                  ]}
                   accessible={true}
-                  accessibilityRole="button"
-                  accessibilityLabel="이제 없어요"
-                  onPress={async () => {
-                    const rid = String(
-                      selectedReport?.reportId ?? selectedReport?.id ?? '',
-      {/* 상세 제보 하단 카드 */}
-      <Modal
-        visible={detailOpen}
-        transparent
-        animationType="slide"
-        accessible={true}
-        accessibilityViewIsModal={true}
-        onRequestClose={() => {
-          detailOpenRef.current = false;
-          setDetailOpen(false);
-        }}>
-        <Pressable
-          style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
-          accessible={false}
-          onPress={() => {
-            detailOpenRef.current = false;
-            setDetailOpen(false);
-          }}>
-          <View style={{flex: 1, justifyContent: 'flex-end'}}>
-            {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
-            <Animated.View
-              {...panResponder.panHandlers}
-              style={[
-                {
-                  backgroundColor: '#fff',
-                  borderTopLeftRadius: 16,
-                  borderTopRightRadius: 16,
-                  padding: 16,
-                },
-                {height: modalHeight},
-              ]}
-              accessible={true}
-              accessibilityViewIsModal={true}>
+                  accessibilityViewIsModal={true}>
               {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
               <TouchableOpacity
                 style={{

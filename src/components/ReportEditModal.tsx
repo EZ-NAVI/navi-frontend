@@ -52,7 +52,7 @@ export default function ReportEditModal({
     useAppAlertStore.getState().show({
       title: '제보 삭제',
       body: '정말로 이 제보를 삭제하시겠습니까?',
-      ctaText: '삭제',
+      ctaText: '확인',
       cancelText: '취소',
       onConfirm: async () => {
         try {
