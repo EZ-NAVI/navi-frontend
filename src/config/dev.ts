@@ -91,5 +91,7 @@ const envWsFromRnConfig = RNConfig ? (RNConfig.WS_BASE_URL as string | undefined
 const envApiFromProc = (process.env.API_BASE_URL as string | undefined) ?? undefined;
 const envWsFromProc = (process.env.WS_BASE_URL as string | undefined) ?? undefined;
 
-export const API_BASE_URL = (envApiFromRnConfig ?? envApiFromProc) ?? (__DEV__ ? "http://3.37.169.176:8000" : "https://api.example.com");
-export const WS_BASE_URL = (envWsFromRnConfig ?? envWsFromProc) ?? (__DEV__ ? "ws://3.37.169.176:8001" : "wss://ws.example.com");
+// 기본값을 개발/릴리스 공통으로 동일 백엔드로 설정해 테스트 가능하게 한다.
+// (실제 배포 시에는 react-native-config 또는 빌드 타임 환경변수로 교체하세요.)
+export const API_BASE_URL = (envApiFromRnConfig ?? envApiFromProc) ?? "http://3.37.169.176:8000";
+export const WS_BASE_URL = (envWsFromRnConfig ?? envWsFromProc) ?? "ws://3.37.169.176:8001";
