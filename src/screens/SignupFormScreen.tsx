@@ -211,7 +211,7 @@ export default function SignupFormScreen() {
             onChangeText={setName}
           />
           <TextInput
-            placeholder="휴대폰 번호 (010-0000-0000)"
+            placeholder="휴대폰 번호 (예시 - 010-0000-0000)"
             placeholderTextColor="#A0A0A0"
             keyboardType="phone-pad"
             style={styles.input}
@@ -219,7 +219,7 @@ export default function SignupFormScreen() {
             onChangeText={setPhone}
           />
           <TextInput
-            placeholder="이메일 (user@example.com)"
+            placeholder="이메일 (예시 - user@example.com)"
             placeholderTextColor="#A0A0A0"
             keyboardType="email-address"
             autoCapitalize="none"
@@ -236,7 +236,7 @@ export default function SignupFormScreen() {
             onChangeText={setPw}
           />
           <TextInput
-            placeholder="출생년도 (예: 2012)"
+            placeholder="출생년도 (예시 - 2012)"
             placeholderTextColor="#A0A0A0"
             keyboardType="number-pad"
             style={styles.input}
@@ -262,7 +262,7 @@ export default function SignupFormScreen() {
             onChangeText={setRelName}
           />
           <TextInput
-            placeholder="출생년도 (예: 2012)"
+            placeholder="출생년도 (예시 - 2012)"
             placeholderTextColor="#A0A0A0"
             keyboardType="number-pad"
             style={styles.input}
@@ -273,7 +273,7 @@ export default function SignupFormScreen() {
           <TextInput
             placeholder={`${
               isParent ? '자녀' : '부모님'
-            } 휴대폰 번호 (010-0000-0000)`}
+            } 휴대폰 번호 (예시 - 010-0000-0000)`}
             placeholderTextColor="#A0A0A0"
             keyboardType="phone-pad"
             style={styles.input}
@@ -283,7 +283,7 @@ export default function SignupFormScreen() {
           <TextInput
             placeholder={`${
               isParent ? '자녀' : '부모님'
-            } 이메일 (user@example.com)`}
+            } 이메일 (예시 - user@example.com)`}
             placeholderTextColor="#A0A0A0"
             keyboardType="email-address"
             autoCapitalize="none"

@@ -29,7 +29,10 @@ export default function SignupTypeScreen() {
           style={styles.card}
           onPress={() =>
             navigation.navigate('SignupConsent', {userType: 'parent'})
-          }>
+          }
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="만 14세 이상 선택">
           <Text style={styles.cardText}>만 14세 이상</Text>
         </TouchableOpacity>
 
@@ -38,7 +41,10 @@ export default function SignupTypeScreen() {
           style={styles.card}
           onPress={() =>
             navigation.navigate('SignupConsent', {userType: 'child'})
-          }>
+          }
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="만 14세 미만 선택">
           <Text style={styles.cardText}>만 14세 미만</Text>
         </TouchableOpacity>
       </View>

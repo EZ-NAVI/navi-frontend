@@ -1,9 +1,9 @@
-import React from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React from 'react';
+import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 export default function CustomAlert({
   visible,
-  title = "알림",
+  title = '알림',
   message,
   onClose,
   hideCancel = false,
@@ -13,28 +13,30 @@ export default function CustomAlert({
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.box}>
-
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title} accessibilityRole="alert">
+            {title}
+          </Text>
           <Text style={styles.message}>{message}</Text>
 
           <View style={styles.buttons}>
             {!hideCancel && (
               <TouchableOpacity
                 style={[styles.btn, styles.cancelBtn]}
-                onPress={onClose}
-              >
-                <Text style={styles.cancelText}>취소</Text>
+                onPress={onClose}>
+                <Text style={styles.cancelText} accessibilityRole="button">
+                  취소
+                </Text>
               </TouchableOpacity>
             )}
 
             <TouchableOpacity
               style={[styles.btn, styles.confirmBtn]}
-              onPress={onConfirm || onClose}
-            >
-              <Text style={styles.confirmText}>확인</Text>
+              onPress={onConfirm || onClose}>
+              <Text style={styles.confirmText} accessibilityRole="button">
+                확인
+              </Text>
             </TouchableOpacity>
           </View>
-
         </View>
       </View>
     </Modal>
@@ -44,33 +46,33 @@ export default function CustomAlert({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   box: {
     width: 280,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 18,
     paddingVertical: 24,
     paddingHorizontal: 22,
-    alignItems: "center",
+    alignItems: 'center',
     elevation: 10,
   },
   title: {
     fontSize: 18,
-    fontWeight: "800",
-    color: "#000",
+    fontWeight: '800',
+    color: '#000',
     marginBottom: 12,
   },
   message: {
     fontSize: 14,
-    color: "#444",
-    textAlign: "center",
+    color: '#444',
+    textAlign: 'center',
     lineHeight: 20,
   },
   buttons: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 26,
     gap: 10,
   },
@@ -80,19 +82,19 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   cancelBtn: {
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
   },
   confirmBtn: {
-    backgroundColor: "#FFDE59",
+    backgroundColor: '#FFDE59',
   },
   cancelText: {
-    textAlign: "center",
-    color: "#555",
-    fontWeight: "700",
+    textAlign: 'center',
+    color: '#555',
+    fontWeight: '700',
   },
   confirmText: {
-    textAlign: "center",
-    color: "#000",
-    fontWeight: "700",
+    textAlign: 'center',
+    color: '#000',
+    fontWeight: '700',
   },
 });

@@ -76,7 +76,11 @@ export default function SignupConsentScreen() {
 
           <TouchableOpacity
             style={[styles.check, consents.personal && styles.checkOn]}
-            onPress={() => toggle('personal')}>
+            onPress={() => toggle('personal')}
+            accessible={true}
+            accessibilityRole="checkbox"
+            accessibilityLabel="개인정보 처리 내용에 동의"
+            accessibilityState={{checked: consents.personal}}>
             <Text style={styles.checkText}>
               {consents.personal ? '☑' : '☐'} 위 내용에 동의합니다
             </Text>
@@ -98,7 +102,11 @@ export default function SignupConsentScreen() {
 
           <TouchableOpacity
             style={[styles.check, consents.location && styles.checkOn]}
-            onPress={() => toggle('location')}>
+            onPress={() => toggle('location')}
+            accessible={true}
+            accessibilityRole="checkbox"
+            accessibilityLabel="위치정보 수집 내용에 동의"
+            accessibilityState={{checked: consents.personal}}>
             <Text style={styles.checkText}>
               {consents.location ? '☑' : '☐'} 위 내용에 동의합니다
             </Text>
@@ -120,7 +128,11 @@ export default function SignupConsentScreen() {
 
           <TouchableOpacity
             style={[styles.check, consents.fcm && styles.checkOn]}
-            onPress={() => toggle('fcm')}>
+            onPress={() => toggle('fcm')}
+            accessible={true}
+            accessibilityRole="checkbox"
+            accessibilityLabel="푸시 토큰 수집 내용에 동의"
+            accessibilityState={{checked: consents.personal}}>
             <Text style={styles.checkText}>
               {consents.fcm ? '☑' : '☐'} 위 내용에 동의합니다
             </Text>
@@ -140,9 +152,13 @@ export default function SignupConsentScreen() {
 
             <TouchableOpacity
               style={[styles.check, consents.guardian && styles.checkOn]}
-              onPress={() => toggle('guardian')}>
+              onPress={() => toggle('guardian')}
+              accessible={true}
+              accessibilityRole="checkbox"
+              accessibilityLabel="법정대리인 동의"
+              accessibilityState={{checked: consents.personal}}>
               <Text style={styles.checkText}>
-                {consents.guardian ? '☑' : '☐'} 법정대리인 동의에 동의합니다
+                {consents.guardian ? '☑' : '☐'} 위 내용에 동의합니다
               </Text>
             </TouchableOpacity>
           </View>
