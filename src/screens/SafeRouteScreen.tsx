@@ -2278,7 +2278,9 @@ export default function SafeRouteScreen() {
             style={styles.row}
             onPress={() =>
               navigation.navigate('LocationSearch', {type: 'start'})
-            }>
+            }
+            accessible={true}
+            accessibilityLabel="출발지 지정, 입력창">
             <Text style={styles.circle}>●</Text>
             <Text style={styles.label}>출발지 :</Text>
             <Text style={styles.value}>{start ? start.name : ''}</Text>
@@ -2296,9 +2298,9 @@ export default function SafeRouteScreen() {
 
           <TouchableOpacity
             style={styles.row}
-            onPress={() =>
-              navigation.navigate('LocationSearch', {type: 'end'})
-            }>
+            onPress={() => navigation.navigate('LocationSearch', {type: 'end'})}
+            accessible={true}
+            accessibilityLabel="도착지 지정 입력창">
             <Text style={styles.circle}>●</Text>
             <Text style={styles.label}>도착지 :</Text>
             <Text style={styles.value}>{end ? end.name : ''}</Text>
