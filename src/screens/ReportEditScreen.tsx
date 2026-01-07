@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -12,11 +12,11 @@ import {
   ToastAndroid,
   ActivityIndicator,
 } from 'react-native';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { updateReport, getPresignedUrl } from '../api/reports';
-import { WebSocketContext } from '../context/WebSocketContext';
+import {updateReport, getPresignedUrl} from '../api/reports';
+import {WebSocketContext} from '../context/WebSocketContext';
 
 type RootStackParamList = {
   ReportEdit: {
@@ -30,20 +30,28 @@ type RootStackParamList = {
 };
 
 type ReportEditScreenRouteProp = RouteProp<RootStackParamList, 'ReportEdit'>;
-type ReportEditScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ReportEdit'>;
+type ReportEditScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'ReportEdit'
+>;
 
 const CATEGORIES = [
-  { label: '공사장', value: '공사장' },
-  { label: '장애물', value: '장애물' },
-  { label: '공포', value: '공포' },
-  { label: '인도 없음', value: '인도 없음' },
-  { label: '놀이터, 쉼터', value: '놀이터, 쉼터' },
+  {label: '공사장', value: '공사장'},
+  {label: '장애물', value: '장애물'},
+  {label: '공포', value: '공포'},
+  {label: '인도 없음', value: '인도 없음'},
+  {label: '놀이터, 쉼터', value: '놀이터, 쉼터'},
 ];
 
 export default function ReportEditScreen() {
   const navigation = useNavigation<ReportEditScreenNavigationProp>();
   const route = useRoute<ReportEditScreenRouteProp>();
-  const { reportId, category: initialCategory, description: initialDescription, image_url: initialImageUrl } = route.params;
+  const {
+    reportId,
+    category: initialCategory,
+    description: initialDescription,
+    image_url: initialImageUrl,
+  } = route.params;
 
   // WebSocket 컨텍스트
   const wsContext = useContext(WebSocketContext);
@@ -57,20 +65,28 @@ export default function ReportEditScreen() {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const notify = (msg: string) => {
-    if (Platform.OS === 'android') ToastAndroid.show(msg, ToastAndroid.SHORT);
-    else Alert.alert('', msg);
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(msg, ToastAndroid.SHORT);
+    } else {
+      Alert.alert('', msg);
+    }
   };
 
   const pickImage = async () => {
     let pickerMod: any;
     try {
       pickerMod = require('react-native-image-picker');
-      if (!pickerMod || (typeof pickerMod === 'object' && Object.keys(pickerMod).length === 0)) {
+      if (
+        !pickerMod ||
+        (typeof pickerMod === 'object' && Object.keys(pickerMod).length === 0)
+      ) {
         notify('이미지 선택 기능이 초기화되지 않았습니다.');
         return;
       }
     } catch (e) {
-      notify('이미지 선택 기능을 사용하려면 react-native-image-picker를 설치하세요.');
+      notify(
+        '이미지 선택 기능을 사용하려면 react-native-image-picker를 설치하세요.',
+      );
       return;
     }
 
@@ -81,7 +97,10 @@ export default function ReportEditScreen() {
       launcher = pickerMod.launchImageLibrary;
     } else if (pickerMod?.default && typeof pickerMod.default === 'function') {
       launcher = pickerMod.default;
-    } else if (pickerMod?.default && typeof pickerMod.default.launchImageLibrary === 'function') {
+    } else if (
+      pickerMod?.default &&
+      typeof pickerMod.default.launchImageLibrary === 'function'
+    ) {
       launcher = pickerMod.default.launchImageLibrary;
     }
 
@@ -91,8 +110,8 @@ export default function ReportEditScreen() {
     }
 
     try {
-      const options = { mediaType: 'photo', selectionLimit: 1 };
-      let result: any = await new Promise((resolve) => {
+      const options = {mediaType: 'photo', selectionLimit: 1};
+      let result: any = await new Promise(resolve => {
         try {
           launcher(options, resolve);
         } catch (err) {
@@ -100,7 +119,11 @@ export default function ReportEditScreen() {
         }
       });
 
-      if (result && result.mediaType === options.mediaType && result.selectionLimit === options.selectionLimit) {
+      if (
+        result &&
+        result.mediaType === options.mediaType &&
+        result.selectionLimit === options.selectionLimit
+      ) {
         try {
           const maybePromise = launcher(options);
           if (maybePromise && typeof maybePromise.then === 'function') {
@@ -129,40 +152,65 @@ export default function ReportEditScreen() {
       const fileName = uri.split('/').pop() || `photo_${Date.now()}.jpg`;
       const ext = fileName.split('.').pop() || 'jpg';
       let mime = 'image/jpeg';
-      if (ext.toLowerCase() === 'png') mime = 'image/png';
-      else if (ext.toLowerCase() === 'webp') mime = 'image/webp';
+      if (ext.toLowerCase() === 'png') {
+        mime = 'image/png';
+      } else if (ext.toLowerCase() === 'webp') {
+        mime = 'image/webp';
+      }
 
       const presigned = await getPresignedUrl(fileName, mime);
       let uploadUrl: string | undefined;
       let finalUrl: string | undefined;
-      
-      if (typeof presigned === 'string') uploadUrl = presigned;
-      else if (presigned) {
-        uploadUrl = presigned.url || presigned.upload_url || presigned.presigned_url || presigned.put_url || presigned.uploadUrl;
-        finalUrl = presigned.final_url || presigned.file_url || presigned.object_url || presigned.url_without_query;
+
+      if (typeof presigned === 'string') {
+        uploadUrl = presigned;
+      } else if (presigned) {
+        uploadUrl =
+          presigned.url ||
+          presigned.upload_url ||
+          presigned.presigned_url ||
+          presigned.put_url ||
+          presigned.uploadUrl;
+        finalUrl =
+          presigned.final_url ||
+          presigned.file_url ||
+          presigned.object_url ||
+          presigned.url_without_query;
       }
-      
-      if (!uploadUrl) throw new Error('presigned url not returned from server');
+
+      if (!uploadUrl) {
+        throw new Error('presigned url not returned from server');
+      }
 
       const localFetch = await fetch(uri);
       const blob = await localFetch.blob();
 
-      const headers: any = { 'Content-Type': mime, 'x-amz-acl': 'public-read' };
-      const putRes = await fetch(uploadUrl, { method: 'PUT', headers, body: blob });
-      
+      const headers: any = {'Content-Type': mime, 'x-amz-acl': 'public-read'};
+      const putRes = await fetch(uploadUrl, {
+        method: 'PUT',
+        headers,
+        body: blob,
+      });
+
       if (!putRes.ok) {
         const txt = await putRes.text().catch(() => '');
-        throw new Error(`upload failed: ${putRes.status} ${putRes.statusText} ${txt}`);
+        throw new Error(
+          `upload failed: ${putRes.status} ${putRes.statusText} ${txt}`,
+        );
       }
 
       if (!finalUrl) {
-        finalUrl = presigned.file_url || presigned.final_url || presigned.object_url || uploadUrl;
+        finalUrl =
+          presigned.file_url ||
+          presigned.final_url ||
+          presigned.object_url ||
+          uploadUrl;
       }
-      
+
       if (!finalUrl) {
         throw new Error('Failed to get final image URL');
       }
-      
+
       notify('사진 업로드 완료');
       return finalUrl;
     } finally {
@@ -188,7 +236,9 @@ export default function ReportEditScreen() {
       if (photo && photo !== initialImageUrl) {
         try {
           const finalUrl = await uploadImageToPresigned(photo);
-          if (finalUrl) payload.image_url = finalUrl;
+          if (finalUrl) {
+            payload.image_url = finalUrl;
+          }
         } catch (e: any) {
           console.warn('upload photo failed', e);
           notify('사진 업로드에 실패했습니다.');
@@ -199,7 +249,7 @@ export default function ReportEditScreen() {
 
       console.log('제보 수정 payload:', payload);
       const updatedReport = await updateReport(reportId, payload);
-      
+
       console.log('✅ [API] 제보 수정 성공:', updatedReport);
 
       // 수정 성공 후 WebSocket으로 부모에게 알림 전송 (report.updated)
@@ -210,23 +260,33 @@ export default function ReportEditScreen() {
             reportId,
             ...payload, // 수정된 category, description, image_url 포함
           };
-          console.log('📤 [WebSocket] 수정 알림 전송:', JSON.stringify(websocketPayload, null, 2));
+          console.log(
+            '📤 [WebSocket] 수정 알림 전송:',
+            JSON.stringify(websocketPayload, null, 2),
+          );
           sendWebSocket(websocketPayload);
           console.log('✅ [WebSocket] 수정 알림 전송 완료');
         } catch (wsError) {
           console.warn('❌ [WebSocket] 알림 전송 실패:', wsError);
         }
       } else {
-        console.log('⚠️ [WebSocket] WebSocketProvider가 없어서 알림을 전송하지 않습니다.');
+        console.log(
+          '⚠️ [WebSocket] WebSocketProvider가 없어서 알림을 전송하지 않습니다.',
+        );
       }
-      
+
       notify('제보가 수정되었습니다.');
       navigation.goBack();
     } catch (error: any) {
       console.error('제보 수정 실패:', error);
       const serverBody = error?.response?.data;
       if (serverBody) {
-        const maybeMsg = typeof serverBody === 'string' ? serverBody : (serverBody.message || serverBody.error || JSON.stringify(serverBody));
+        const maybeMsg =
+          typeof serverBody === 'string'
+            ? serverBody
+            : serverBody.message ||
+              serverBody.error ||
+              JSON.stringify(serverBody);
         notify(String(maybeMsg).slice(0, 200));
       } else {
         notify('제보 수정에 실패했습니다.');
@@ -239,21 +299,25 @@ export default function ReportEditScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="뒤로가기">
           <MaterialIcons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>제보 수정</Text>
-        <View style={{ width: 24 }} />
+        <View style={{width: 24}} />
       </View>
 
       <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.sectionTitle}>카테고리</Text>
-        <View style={{ marginBottom: 20, position: 'relative' }}>
+        <View style={{marginBottom: 20, position: 'relative'}}>
           <TouchableOpacity
             style={styles.dropdownHeader}
-            onPress={() => setCatOpen((v) => !v)}
-            activeOpacity={0.7}
-          >
+            onPress={() => setCatOpen(v => !v)}
+            activeOpacity={0.7}>
             <Text style={styles.dropdownHeaderText}>
               {category ? category : '카테고리 선택'}
             </Text>
@@ -261,16 +325,18 @@ export default function ReportEditScreen() {
           </TouchableOpacity>
           {catOpen && (
             <View style={styles.dropdownList}>
-              <ScrollView style={{ maxHeight: 140 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-                {CATEGORIES.map((cat) => (
+              <ScrollView
+                style={{maxHeight: 140}}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}>
+                {CATEGORIES.map(cat => (
                   <TouchableOpacity
                     key={cat.value}
                     style={styles.dropdownItem}
                     onPress={() => {
                       setCategory(cat.value);
                       setCatOpen(false);
-                    }}
-                  >
+                    }}>
                     <Text style={styles.dropdownItemText}>{cat.label}</Text>
                   </TouchableOpacity>
                 ))}
@@ -282,7 +348,11 @@ export default function ReportEditScreen() {
         <Text style={styles.sectionTitle}>사진</Text>
         <TouchableOpacity style={styles.uploadBox} onPress={pickImage}>
           {photo ? (
-            <Image source={{ uri: photo }} style={styles.photoPreview} resizeMode="cover" />
+            <Image
+              source={{uri: photo}}
+              style={styles.photoPreview}
+              resizeMode="cover"
+            />
           ) : (
             <View style={styles.uploadEmpty}>
               <MaterialIcons name="cloud-upload" size={40} color="#888" />
@@ -302,17 +372,23 @@ export default function ReportEditScreen() {
           onFocus={() => setCatOpen(false)}
           blurOnSubmit={false}
         />
-        <Text style={[styles.charCount, description.length > 100 && styles.charCountOver]}>
+        <Text
+          style={[
+            styles.charCount,
+            description.length > 100 && styles.charCountOver,
+          ]}>
           {description.length}/100
         </Text>
       </ScrollView>
 
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[styles.submitButton, (isSubmitting || isUploadingImage) && styles.buttonDisabled]}
+          style={[
+            styles.submitButton,
+            (isSubmitting || isUploadingImage) && styles.buttonDisabled,
+          ]}
           onPress={handleSubmit}
-          disabled={isSubmitting || isUploadingImage}
-        >
+          disabled={isSubmitting || isUploadingImage}>
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
@@ -386,7 +462,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     zIndex: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
