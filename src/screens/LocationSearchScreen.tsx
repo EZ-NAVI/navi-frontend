@@ -141,7 +141,13 @@ export default function LocationSearchScreen() {
           </TouchableOpacity>
         )}
 
-        <Icon name="search-outline" size={20} color="#444" />
+        <Icon
+          name="search-outline"
+          size={20}
+          color="#444"
+          accessible={true}
+          accessibilityLabel="검색 아이콘"
+        />
       </View>
 
       {loading && (
@@ -163,6 +169,8 @@ export default function LocationSearchScreen() {
               size={20}
               color="#f7d23e"
               style={{marginRight: 8}}
+              accessible={true}
+              accessibilityLabel="검색 결과"
             />
             <View>
               <Text style={styles.name}>{item.name}</Text>
