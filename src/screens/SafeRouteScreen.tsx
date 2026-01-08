@@ -1577,78 +1577,78 @@ export default function SafeRouteScreen() {
           />
         )}
 
-          {/* 상세 제보 하단 카드 */}
-          <Modal
-            visible={detailOpen}
-            transparent
-            animationType="slide"
-            accessible={true}
-            accessibilityViewIsModal={true}
-            onRequestClose={() => {
+        {/* 상세 제보 하단 카드 */}
+        <Modal
+          visible={detailOpen}
+          transparent
+          animationType="slide"
+          accessible={true}
+          accessibilityViewIsModal={true}
+          onRequestClose={() => {
+            detailOpenRef.current = false;
+            setDetailOpen(false);
+          }}>
+          <Pressable
+            style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
+            accessible={false}
+            onPress={() => {
               detailOpenRef.current = false;
               setDetailOpen(false);
             }}>
-            <Pressable
-              style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
-              accessible={false}
-              onPress={() => {
-                detailOpenRef.current = false;
-                setDetailOpen(false);
-              }}>
-              <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
-                <Animated.View
-                  {...panResponder.panHandlers}
-                  style={[
-                    {
-                      backgroundColor: '#fff',
-                      borderTopLeftRadius: 16,
-                      borderTopRightRadius: 16,
-                      padding: 16,
-                    },
-                    {height: modalHeight},
-                  ]}
-                  accessible={true}
-                  accessibilityViewIsModal={true}>
-              {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
-              <TouchableOpacity
-                style={{
-                  position: 'absolute',
-                  right: 16,
-                  top: 16,
-                  backgroundColor: '#FFD44C',
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  borderRadius: 18,
-                  zIndex: 1000,
-                  elevation: 0,
-                  shadowColor: 'transparent',
-                  shadowOpacity: 0,
-                }}
+            <View style={{flex: 1, justifyContent: 'flex-end'}}>
+              {/* Use a pan responder on the modal container to detect upward drag-to-expand gesture */}
+              <Animated.View
+                {...panResponder.panHandlers}
+                style={[
+                  {
+                    backgroundColor: '#fff',
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16,
+                    padding: 16,
+                  },
+                  {height: modalHeight},
+                ]}
                 accessible={true}
-                accessibilityRole="button"
-                accessibilityLabel="이제 없어요"
-                onPress={async () => {
-                  const rid = String(
-                    selectedReport?.reportId ?? selectedReport?.id ?? '',
-                  );
-                  if (!rid) {
-                    detailOpenRef.current = false;
-                    setDetailOpen(false);
-                    return;
-                  }
+                accessibilityViewIsModal={true}>
+                {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    right: 16,
+                    top: 16,
+                    backgroundColor: '#FFD44C',
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    borderRadius: 18,
+                    zIndex: 1000,
+                    elevation: 0,
+                    shadowColor: 'transparent',
+                    shadowOpacity: 0,
+                  }}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel="이제 없어요"
+                  onPress={async () => {
+                    const rid = String(
+                      selectedReport?.reportId ?? selectedReport?.id ?? '',
+                    );
+                    if (!rid) {
+                      detailOpenRef.current = false;
+                      setDetailOpen(false);
+                      return;
+                    }
 
-                  // 토큰 확인: 체험 모드면 CustomAlert로 안내
-                  let token: string | null = null;
-                  try {
-                    token = await AsyncStorage.getItem('access_token');
-                  } catch (e) {
-                    console.warn('token read failed', e);
-                  }
-                  if (!token) {
-                    openAlert(
-                      '알림',
-                      '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
+                    // 토큰 확인: 체험 모드면 CustomAlert로 안내
+                    let token: string | null = null;
+                    try {
+                      token = await AsyncStorage.getItem('access_token');
+                    } catch (e) {
+                      console.warn('token read failed', e);
+                    }
+                    if (!token) {
+                      openAlert(
+                        '알림',
+                        '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
                       );
                       return;
                     }
@@ -2628,20 +2628,26 @@ export default function SafeRouteScreen() {
               </View>
             )}
 
+            {/* 🔥 닫기 버튼 위: 튜토리얼 보기 */}
+            <TouchableOpacity
+              style={extraStyles.tutorialBtn}
+              onPress={() => {
+                navigation.navigate('Onboarding', {from: 'mypage'});
+              }}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={'튜토리얼 보기'}>
+              <Text style={extraStyles.tutorialBtnText}>튜토리얼 보기</Text>
+            </TouchableOpacity>
+
             {/* 🔥 닫기 버튼 */}
             <TouchableOpacity
-              style={{
-                alignSelf: 'flex-start',
-                paddingVertical: 10,
-                paddingHorizontal: 18,
-                backgroundColor: '#FFDE59',
-                borderRadius: 8,
-              }}
+              style={extraStyles.closeBtn}
               onPress={closeMyPage}
               accessible={true}
               accessibilityRole="button"
               accessibilityLabel={'닫기'}>
-              <Text style={{fontWeight: '700', color: '#000'}}>닫기</Text>
+              <Text style={extraStyles.closeBtnText}>닫기</Text>
             </TouchableOpacity>
           </Animated.View>
         </Pressable>
@@ -2792,5 +2798,28 @@ const extraStyles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     elevation: 6,
+  },
+  tutorialBtn: {
+    alignSelf: 'flex-start',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    backgroundColor: '#EFEFEF',
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  tutorialBtnText: {
+    fontWeight: '700',
+    color: '#000',
+  },
+  closeBtn: {
+    alignSelf: 'flex-start',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    backgroundColor: '#FFDE59',
+    borderRadius: 8,
+  },
+  closeBtnText: {
+    fontWeight: '700',
+    color: '#000',
   },
 });
