@@ -20,6 +20,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TMapView from '../components/TMapView';
 import {useTMapCommands} from '../components/useTMapCommands';
+import Geolocation from 'react-native-geolocation-service';
 import {useRouteData} from '../context/RouteContext';
 import {fetchPreviewRoute, saveRoute} from '../api/routes';
 import SafetyNoticeModal from '../components/SafetyNoticeModal';
@@ -43,7 +44,11 @@ import {useReportStore} from '../stores/reportStore';
 import {DEV_TOKEN} from '../config/dev';
 
 import {evaluateRoute} from '../api/evaluateRoute';
-import {startTracking, stopTracking} from '../utils/locationTracker';
+import {
+  startTracking,
+  stopTracking,
+  requestLocationPermission,
+} from '../utils/locationTracker';
 import {haversine} from '../utils/haversine';
 import RouteRatingModal from '../components/RouteRatingModal';
 import CustomAlert from '../components/CustomAlert';
@@ -55,6 +60,7 @@ export default function SafeRouteScreen() {
   const {start, end} = useRouteData();
   const map = useTMapCommands();
   const [isReady, setIsReady] = useState(false);
+  const [mapZoom, setMapZoom] = useState(15);
   // Persisted toggle to hide/show development-only UI (default: hidden)
   const [showDevUI, setShowDevUI] = useState<boolean>(false);
 
@@ -1354,6 +1360,73 @@ export default function SafeRouteScreen() {
     }
   };
 
+  // 확대/축소 보조 함수: 현재 지도 중심 추정 후 zoom 변경
+  const getMapCenter = (): {lat: number; lon: number} => {
+    if (currentPosition && typeof currentPosition.lat === 'number' && typeof currentPosition.lon === 'number') {
+      return {lat: currentPosition.lat, lon: currentPosition.lon};
+    }
+    const sr: any = selectedReport as any;
+    const rlat = Number(
+      sr?.locationLat ?? sr?.location_lat ?? sr?.lat ?? sr?.latitude ?? 0,
+    );
+    const rlon = Number(
+      sr?.locationLng ?? sr?.location_lng ?? sr?.lon ?? sr?.longitude ?? 0,
+    );
+    if (rlat && rlon) {
+      return {lat: rlat, lon: rlon};
+    }
+    if (start) {
+      return {lat: start.lat, lon: start.lon};
+    }
+    return {lat: 37.5665, lon: 126.978};
+  };
+
+  const zoomBy = (delta: number) => {
+    try {
+      const center = getMapCenter();
+      const next = Math.max(3, Math.min(20, mapZoom + delta));
+      map.animateTo(center.lat, center.lon, next);
+      setMapZoom(next);
+    } catch (e) {
+      console.warn('zoomBy failed', e);
+    }
+  };
+  const zoomIn = () => zoomBy(+1);
+  const zoomOut = () => zoomBy(-1);
+
+  const focusMyLocation = async () => {
+    try {
+      const ok = await requestLocationPermission();
+      if (!ok) {
+        openAlert('위치 권한이 필요합니다.', '설정에서 위치 권한을 허용해 주세요.');
+        return;
+      }
+      Geolocation.getCurrentPosition(
+        pos => {
+          const {latitude, longitude} = pos.coords;
+          setCurrentPosition({lat: latitude, lon: longitude});
+          const nextZoom = Math.max(mapZoom, 16);
+          map.animateTo(latitude, longitude, nextZoom);
+          setMapZoom(nextZoom);
+        },
+        err => {
+          console.warn('focusMyLocation error', err);
+          showToast('현재 위치를 가져올 수 없습니다.');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+          forceRequestLocation: true,
+          showLocationDialog: true,
+        },
+      );
+    } catch (e) {
+      console.warn('focusMyLocation failed', e);
+      showToast('현재 위치를 가져올 수 없습니다.');
+    }
+  };
+
   const submitComment = async () => {
     if (!selectedReport) {
       return;
@@ -1497,6 +1570,77 @@ export default function SafeRouteScreen() {
           onClose={() => setShowRating(false)}
           onSubmit={handleSubmitRating}
         />
+
+        {/* 확대/축소/내 위치 버튼 (맵 우하단, 제보하기 버튼 위) */}
+        <View
+          style={{
+            position: 'absolute',
+            right: 16,
+            bottom: Platform.select({android: 120, ios: 140}),
+            gap: 8,
+            zIndex: 20,
+            elevation: 8,
+          }}
+          pointerEvents={myPageOpen ? 'none' : 'auto'}
+        >
+          <TouchableOpacity
+            onPress={zoomIn}
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: 14,
+              width: 40,
+              height: 40,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: '#ddd',
+            }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="확대"
+            accessibilityHint="지도를 확대합니다"
+          >
+            <Text style={{fontSize: 22, fontWeight: '700', color: '#000'}}>+</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={zoomOut}
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: 14,
+              width: 40,
+              height: 40,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: '#ddd',
+            }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="축소"
+            accessibilityHint="지도를 축소합니다"
+          >
+            <Text style={{fontSize: 22, fontWeight: '700', color: '#000'}}>-</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={focusMyLocation}
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: 14,
+              width: 40,
+              height: 40,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: '#ddd',
+            }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="내 위치"
+            accessibilityHint="현재 위치로 지도를 이동합니다"
+          >
+            <Text style={{fontSize: 18, fontWeight: '700', color: '#000'}}>◎</Text>
+          </TouchableOpacity>
+        </View>
 
         <TMapView
           ref={map.ref}
