@@ -25,6 +25,7 @@ import {getMe} from '../api/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {DEV_TOKEN} from '../config/dev';
 import {useAppAlertStore} from '../stores/appAlertStore';
+import CustomConfirm from './CustomConfirm';
 
 console.log('🔍 [ReportModal] DEV_TOKEN:', DEV_TOKEN?.substring(0, 50) + '...');
 
@@ -48,6 +49,7 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
   const [catOpen, setCatOpen] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
   const [isPicking, setIsPicking] = useState(false);
   const [pickerOptionsOpen, setPickerOptionsOpen] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
@@ -546,6 +548,26 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
     return !!category && content.trim().length > 0; // 사진은 선택적으로 허용
   };
 
+  // Parent-only confirmation before sending
+  const handleSendClick = async () => {
+    if (!canSubmit() || submitting) {
+      return;
+    }
+    try {
+      const me = await getMe();
+      const rawUserType =
+        me && (me.user_type ?? me.type ?? me.userType ?? me.type_name ?? me.role);
+      const userType = rawUserType ? String(rawUserType).toLowerCase() : '';
+      if (userType === 'parent') {
+        setConfirmVisible(true);
+        return;
+      }
+    } catch (e) {
+      // If role check fails, fall through to normal send
+    }
+    handleSend(true);
+  };
+
   // require explicit user action to send (guard against accidental programmatic calls)
   const handleSend = async (explicit = false) => {
     if (!explicit) {
@@ -856,7 +878,7 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
                       styles.sendBtn,
                       !canSubmit() || submitting ? styles.disabledBtn : null,
                     ]}
-                    onPress={() => handleSend(true)}
+                    onPress={handleSendClick}
                     disabled={!canSubmit() || submitting}
                     accessible={true}
                     accessibilityRole="button"
@@ -965,6 +987,19 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
           </View>
         </View>
       </View>
+
+      {/* Parent-only confirmation modal */}
+      <CustomConfirm
+        visible={confirmVisible}
+        title="경고"
+        message={'부적절한 제보를 하면 제재가 가해질 수 있어요.\n정말 제보하시겠어요?'}
+        onConfirm={() => {
+          setConfirmVisible(false);
+          handleSend(true);
+        }}
+        onCancel={() => setConfirmVisible(false)}
+        hideCancel={false}
+      />
     </Modal>
   );
 }
