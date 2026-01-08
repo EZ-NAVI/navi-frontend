@@ -290,6 +290,10 @@ export default function ClusterReportsScreen({
     return (
       <TouchableOpacity
         style={styles.card}
+        accessible={true}
+        accessibilityRole="none"
+        accessibilityLabel="제보 카드"
+        accessibilityHint="두 번 탭하여 해당 상세 페이지로 이동합니다"
         onPress={() => {
           const rid = String(item.reportId ?? item.id ?? '');
           if (rid) {
@@ -317,7 +321,7 @@ export default function ClusterReportsScreen({
               accessibilityRole="text"
               accessibilityLabel={`카테고리 ${item.category ?? item.title ?? '제보'}`}
             >
-              <Text style={{fontSize: 16, fontWeight: '800', marginBottom: 6}}>
+              <Text style={{fontSize: 16, fontWeight: '800', marginBottom: 6, color: '#000'}}>
                 {item.category ?? item.title ?? '제보'}
               </Text>
             </Pressable>
@@ -337,8 +341,7 @@ export default function ClusterReportsScreen({
           {imageUrl ? (
             <Image
               accessible={true}
-              accessibilityRole="image"
-              accessibilityLabel="제보, 이미지"
+              accessibilityLabel="제보 사진"
               source={{uri: imageUrl}}
               style={styles.cardImage}
               resizeMode="cover"
@@ -392,7 +395,8 @@ export default function ClusterReportsScreen({
           </TouchableOpacity>
 
           <View style={styles.cardFooter}>
-            <View style={styles.rightArea}>
+            {/* 접근성 순서 6: 이모지 평가 (시각적으로는 오른쪽) */}
+            <View style={[styles.rightArea, {alignSelf: 'flex-end', marginLeft: 0}]}>
               <View style={styles.emojisRow}>
                 {/* 좋음 → bad */}
                 {(() => {
@@ -560,8 +564,14 @@ export default function ClusterReportsScreen({
               </View>
             </View>
 
+            {/* 접근성 순서 7: 댓글 (시각적으로는 왼쪽) */}
             <View style={{flex: 1}}>
-              <Text style={styles.commentLabel}>댓글</Text>
+              <Pressable
+                accessible={true}
+                accessibilityLabel="댓글 목록"
+              >
+                <Text style={styles.commentLabel}>댓글 목록</Text>
+              </Pressable>
 
               {(() => {
                 const commentsArr: any[] = Array.isArray(item.comments)
@@ -591,7 +601,7 @@ export default function ClusterReportsScreen({
                       <Pressable
                         key={idx}
                         accessible={true}
-                        accessibilityLabel={`${txt}, 최신 댓글 중 ${idx === 0 ? '첫' : idx === 1 ? '두' : '세'} 번째 댓글입니다.`}
+                        accessibilityLabel={`${txt}, 최신 댓글 중 ${idx === 0 ? '첫' : idx === 1 ? '두' : '세'} 번째 댓글입니다`}
                         style={{marginBottom: 6}}
                       >
                         <Text style={styles.cardTextSmall}>
@@ -725,7 +735,7 @@ const styles = StyleSheet.create({
   cardText: {color: '#000', marginBottom: 10},
   cardTextSmall: {color: '#000', marginBottom: 6, fontSize: 14},
   commentLabel: {fontWeight: '700', marginBottom: 8, color: '#000'},
-  cardFooter: {flexDirection: 'row-reverse', justifyContent: 'space-between'},
+  cardFooter: {flexDirection: 'column'},
 
   rightArea: {alignItems: 'flex-end', marginLeft: 12},
   emojisRow: {flexDirection: 'row', alignItems: 'center', marginTop: 6},

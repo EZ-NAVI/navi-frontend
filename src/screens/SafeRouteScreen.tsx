@@ -406,7 +406,7 @@ export default function SafeRouteScreen() {
       status = '낮음 구역';
     }
 
-    const newLabel = `위험 상태 ${status}에 대한 최신 제보입니다, 두 번 탭하여 이 구역에 커뮤니티 페이지로 이동해보세요.`;
+    const newLabel = `위험 상태 ${status}에 대한 최신 제보입니다, 두 번 탭하여 이 구역 커뮤니티 페이지로 이동합니다`;
     setReportDetailLabel(newLabel);
   }, [selectedReport]);
 
@@ -633,11 +633,11 @@ export default function SafeRouteScreen() {
 
   // animated pan for bottom detail modal drag-to-expand
   const screenHeight = Dimensions.get('window').height;
-  // collapsed height for the bottom modal (px) — adjust for desired initial size
-  // make the initial collapsed modal occupy slightly more than half the screen
-  // so the modal appears a bit higher on pin tap
-  const COLLAPSED_HEIGHT = Math.round(screenHeight * 0.55);
-  const MAX_HEIGHT = Math.round(screenHeight * 0.9);
+  // collapsed height for the bottom modal (px) — raise to avoid comment clipping
+  // make the initial collapsed modal occupy about two-thirds of the screen
+  // so the modal appears higher and comments don't get truncated
+  const COLLAPSED_HEIGHT = Math.round(screenHeight * 0.68);
+  const MAX_HEIGHT = Math.round(screenHeight * 0.95);
   const modalHeight = useRef(new Animated.Value(COLLAPSED_HEIGHT)).current;
 
   const panResponder = useRef(
@@ -818,6 +818,16 @@ export default function SafeRouteScreen() {
       },
     }),
   ).current;
+
+  // Ensure the collapsed height applies when the detail modal opens,
+  // even during hot reloads where the Animated.Value instance persists.
+  useEffect(() => {
+    if (detailOpen) {
+      try {
+        modalHeight.setValue(COLLAPSED_HEIGHT);
+      } catch (e) {}
+    }
+  }, [detailOpen, COLLAPSED_HEIGHT]);
 
   // 출발/도착 + preview 경로 + GPS 추적 (기능 merge)
   useEffect(() => {
@@ -1802,31 +1812,29 @@ export default function SafeRouteScreen() {
                   <Text style={{color: '#000'}}>불러오는 중...</Text>
                 ) : selectedReport ? (
                   <View>
-                    <TouchableOpacity
-                      activeOpacity={0.85}
-                      onPress={handleOpenReportDetail}
-                      accessible={true}
-                      accessibilityRole="text"
-                      accessibilityLabel={`카테고리 ${selectedReport.category ?? selectedReport.description ?? '제보'}, 제보 내용 ${selectedReport.description ?? selectedReport.content ?? ''}`}
-                      style={{marginBottom: 12}}>
+                    <View style={{marginBottom: 12}}>
                       <Text
+                        accessible={true}
+                        accessibilityRole="text"
+                        accessibilityLabel={`카테고리 ${selectedReport.category ?? selectedReport.description ?? '제보'}`}
                         style={{
                           fontSize: 20,
                           fontWeight: '800',
                           marginBottom: 6,
                           color: '#000',
-                        }}
-                        accessible={false}>
+                        }}>
                         {selectedReport.category ??
                           selectedReport.description ??
                           '제보'}
                       </Text>
-                      <Text style={{color: '#000'}} accessible={false}>
-                        {selectedReport.description ??
-                          selectedReport.content ??
-                          ''}
+                      <Text
+                        accessible={true}
+                        accessibilityRole="text"
+                        accessibilityLabel={`${selectedReport.description ?? selectedReport.content ? '제보 내용 ' + (selectedReport.description ?? selectedReport.content) : '제보 내용 없음'}`}
+                        style={{color: '#000'}}>
+                        {selectedReport.description ?? selectedReport.content ?? ''}
                       </Text>
-                    </TouchableOpacity>
+                    </View>
                     {(() => {
                       // Normalize common image fields from backend: support camelCase and snake_case
                       const sr: any = selectedReport as any;
@@ -2419,12 +2427,14 @@ export default function SafeRouteScreen() {
 
                       <View style={{width: '100%', marginTop: 4}}>
                         <Text
+                          accessible={true}
+                          accessibilityLabel="댓글 목록"
                           style={{
                             fontWeight: '700',
                             marginBottom: 8,
                             color: '#000',
                           }}>
-                          댓글
+                          댓글 목록
                         </Text>
                         {/* Render actual comment(s). Backend may return a single string field or an array of comments
                           with different property names; handle common shapes defensively. */}
@@ -2460,7 +2470,7 @@ export default function SafeRouteScreen() {
                                 <Text
                                   key={idx}
                                   accessible={true}
-                                  accessibilityLabel={`${txt}, 최신 댓글 중 ${idx === 0 ? '첫' : idx === 1 ? '두' : '세'} 번째 댓글입니다.`}
+                                  accessibilityLabel={`${txt}, 최신 댓글 중 ${idx === 0 ? '첫' : idx === 1 ? '두' : '세'} 번째 댓글입니다`}
                                   style={{
                                     color: '#000',
                                     marginBottom: 8,
