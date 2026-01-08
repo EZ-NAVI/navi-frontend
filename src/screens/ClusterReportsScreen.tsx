@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Pressable,
 } from 'react-native';
 import {useAppAlertStore} from '../stores/appAlertStore';
 import {useNavigation} from '@react-navigation/native';
@@ -310,114 +311,87 @@ export default function ClusterReportsScreen({
         }}>
         <View style={styles.cardBody}>
           <View style={styles.cardHeaderRow}>
-            <Text style={styles.cardTitle}>
-              {item.category ?? item.title ?? '제보'}
-            </Text>
-
-            <TouchableOpacity
-              style={styles.resolvedBtnInline}
-              onPress={async () => {
-                const rid = String(item.reportId ?? item.id ?? '');
-                if (!rid) {
-                  return;
-                }
-
-                const tokenCheck = await AsyncStorage.getItem('access_token');
-                if (!tokenCheck) {
-                  setAlertTitle('안내');
-                  setAlertMsg(
-                    "체험해보기 상태에서는 '이제 없어요' 기능을 사용할 수 없어요!",
-                  );
-                  setAlertHideCancel(true);
-                  setAlertConfirm(null);
-                  setAlertVisible(true);
-                  return;
-                }
-
-                setAlertTitle('이제 없어요');
-                setAlertMsg('정말 더 이상 존재하지 않나요?');
-                setAlertHideCancel(true);
-                setAlertConfirm(() => async () => {
-                  try {
-                    let token: string | null = null;
-                    try {
-                      token = await AsyncStorage.getItem('access_token');
-                    } catch (e) {}
-                    await postReportNotThere(rid, token ?? undefined);
-                  } catch (e: any) {
-                    // Standardize message to '이미 누른 제보입니다.' and prevent retry
-                    setAlertTitle('안내');
-                    setAlertMsg('이미 누른 제보입니다.');
-                    setAlertHideCancel(true);
-                    setAlertConfirm(null);
-                  }
-                });
-                setAlertVisible(true);
-              }}
+            <Pressable
+              style={styles.cardTitle}
               accessible={true}
-              accessibilityRole="button"
-              accessibilityLabel="이제 없어요">
-              <Text style={{fontWeight: '700', color: '#000'}}>
-                이제 없어요
+              accessibilityRole="text"
+              accessibilityLabel={`카테고리 ${item.category ?? item.title ?? '제보'}`}
+            >
+              <Text style={{fontSize: 16, fontWeight: '800', marginBottom: 6}}>
+                {item.category ?? item.title ?? '제보'}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
-          <Text style={styles.cardText}>
-            {item.userComment ?? item.comment ?? item.description ?? ''}
-          </Text>
+          <Pressable
+            style={styles.cardText}
+            accessible={true}
+            accessibilityRole="text"
+            accessibilityLabel={`제보 내용 ${item.userComment ?? item.comment ?? item.description ?? ''}`}
+          >
+            <Text style={{color: '#000', marginBottom: 10}}>
+              {item.userComment ?? item.comment ?? item.description ?? ''}
+            </Text>
+          </Pressable>
 
           {imageUrl ? (
             <Image
+              accessible={true}
+              accessibilityRole="image"
+              accessibilityLabel="제보, 이미지"
               source={{uri: imageUrl}}
               style={styles.cardImage}
               resizeMode="cover"
             />
           ) : null}
 
-          <View style={styles.cardFooter}>
-            <View style={{flex: 1}}>
-              <Text style={styles.commentLabel}>댓글</Text>
+          <TouchableOpacity
+            style={[styles.resolvedBtnInline, {alignSelf: 'flex-end', marginTop: 4}]}
+            onPress={async () => {
+              const rid = String(item.reportId ?? item.id ?? '');
+              if (!rid) {
+                return;
+              }
 
-              {(() => {
-                const commentsArr: any[] = Array.isArray(item.comments)
-                  ? item.comments
-                  : [];
-                if (commentsArr.length === 0) {
-                  return (
-                    <Text style={{color: '#666', marginBottom: 12}}>
-                      아직 댓글이 없습니다.
-                    </Text>
-                  );
-                }
-                const toShow = commentsArr
-                  .slice(0, 3)
-                  .map((c: any) =>
-                    typeof c === 'string'
-                      ? c
-                      : c.content ??
-                        c.text ??
-                        c.comment ??
-                        c.body ??
-                        JSON.stringify(c),
-                  );
-                return (
-                  <View>
-                    {toShow.map((txt: string, idx: number) => (
-                      <Text key={idx} style={styles.cardTextSmall}>
-                        {txt}
-                      </Text>
-                    ))}
-                    {commentsArr.length > 3 ? (
-                      <Text style={{color: '#666', fontSize: 12}}>
-                        외 {commentsArr.length - 3}개의 댓글
-                      </Text>
-                    ) : null}
-                  </View>
+              const tokenCheck = await AsyncStorage.getItem('access_token');
+              if (!tokenCheck) {
+                setAlertTitle('안내');
+                setAlertMsg(
+                  "체험해보기 상태에서는 '이제 없어요' 기능을 사용할 수 없어요!",
                 );
-              })()}
-            </View>
+                setAlertHideCancel(true);
+                setAlertConfirm(null);
+                setAlertVisible(true);
+                return;
+              }
 
+              setAlertTitle('이제 없어요');
+              setAlertMsg('정말 더 이상 존재하지 않나요?');
+              setAlertHideCancel(true);
+              setAlertConfirm(() => async () => {
+                try {
+                  let token: string | null = null;
+                  try {
+                    token = await AsyncStorage.getItem('access_token');
+                  } catch (e) {}
+                  await postReportNotThere(rid, token ?? undefined);
+                } catch (e: any) {
+                  setAlertTitle('안내');
+                  setAlertMsg('이미 누른 제보입니다.');
+                  setAlertHideCancel(true);
+                  setAlertConfirm(null);
+                }
+              });
+              setAlertVisible(true);
+            }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="이제 없어요"
+          >
+            <Text style={{fontWeight: '700', color: '#000'}}>이제 없어요</Text>
+          </TouchableOpacity>
+
+          <View style={styles.cardFooter}>
             <View style={styles.rightArea}>
               <View style={styles.emojisRow}>
                 {/* 좋음 → bad */}
@@ -585,6 +559,55 @@ export default function ClusterReportsScreen({
                 })()}
               </View>
             </View>
+
+            <View style={{flex: 1}}>
+              <Text style={styles.commentLabel}>댓글</Text>
+
+              {(() => {
+                const commentsArr: any[] = Array.isArray(item.comments)
+                  ? item.comments
+                  : [];
+                if (commentsArr.length === 0) {
+                  return (
+                    <Text style={{color: '#666', marginBottom: 12}}>
+                      아직 댓글이 없습니다.
+                    </Text>
+                  );
+                }
+                const toShow = commentsArr
+                  .slice(0, 3)
+                  .map((c: any) =>
+                    typeof c === 'string'
+                      ? c
+                      : c.content ??
+                        c.text ??
+                        c.comment ??
+                        c.body ??
+                        JSON.stringify(c),
+                  );
+                return (
+                  <View>
+                    {toShow.map((txt: string, idx: number) => (
+                      <Pressable
+                        key={idx}
+                        accessible={true}
+                        accessibilityLabel={`${txt}, 최신 댓글 중 ${idx === 0 ? '첫' : idx === 1 ? '두' : '세'} 번째 댓글입니다.`}
+                        style={{marginBottom: 6}}
+                      >
+                        <Text style={styles.cardTextSmall}>
+                          {txt}
+                        </Text>
+                      </Pressable>
+                    ))}
+                    {commentsArr.length > 3 ? (
+                      <Text style={{color: '#666', fontSize: 12}}>
+                        외 {commentsArr.length - 3}개의 댓글
+                      </Text>
+                    ) : null}
+                  </View>
+                );
+              })()}
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -602,7 +625,13 @@ export default function ClusterReportsScreen({
           accessibilityLabel="상세 화면 줄이기">
           <MaterialIcons name="keyboard-arrow-down" size={28} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>커뮤니티</Text>
+        <Text
+          style={styles.headerTitle}
+          accessible={true}
+          accessibilityLabel="커뮤니티 페이지"
+        >
+          커뮤니티
+        </Text>
         <View style={{width: 60}} />
       </View>
 
@@ -696,7 +725,7 @@ const styles = StyleSheet.create({
   cardText: {color: '#000', marginBottom: 10},
   cardTextSmall: {color: '#000', marginBottom: 6, fontSize: 14},
   commentLabel: {fontWeight: '700', marginBottom: 8, color: '#000'},
-  cardFooter: {flexDirection: 'row', justifyContent: 'space-between'},
+  cardFooter: {flexDirection: 'row-reverse', justifyContent: 'space-between'},
 
   rightArea: {alignItems: 'flex-end', marginLeft: 12},
   emojisRow: {flexDirection: 'row', alignItems: 'center', marginTop: 6},

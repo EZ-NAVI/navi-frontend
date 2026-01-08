@@ -147,6 +147,9 @@ export default function SafeRouteScreen() {
   const [selectedImageStatus, setSelectedImageStatus] = useState<
     'unknown' | 'ok' | 'error' | 'no-url'
   >('unknown');
+  const [reportDetailLabel, setReportDetailLabel] = useState(
+    '위험 상태 구역에 대한 최신 제보입니다.',
+  );
 
   // 기능용 상태 추가
   const [routeId, setRouteId] = useState<string | null>(null);
@@ -165,6 +168,10 @@ export default function SafeRouteScreen() {
 
   const a11yTitleRef = useRef<any>(null);
   const a11yMenuBtnRef = useRef<any>(null);
+  const modalIntroRef = useRef<any>(null);
+
+  // clusterId를 키로 하여 count 값을 저장 (native 브릿지 거쳐도 유지됨)
+  const clusterCountsMapRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     let timer: any;
@@ -378,6 +385,57 @@ export default function SafeRouteScreen() {
     });
   };
 
+  
+  // Update label when selectedReport changes
+  useEffect(() => {
+    if (!selectedReport) {
+      setReportDetailLabel('위험 상태 구역에 대한 최신 제보입니다.');
+      return;
+    }
+
+    // 클러스터 count 사용 (마커에서 저장한 count)
+    const cnt = selectedReport._clusterCount ?? 0;
+    
+    let status = '구역';
+
+    if (cnt >= 5) {
+      status = '높음 구역';
+    } else if (cnt >= 3) {
+      status = '보통 구역';
+    } else if (cnt >= 1) {
+      status = '낮음 구역';
+    }
+
+    const newLabel = `위험 상태 ${status}에 대한 최신 제보입니다, 두 번 탭하여 이 구역에 커뮤니티 페이지로 이동해보세요.`;
+    setReportDetailLabel(newLabel);
+  }, [selectedReport]);
+
+  const getReportDetailA11yHint = () => '';
+
+
+  const handleOpenReportDetail = () => {
+    if (!selectedReport) {
+      return;
+    }
+
+    try {
+      const cid = resolveClusterId(selectedReport);
+      if (cid) {
+        setClusterIdForList(String(cid));
+        setClusterNearbyReports(null);
+        detailOpenRef.current = false;
+        setDetailOpen(false);
+        setClusterListOpen(true);
+        modalHeight.setValue(COLLAPSED_HEIGHT);
+      } else {
+        openAlert('클러스터 정보 없음', '이 제보에 대한 클러스터 정보가 없습니다.');
+      }
+    } catch (e) {
+      console.warn('Cluster navigation failed', e);
+      openAlert('안내', '커뮤니티 페이지로 이동하지 못했습니다.');
+    }
+  };
+
   // Log when cluster list modal opens and what clusterId is requested
   useEffect(() => {
     if (clusterListOpen) {
@@ -391,6 +449,22 @@ export default function SafeRouteScreen() {
       } catch (e) {}
     }
   }, [clusterListOpen, clusterIdForList, clusterNearbyReports]);
+
+  // 모달 열릴 때 첫 포커스를 안내 영역으로 이동
+  useEffect(() => {
+    if (!detailOpen || !selectedReport || !modalIntroRef.current) {
+      return;
+    }
+    const handle = setTimeout(() => {
+      try {
+        const node = findNodeHandle(modalIntroRef.current);
+        if (node) {
+          AccessibilityInfo.setAccessibilityFocus(node);
+        }
+      } catch (e) {}
+    }, 120);
+    return () => clearTimeout(handle);
+  }, [detailOpen, selectedReport]);
 
   // If this screen receives navigation params asking to open the cluster modal,
   // open it on focus and then clear the param so it doesn't repeatedly open.
@@ -1024,6 +1098,12 @@ export default function SafeRouteScreen() {
               }
 
               const cnt = Number(rawCount) || 0;
+              
+              // clusterId를 키로 count를 Map에 저장 (native 브릿지 거쳐도 유지됨)
+              if (cid) {
+                clusterCountsMapRef.current[String(cid)] = cnt;
+              }
+              
               // If count is zero, log the full object once for debugging so we can see available keys
               if (cnt === 0) {
                 try {
@@ -1146,10 +1226,16 @@ export default function SafeRouteScreen() {
   // 마커를 탭했을 때 실행: reportId로 상세 조회 후 하단 모달을 연다
   const onMarkerPress = async (report: any) => {
     const reportId = report.reportId ?? report.id;
+    const clusterId = report.clusterId ?? report.cluster_id;
     if (!reportId) {
       return;
     }
     setLoadingDetail(true);
+    
+    
+    // clusterId로 Map에서 count 정보 가져오기 (native 브릿지 거쳐도 유지됨)
+    const initialCount = clusterId ? (clusterCountsMapRef.current[String(clusterId)] ?? 0) : 0;
+    console.log('[onMarkerPress] reportId:', reportId, 'clusterId:', clusterId, 'initialCount:', initialCount);
     try {
       // try to use stored token or dev token in dev mode
       let tokenToUse: string | null = null;
@@ -1189,6 +1275,10 @@ export default function SafeRouteScreen() {
         console.warn('댓글 불러오기 실패', e);
         detail.comments = detail.comments ?? [];
       }
+      
+      // 클러스터 count 정보를 상세 조회 결과에 병합
+      detail._clusterCount = initialCount;
+      
       // synchronize refs immediately to avoid pan gesture races
       selectedReportRef.current = detail;
       setSelectedReport(detail);
@@ -1397,28 +1487,27 @@ export default function SafeRouteScreen() {
           ref={map.ref}
           style={styles.map}
           apiKey="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy"
+          accessible={true}
+          accessibilityRole="image"
+          accessibilityLabel="지도 화면"
           zoomLevel={15}
           centerLat={37.5665}
           centerLon={126.978}
           onMapReady={() => {
-            console.log('🗺️ 지도 로드 완료!');
             setIsReady(true);
           }}
-          onPress={(e: any) => {
-            // e.nativeEvent: { lat, lon }
-            const lat = e?.nativeEvent?.lat;
-            const lon = e?.nativeEvent?.lon;
-            if (typeof lat !== 'number' || typeof lon !== 'number') {
+          onPress={e => {
+            const lat = Number(e?.nativeEvent?.lat ?? 0);
+            const lon = Number(e?.nativeEvent?.lon ?? 0);
+            if (!lat || !lon || !Array.isArray(reportsData)) {
               return;
             }
-            // find nearest report within ~50 meters
-            if (!reportsData || reportsData.length === 0) {
-              return;
-            }
+
             const toRad = (deg: number) => (deg * Math.PI) / 180;
             const earthRadius = 6371000; // meters
             let best: any = null;
             let bestDist = Infinity;
+
             for (const r of reportsData) {
               const rlat = Number(
                 r.locationLat ?? r.location_lat ?? r.__lat ?? 0,
@@ -1444,7 +1533,7 @@ export default function SafeRouteScreen() {
                 best = r;
               }
             }
-            // threshold 20 meters (더 정확한 클릭만 인식)
+
             if (best && bestDist <= 20) {
               onMarkerPress(best);
             }
@@ -1713,22 +1802,31 @@ export default function SafeRouteScreen() {
                   <Text style={{color: '#000'}}>불러오는 중...</Text>
                 ) : selectedReport ? (
                   <View>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: '800',
-                        marginBottom: 8,
-                        color: '#000',
-                      }}>
-                      {selectedReport.category ??
-                        selectedReport.description ??
-                        '제보'}
-                    </Text>
-                    <Text style={{color: '#000', marginBottom: 12}}>
-                      {selectedReport.description ??
-                        selectedReport.content ??
-                        ''}
-                    </Text>
+                    <TouchableOpacity
+                      activeOpacity={0.85}
+                      onPress={handleOpenReportDetail}
+                      accessible={true}
+                      accessibilityRole="text"
+                      accessibilityLabel={`카테고리 ${selectedReport.category ?? selectedReport.description ?? '제보'}, 제보 내용 ${selectedReport.description ?? selectedReport.content ?? ''}`}
+                      style={{marginBottom: 12}}>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: '800',
+                          marginBottom: 6,
+                          color: '#000',
+                        }}
+                        accessible={false}>
+                        {selectedReport.category ??
+                          selectedReport.description ??
+                          '제보'}
+                      </Text>
+                      <Text style={{color: '#000'}} accessible={false}>
+                        {selectedReport.description ??
+                          selectedReport.content ??
+                          ''}
+                      </Text>
+                    </TouchableOpacity>
                     {(() => {
                       // Normalize common image fields from backend: support camelCase and snake_case
                       const sr: any = selectedReport as any;
@@ -1761,6 +1859,9 @@ export default function SafeRouteScreen() {
                       if (selectedImageStatus === 'ok') {
                         return (
                           <Image
+                            accessible={true}
+                            accessibilityRole="image"
+                            accessibilityLabel="제보 사진"
                             source={{uri: imageUrl}}
                             style={{
                               width: '100%',
@@ -1802,79 +1903,105 @@ export default function SafeRouteScreen() {
                       );
                     })()}
 
+                    {/* 이제 없어요 버튼: 제목/내용 및 이미지 다음에 포커스 이동 */}
+                    <TouchableOpacity
+                      style={{
+                        alignSelf: 'flex-end',
+                        backgroundColor: '#FFD44C',
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 18,
+                        marginBottom: 8,
+                      }}
+                      accessible={true}
+                      accessibilityRole="button"
+                      accessibilityLabel="이제 없어요"
+                      onPress={async () => {
+                        const rid = String(
+                          selectedReport?.reportId ?? selectedReport?.id ?? '',
+                        );
+                        if (!rid) {
+                          detailOpenRef.current = false;
+                          setDetailOpen(false);
+                          return;
+                        }
+
+                        // 토큰 확인: 체험 모드면 CustomAlert로 안내
+                        let token: string | null = null;
+                        try {
+                          token = await AsyncStorage.getItem('access_token');
+                        } catch (e) {
+                          console.warn('token read failed', e);
+                        }
+                        if (!token) {
+                          openAlert(
+                            '알림',
+                            '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
+                          );
+                          return;
+                        }
+
+                        // Use local CustomAlert confirm (consistent with Cluster behavior)
+                        setAlertTitle('이제 없어요');
+                        setAlertMsg('정말 더 이상 존재하지 않나요?');
+                        setAlertHideCancel(false);
+                        setAlertConfirm(() => async () => {
+                          try {
+                            try {
+                              console.log(
+                                '[NotThere] map modal send for reportId=',
+                                rid,
+                                'category=',
+                                selectedReport?.category ??
+                                  selectedReport?.title ??
+                                  '제보',
+                              );
+                            } catch (logErr) {}
+                            let tokenToUse: string | null = null;
+                            try {
+                              tokenToUse = await AsyncStorage.getItem(
+                                'access_token',
+                              );
+                            } catch (e) {}
+                            await postReportNotThere(
+                              rid,
+                              tokenToUse ?? undefined,
+                            );
+                            // on success: close alert
+                            setAlertVisible(false);
+                            setAlertConfirm(null);
+                          } catch (e: any) {
+                            console.warn('not-there failed', e);
+                            // Standardize to single dismissible message
+                            setAlertTitle('안내');
+                            setAlertMsg('이미 누른 제보입니다.');
+                            setAlertConfirm(null);
+                            setAlertHideCancel(true);
+                          }
+                          // 닫기 modal
+                          detailOpenRef.current = false;
+                          setDetailOpen(false);
+                        });
+                        setAlertVisible(true);
+                      }}>
+                      <Text style={{fontWeight: '700', color: '#000'}}>
+                        이제 없어요
+                      </Text>
+                    </TouchableOpacity>
+
                     <View
                       style={{
-                        flexDirection: 'row',
+                        flexDirection: 'column',
                         alignItems: 'flex-start',
-                        justifyContent: 'space-between',
+                        justifyContent: 'flex-start',
                         marginBottom: 6,
                       }}>
-                      <View style={{flex: 1}}>
-                        <Text
-                          style={{
-                            fontWeight: '700',
-                            marginBottom: 8,
-                            color: '#000',
-                          }}>
-                          댓글
-                        </Text>
-                        {/* Render actual comment(s). Backend may return a single string field or an array of comments
-                          with different property names; handle common shapes defensively. */}
-                        {(() => {
-                          const sr: any = selectedReport as any;
-                          // Only show comments returned from the comments endpoint.
-                          // Do NOT fall back to report content — that caused report text
-                          // to appear where comment list is expected.
-                          const list: string[] =
-                            Array.isArray(sr.comments) && sr.comments.length > 0
-                              ? sr.comments.map((c: any) =>
-                                  typeof c === 'string'
-                                    ? c
-                                    : c.content ??
-                                      c.text ??
-                                      c.comment ??
-                                      c.body ??
-                                      c.message ??
-                                      JSON.stringify(c),
-                                )
-                              : [];
-
-                          if (list.length === 0) {
-                            return (
-                              <Text style={{color: '#666', marginBottom: 12}}>
-                                아직 댓글이 없습니다.
-                              </Text>
-                            );
-                          }
-
-                          // Show up to 4 comments only
-                          const toShow = list.slice(0, 3);
-                          return (
-                            <View style={{marginBottom: 8}}>
-                              {toShow.map((txt: string, idx: number) => (
-                                <Text
-                                  key={idx}
-                                  style={{
-                                    color: '#000',
-                                    marginBottom: 8,
-                                    fontSize: 14,
-                                  }}>
-                                  {txt}
-                                </Text>
-                              ))}
-                              {list.length > 4 ? (
-                                <Text style={{color: '#666', fontSize: 12}}>
-                                  외 {list.length - 4}개의 댓글
-                                </Text>
-                              ) : null}
-                            </View>
-                          );
-                        })()}
-
-                        {/* 댓글 입력 UI는 하단 좌측 고정으로 이동함 */}
-                      </View>
-
-                      <View style={{alignItems: 'flex-end', marginLeft: 12}}>
+                      <View
+                        style={{
+                          alignItems: 'flex-end',
+                          alignSelf: 'stretch',
+                          marginBottom: 12,
+                        }}>
                         {/* 위로 끌어올리면 전체보기(풀스크린)로 전환됩니다. */}
                         <View
                           style={{
@@ -2288,6 +2415,70 @@ export default function SafeRouteScreen() {
                             );
                           })()}
                         </View>
+                      </View>
+
+                      <View style={{width: '100%', marginTop: 4}}>
+                        <Text
+                          style={{
+                            fontWeight: '700',
+                            marginBottom: 8,
+                            color: '#000',
+                          }}>
+                          댓글
+                        </Text>
+                        {/* Render actual comment(s). Backend may return a single string field or an array of comments
+                          with different property names; handle common shapes defensively. */}
+                        {(() => {
+                          const sr: any = selectedReport as any;
+                          // Only show comments returned from the comments endpoint.
+                          const list: string[] =
+                            Array.isArray(sr.comments) && sr.comments.length > 0
+                              ? sr.comments.map((c: any) =>
+                                  typeof c === 'string'
+                                    ? c
+                                    : c.content ??
+                                      c.text ??
+                                      c.comment ??
+                                      c.body ??
+                                      c.message ??
+                                      JSON.stringify(c),
+                                )
+                              : [];
+
+                          if (list.length === 0) {
+                            return (
+                              <Text style={{color: '#666', marginBottom: 12}}>
+                                아직 댓글이 없습니다.
+                              </Text>
+                            );
+                          }
+
+                          const toShow = list.slice(0, 3);
+                          return (
+                            <View style={{marginBottom: 8}}>
+                              {toShow.map((txt: string, idx: number) => (
+                                <Text
+                                  key={idx}
+                                  accessible={true}
+                                  accessibilityLabel={`${txt}, 최신 댓글 중 ${idx === 0 ? '첫' : idx === 1 ? '두' : '세'} 번째 댓글입니다.`}
+                                  style={{
+                                    color: '#000',
+                                    marginBottom: 8,
+                                    fontSize: 14,
+                                  }}>
+                                  {txt}
+                                </Text>
+                              ))}
+                              {list.length > 4 ? (
+                                <Text style={{color: '#666', fontSize: 12}}>
+                                  외 {list.length - 4}개의 댓글
+                                </Text>
+                              ) : null}
+                            </View>
+                          );
+                        })()}
+
+                        {/* 댓글 입력 UI는 하단 좌측 고정으로 이동함 */}
                       </View>
                     </View>
 
