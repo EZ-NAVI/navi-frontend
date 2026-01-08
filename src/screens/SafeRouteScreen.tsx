@@ -149,6 +149,8 @@ export default function SafeRouteScreen() {
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [miniPopupOpen, setMiniPopupOpen] = useState(false);
+  const [miniPopupData, setMiniPopupData] = useState<any | null>(null);
   // Track accessibility status of the selected report's image so we can show
   // a friendly fallback when the URL is missing or returns 403/404.
   const [selectedImageStatus, setSelectedImageStatus] = useState<
@@ -1242,13 +1244,28 @@ export default function SafeRouteScreen() {
     }
   };
 
-  // 마커를 탭했을 때 실행: reportId로 상세 조회 후 하단 모달을 연다
-  const onMarkerPress = async (report: any) => {
+  // 마커를 탭했을 때 실행: 미니 팝업만 표시
+  const onMarkerPress = (report: any) => {
     const reportId = report.reportId ?? report.id;
     const clusterId = report.clusterId ?? report.cluster_id;
     if (!reportId) {
       return;
     }
+    
+    // 미니 팝업 표시
+    setMiniPopupData(report);
+    setMiniPopupOpen(true);
+  };
+
+  // 미니 팝업에서 상세 보기 클릭: reportId로 상세 조회 후 하단 모달을 연다
+  const openDetailFromMiniPopup = async () => {
+    if (!miniPopupData) return;
+    
+    const report = miniPopupData;
+    const reportId = report.reportId ?? report.id;
+    const clusterId = report.clusterId ?? report.cluster_id;
+    
+    setMiniPopupOpen(false);
     setLoadingDetail(true);
 
     // clusterId로 Map에서 count 정보 가져오기 (native 브릿지 거쳐도 유지됨)
@@ -1256,7 +1273,7 @@ export default function SafeRouteScreen() {
       ? clusterCountsMapRef.current[String(clusterId)] ?? 0
       : 0;
     console.log(
-      '[onMarkerPress] reportId:',
+      '[openDetailFromMiniPopup] reportId:',
       reportId,
       'clusterId:',
       clusterId,
@@ -1789,6 +1806,93 @@ export default function SafeRouteScreen() {
             }
           }}
         />
+
+        {/* 미니 팝업 (마커 클릭 시 표시) */}
+        {miniPopupOpen && miniPopupData && (
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'transparent',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 999,
+            }}
+            activeOpacity={1}
+            onPress={() => setMiniPopupOpen(false)}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#fff',
+                borderRadius: 12,
+                padding: 16,
+                width: 300,
+                shadowColor: '#000',
+                shadowOffset: {width: 0, height: 4},
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 10,
+              }}
+              activeOpacity={1}
+              onPress={openDetailFromMiniPopup}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={`${miniPopupData.category || '제보'}, 두 번 탭하여 상세 보기`}>
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 12,
+                  padding: 4,
+                  zIndex: 1000,
+                }}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  setMiniPopupOpen(false);
+                }}
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="닫기">
+                <Text style={{fontSize: 24, color: '#999'}}>×</Text>
+              </TouchableOpacity>
+              
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: '#333',
+                  marginBottom: 8,
+                }}>
+                {miniPopupData.category || '제보'}
+              </Text>
+              
+              {miniPopupData.description && (
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: '#666',
+                    marginBottom: 8,
+                  }}
+                  numberOfLines={2}>
+                  {miniPopupData.description}
+                </Text>
+              )}
+              
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '700',
+                  color: '#E9C74E',
+                  textAlign: 'center',
+                  marginTop: 4,
+                }}>
+                탭하여 자세히 보기
+              </Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        )}
 
         {__DEV__ && showDevUI && (
           <View
