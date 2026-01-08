@@ -2743,7 +2743,13 @@ export default function SafeRouteScreen() {
           {/* 🔥 우측 상단 햄버거 메뉴 추가 */}
           <TouchableOpacity
             ref={a11yMenuBtnRef}
-            style={{position: 'absolute', left: 20, top: 22}}
+            style={{
+              position: 'absolute',
+              left: 20,
+              top: 22,
+              padding: 10,
+              marginBottom: 10,
+            }}
             onPress={openMyPage}
             accessible={true}
             accessibilityRole="button"
@@ -2990,12 +2996,17 @@ export default function SafeRouteScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={'로그아웃'}>
                   <Text
-                    style={{color: '#000', fontWeight: '700', fontSize: 12}}>
+                    style={{
+                      color: '#000',
+                      fontWeight: '700',
+                      fontSize: 12,
+                      padding: 10,
+                    }}>
                     로그아웃
                   </Text>
                 </TouchableOpacity>
 
-                <Text style={{color: '#999', fontSize: 12}}>|</Text>
+                <Text style={{color: '#999', fontSize: 18}}>|</Text>
 
                 <TouchableOpacity
                   onPress={() => {
@@ -3031,7 +3042,12 @@ export default function SafeRouteScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={'회원탈퇴'}>
                   <Text
-                    style={{color: '#E53935', fontWeight: '700', fontSize: 12}}>
+                    style={{
+                      color: '#E53935',
+                      fontWeight: '700',
+                      fontSize: 12,
+                      padding: 10,
+                    }}>
                     회원탈퇴
                   </Text>
                 </TouchableOpacity>

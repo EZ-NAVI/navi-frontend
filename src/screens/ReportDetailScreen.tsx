@@ -216,7 +216,9 @@ export default function ReportDetailScreen() {
           <Text
             accessible={true}
             accessibilityRole="text"
-            accessibilityLabel={`카테고리 ${report.category ?? report.title ?? '제보'}`}
+            accessibilityLabel={`카테고리 ${
+              report.category ?? report.title ?? '제보'
+            }`}
             style={styles.title}>
             {report.category ?? report.title ?? '제보'}
           </Text>
@@ -225,7 +227,9 @@ export default function ReportDetailScreen() {
           <Text
             accessible={true}
             accessibilityRole="text"
-            accessibilityLabel={`제보 내용 ${report.description ?? report.content ?? '없음'}`}
+            accessibilityLabel={`제보 내용 ${
+              report.description ?? report.content ?? '없음'
+            }`}
             style={styles.description}>
             {report.description ?? report.content ?? ''}
           </Text>
@@ -244,7 +248,10 @@ export default function ReportDetailScreen() {
 
           {/* 4. 이제 없어요 버튼 */}
           <TouchableOpacity
-            style={[styles.resolvedBtnInline, {alignSelf: 'flex-end', marginTop: 8, marginBottom: 8}]}
+            style={[
+              styles.resolvedBtnInline,
+              {alignSelf: 'flex-end', marginTop: 8, marginBottom: 8},
+            ]}
             onPress={() => {
               const fromCluster = (route.params as any)?.fromCluster;
               const clusterId = (route.params as any)?.clusterId;
@@ -304,9 +311,7 @@ export default function ReportDetailScreen() {
             accessible={true}
             accessibilityRole="button"
             accessibilityLabel="이제 없어요">
-            <Text style={{fontWeight: '700', color: '#000'}}>
-              이제 없어요
-            </Text>
+            <Text style={{fontWeight: '700', color: '#000'}}>이제 없어요</Text>
           </TouchableOpacity>
 
           {/* 5. 이모지 평가 */}
@@ -732,12 +737,19 @@ export default function ReportDetailScreen() {
                 } catch (e) {
                   dateOnly = String(rawDate || '');
                 }
-                const orderText = idx === 0 ? '첫' : idx === 1 ? '두' : idx === 2 ? '세' : `${idx + 1}`;
+                const orderText =
+                  idx === 0
+                    ? '첫'
+                    : idx === 1
+                    ? '두'
+                    : idx === 2
+                    ? '세'
+                    : `${idx + 1}`;
                 return (
                   <View key={idx} style={{marginBottom: 12}}>
                     <Text
                       accessible={true}
-                      accessibilityLabel={`${text}, 댓글 목록의 ${orderText} 번째 댓글입니다`}
+                      accessibilityLabel={`${text}, 댓글 목록의 ${orderText}번째 댓글입니다`}
                       style={styles.commentText}>
                       {text}
                     </Text>
@@ -750,7 +762,7 @@ export default function ReportDetailScreen() {
                       }}>
                       <Text
                         accessible={true}
-                        accessibilityLabel={`${dateOnly}, 댓글 작성일`}
+                        accessibilityLabel={`댓글 작성일, ${dateOnly}`}
                         style={{color: '#666', fontSize: 12}}>
                         {dateOnly}
                       </Text>
@@ -851,7 +863,8 @@ export default function ReportDetailScreen() {
                               },
                             });
                           }}>
-                          <Text style={{color: '#666', fontSize: 13}}>
+                          <Text
+                            style={{color: '#666', fontSize: 13, padding: 10}}>
                             삭제
                           </Text>
                         </TouchableOpacity>
