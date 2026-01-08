@@ -1624,6 +1624,29 @@ export default function SafeRouteScreen() {
       .catch(() => console.log('❌ 평가 저장 실패'));
   };
 
+  const [isRated, setIsRated] = useState(false);
+
+  useEffect(() => {
+    if (!isRated) {
+      return;
+    }
+
+    resetRoute();
+    map.clear();
+
+    setIsRated(false); // 한 번만 실행
+  }, [isRated]);
+
+  const handleSubmitRatingAndReset = (rating: number) => {
+    handleSubmitRating(rating); // ✅ 기존 로직 그대로 사용
+
+    // UI 흐름 제어
+    setShowRating(false);
+
+    // 평가 완료 플래그 ON
+    setIsRated(true);
+  };
+
   // (더이상 애니메이션 토글 필요 없음)
 
   return (
@@ -1636,7 +1659,7 @@ export default function SafeRouteScreen() {
         <RouteRatingModal
           visible={showRating}
           onClose={() => setShowRating(false)}
-          onSubmit={handleSubmitRating}
+          onSubmit={handleSubmitRatingAndReset}
         />
 
         {/* 확대/축소/내 위치 버튼 (맵 우하단, 제보하기 버튼 위) */}
