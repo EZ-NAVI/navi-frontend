@@ -1193,16 +1193,6 @@ export default function SafeRouteScreen() {
               console.warn('마커 추가 실패', e);
             }
           });
-
-          // 첫 번째 유효 제보 위치로 카메라 이동(개발 편의) - 최초 로딩 시에만
-          if (validReports.length > 0 && !reportsData.length) {
-            const first = validReports[0];
-            try {
-              map.animateTo(first.__lat, first.__lon, 15);
-            } catch (e) {
-              console.warn('초기 제보 위치로 이동 실패', e);
-            }
-          }
         }
       } catch (err) {
         console.warn('/reports 조회 실패:', err);

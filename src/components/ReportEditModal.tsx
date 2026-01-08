@@ -82,8 +82,21 @@ export default function ReportEditModal({
       <View style={styles.overlay}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <MaterialIcons name="edit" size={40} color="#FF6B6B" />
-            <Text style={styles.title}>수정 요청</Text>
+            <MaterialIcons
+              name="edit"
+              size={40}
+              color="#FF6B6B"
+              accessible={true}
+              accessibilityRole="image"
+              accessibilityLabel="수정 아이콘"
+            />
+            <Text
+              style={styles.title}
+              accessible={true}
+              accessibilityLabel="알림, 수정 요청"
+            >
+              수정 요청
+            </Text>
           </View>
 
           <ScrollView style={styles.content}>
@@ -113,7 +126,6 @@ export default function ReportEditModal({
               onPress={handleDelete}
               disabled={isDeleting}
             >
-              <MaterialIcons name="delete" size={20} color="#FF6B6B" />
               <Text style={styles.cancelButtonText}>
                 {isDeleting ? '삭제 중...' : '삭제'}
               </Text>
@@ -124,7 +136,6 @@ export default function ReportEditModal({
               onPress={onEdit}
               disabled={isDeleting}
             >
-              <MaterialIcons name="edit" size={20} color="#fff" />
               <Text style={styles.editButtonText}>수정하기</Text>
             </TouchableOpacity>
           </View>
