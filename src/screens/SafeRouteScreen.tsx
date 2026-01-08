@@ -1465,12 +1465,7 @@ export default function SafeRouteScreen() {
           const nextZoom = Math.max(mapZoom, 17);
           map.animateTo(latitude, longitude, nextZoom);
           setMapZoom(nextZoom);
-          const accText = accuracy ? ` (±${Math.round(accuracy)}m)` : '';
-          showToast(
-            `현재 위치로 이동: ${latitude.toFixed(4)}, ${longitude.toFixed(
-              4,
-            )}${accText}`,
-          );
+          showToast('현재 위치로 이동합니다');
         },
         err => {
           console.warn('focusMyLocation error', err);
