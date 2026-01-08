@@ -750,9 +750,12 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
                   />
                 </TouchableOpacity>
                 {catOpen && (
-                  <View style={styles.dropdownList}>
+                  <View
+                    style={styles.dropdownList}
+                    accessible={true}
+                    accessibilityViewIsModal={true}>
                     <ScrollView
-                      style={{maxHeight: 140}}
+                      style={styles.dropdownScroll}
                       keyboardShouldPersistTaps="handled"
                       showsVerticalScrollIndicator={false}>
                       {CATEGORIES.map(cat => (
@@ -762,7 +765,10 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
                           onPress={() => {
                             setCategory(cat.value);
                             setCatOpen(false);
-                          }}>
+                          }}
+                          accessible={true}
+                          accessibilityRole="button"
+                          accessibilityLabel={`${cat.label}`}>
                           <Text style={styles.dropdownItemText}>
                             {cat.label}
                           </Text>
@@ -773,174 +779,188 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
                 )}
               </View>
 
-              <TouchableOpacity
-                style={styles.uploadBox}
-                onPress={() => {
-                  photo ? setEditorOpen(true) : showPickerOptions();
-                }}>
-                {photo ? (
-                  <Image
-                    source={{uri: photo}}
-                    style={styles.thumbnailFixed}
-                    resizeMode="cover"
-                    accessible={true}
-                    accessibilityRole="image"
-                    accessibilityLabel="제보 사진"
-                  />
-                ) : (
-                  <View
-                    style={{alignItems: 'center'}}
-                    accessible={true}
-                    accessibilityRole="button"
-                    accessibilityLabel="사진 업로드">
-                    <MaterialIcons name="cloud-upload" size={40} color="#888" />
-                    <Text style={styles.uploadEmptyHint}>
-                      장소의 사진을 업로드 해주세요.
-                    </Text>
-                  </View>
-                )}
-              </TouchableOpacity>
-
-              <Text style={styles.fieldLabel}>제보 내용</Text>
-              <TextInput
-                placeholder="100자 이내"
-                value={content}
-                onChangeText={setContent}
-                style={styles.input}
-                multiline
-                onFocus={() => setCatOpen(false)}
-                blurOnSubmit={false}
-                keyboardType="default"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-              <Text
-                style={{
-                  alignSelf: 'flex-end',
-                  marginTop: 4,
-                  color: content.length > 100 ? '#d00' : '#666',
-                }}>
-                {content.length}/100
-              </Text>
-
-              <View style={styles.buttonRow}>
-                <TouchableOpacity 
-                  style={styles.cancelBtn} 
-                  onPress={onClose}
-                  accessible={true}
-                  accessibilityRole="button"
-                  accessibilityLabel="취소">
-                  <Text style={{fontWeight: 'bold'}}>취소</Text>
-                </TouchableOpacity>
+              {/* 드롭다운이 열려있을 때 아래 영역을 스크린리더 탐색/터치에서 숨김 */}
+              <View
+                accessibilityElementsHidden={catOpen}
+                importantForAccessibility={
+                  catOpen ? 'no-hide-descendants' : 'auto'
+                }
+                pointerEvents={catOpen ? 'none' : 'auto'}>
                 <TouchableOpacity
-                  style={[
-                    styles.sendBtn,
-                    !canSubmit() || submitting ? {opacity: 0.6} : null,
-                  ]}
-                  onPress={() => handleSend(true)}
-                  disabled={!canSubmit() || submitting}
-                  accessible={true}
-                  accessibilityRole="button"
-                  accessibilityLabel={submitting ? '보내는 중' : '보내기'}>
-                  <Text style={{fontWeight: 'bold'}}>
-                    {submitting ? '보내는 중…' : '보내기'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <Modal
-                visible={editorOpen}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setEditorOpen(false)}>
-                <View style={styles.editorDim}>
-                  <View style={styles.editorModal}>
-                    {photo && (
-                      <Image
-                        source={{uri: photo}}
-                        style={styles.editorImage}
-                        resizeMode="contain"
-                      />
-                    )}
-                    <View style={styles.editorBtns}>
-                      <TouchableOpacity
-                        style={styles.editorCancel}
-                        onPress={() => setEditorOpen(false)}>
-                        <Text style={{fontWeight: '700'}}>닫기</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.editorPick}
-                        onPress={async () => {
-                          await pickImage();
-                          setEditorOpen(false);
-                        }}>
-                        <Text style={{fontWeight: '700', color: '#000'}}>
-                          다시 선택
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              </Modal>
-
-              {/* picker options presented as an in-app styled modal */}
-              <Modal
-                visible={pickerOptionsOpen}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setPickerOptionsOpen(false)}>
-                <View style={styles.pickerDim}>
-                  <View style={styles.pickerModal}>
-                    <Text
-                      style={styles.pickerTitle}
+                  style={styles.uploadBox}
+                  onPress={() => {
+                    photo ? setEditorOpen(true) : showPickerOptions();
+                  }}>
+                  {photo ? (
+                    <Image
+                      source={{uri: photo}}
+                      style={styles.thumbnailFixed}
+                      resizeMode="cover"
                       accessible={true}
-                      accessibilityRole="alert"
-                    >
-                      사진을 추가할 방법을 선택하세요
-                    </Text>
-                    <View style={styles.pickerButtons}>
-                      <TouchableOpacity
-                        style={[styles.pickerBtn, styles.pickerBtnPrimary]}
-                        accessibilityRole="button"
-                        onPress={async () => {
-                          setPickerOptionsOpen(false);
-                          await pickImage();
-                        }}>
-                        <Text
-                          style={[
-                            styles.pickerBtnText,
-                            styles.pickerBtnTextPrimary,
-                          ]}>
-                          갤러리에서 선택
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[styles.pickerBtn, styles.pickerBtnPrimary]}
-                        accessibilityRole="button"
-                        onPress={async () => {
-                          setPickerOptionsOpen(false);
-                          await takePhoto();
-                        }}>
-                        <Text
-                          style={[
-                            styles.pickerBtnText,
-                            styles.pickerBtnTextPrimary,
-                          ]}>
-                          카메라로 촬영
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.pickerCancel}
-                      onPress={() => setPickerOptionsOpen(false)}
+                      accessibilityRole="image"
+                      accessibilityLabel="제보 사진"
+                    />
+                  ) : (
+                    <View
+                      style={styles.centerAlign}
                       accessible={true}
                       accessibilityRole="button"
-                      accessibilityLabel="취소">
-                      <Text style={styles.pickerCancelText}>취소</Text>
-                    </TouchableOpacity>
-                  </View>
+                      accessibilityLabel="사진 업로드">
+                      <MaterialIcons
+                        name="cloud-upload"
+                        size={40}
+                        color="#888"
+                      />
+                      <Text style={styles.uploadEmptyHint}>
+                        장소의 사진을 업로드 해주세요.
+                      </Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+
+                <Text style={styles.fieldLabel}>제보 내용</Text>
+                <TextInput
+                  placeholder="100자 이내"
+                  value={content}
+                  onChangeText={setContent}
+                  style={styles.input}
+                  multiline
+                  onFocus={() => setCatOpen(false)}
+                  blurOnSubmit={false}
+                  keyboardType="default"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <Text
+                  style={[
+                    styles.charCount,
+                    content.length > 100
+                      ? styles.charCountOver
+                      : styles.charCountNormal,
+                  ]}>
+                  {content.length}/100
+                </Text>
+
+                <View style={styles.buttonRow}>
+                  <TouchableOpacity
+                    style={styles.cancelBtn}
+                    onPress={onClose}
+                    accessible={true}
+                    accessibilityRole="button"
+                    accessibilityLabel="취소"
+                    importantForAccessibility="yes">
+                    <Text style={styles.boldText}>취소</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.sendBtn,
+                      !canSubmit() || submitting ? styles.disabledBtn : null,
+                    ]}
+                    onPress={() => handleSend(true)}
+                    disabled={!canSubmit() || submitting}
+                    accessible={true}
+                    accessibilityRole="button"
+                    accessibilityLabel={submitting ? '보내는 중' : '보내기'}
+                    importantForAccessibility="yes">
+                    <Text style={styles.boldText}>
+                      {submitting ? '보내는 중…' : '보내기'}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-              </Modal>
+
+                <Modal
+                  visible={editorOpen}
+                  transparent
+                  animationType="fade"
+                  onRequestClose={() => setEditorOpen(false)}>
+                  <View style={styles.editorDim}>
+                    <View style={styles.editorModal}>
+                      {photo && (
+                        <Image
+                          source={{uri: photo}}
+                          style={styles.editorImage}
+                          resizeMode="contain"
+                        />
+                      )}
+                      <View style={styles.editorBtns}>
+                        <TouchableOpacity
+                          style={styles.editorCancel}
+                          onPress={() => setEditorOpen(false)}>
+                          <Text style={styles.editorBtnTextBold}>닫기</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.editorPick}
+                          onPress={async () => {
+                            await pickImage();
+                            setEditorOpen(false);
+                          }}>
+                          <Text style={styles.editorBtnTextPrimary}>
+                            다시 선택
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </Modal>
+
+                {/* picker options presented as an in-app styled modal */}
+                <Modal
+                  visible={pickerOptionsOpen}
+                  transparent
+                  animationType="fade"
+                  onRequestClose={() => setPickerOptionsOpen(false)}>
+                  <View style={styles.pickerDim}>
+                    <View style={styles.pickerModal}>
+                      <Text
+                        style={styles.pickerTitle}
+                        accessible={true}
+                        accessibilityRole="alert">
+                        사진을 추가할 방법을 선택하세요
+                      </Text>
+                      <View style={styles.pickerButtons}>
+                        <TouchableOpacity
+                          style={[styles.pickerBtn, styles.pickerBtnPrimary]}
+                          accessibilityRole="button"
+                          onPress={async () => {
+                            setPickerOptionsOpen(false);
+                            await pickImage();
+                          }}>
+                          <Text
+                            style={[
+                              styles.pickerBtnText,
+                              styles.pickerBtnTextPrimary,
+                            ]}>
+                            갤러리에서 선택
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.pickerBtn, styles.pickerBtnPrimary]}
+                          accessibilityRole="button"
+                          onPress={async () => {
+                            setPickerOptionsOpen(false);
+                            await takePhoto();
+                          }}>
+                          <Text
+                            style={[
+                              styles.pickerBtnText,
+                              styles.pickerBtnTextPrimary,
+                            ]}>
+                            카메라로 촬영
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.pickerCancel}
+                        onPress={() => setPickerOptionsOpen(false)}
+                        accessible={true}
+                        accessibilityRole="button"
+                        accessibilityLabel="취소">
+                        <Text style={styles.pickerCancelText}>취소</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Modal>
+              </View>
             </ScrollView>
           </View>
         </View>
@@ -1009,6 +1029,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
+  dropdownScroll: {maxHeight: 140},
   dropdownItem: {
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -1147,4 +1168,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   pickerCancelText: {color: '#333', fontWeight: '700'},
+  centerAlign: {alignItems: 'center'},
+  charCount: {alignSelf: 'flex-end', marginTop: 4},
+  charCountNormal: {color: '#666'},
+  charCountOver: {color: '#d00'},
+  boldText: {fontWeight: 'bold'},
+  disabledBtn: {opacity: 0.6},
+  editorBtnTextBold: {fontWeight: '700'},
+  editorBtnTextPrimary: {fontWeight: '700', color: '#000'},
 });
