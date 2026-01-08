@@ -1886,7 +1886,7 @@ export default function SafeRouteScreen() {
                                   accessibilityLabel={`좋음 ${Number(
                                     selectedReport?.badCount ?? 0,
                                   )}개`}
-                                  accessibilityHint="자녀만 선택 가능"
+                                  accessibilityHint="자녀만 선택 가능합니다"
                                   accessibilityState={{
                                     selected:
                                       selectedReport?.userEvaluation === 'bad',
@@ -2017,7 +2017,7 @@ export default function SafeRouteScreen() {
                                   accessibilityLabel={`보통 ${Number(
                                     selectedReport?.badCount ?? 0,
                                   )}개`}
-                                  accessibilityHint="자녀만 선택 가능"
+                                  accessibilityHint="자녀만 선택 가능합니다"
                                   accessibilityState={{
                                     selected:
                                       selectedReport?.userEvaluation ===
@@ -2154,7 +2154,7 @@ export default function SafeRouteScreen() {
                                   accessibilityLabel={`아쉬움 ${Number(
                                     selectedReport?.badCount ?? 0,
                                   )}개`}
-                                  accessibilityHint="자녀만 선택 가능"
+                                  accessibilityHint="자녀만 선택 가능합니다"
                                   accessibilityState={{
                                     selected:
                                       selectedReport?.userEvaluation === 'good',
@@ -2353,7 +2353,9 @@ export default function SafeRouteScreen() {
                 start ? `출발지 ${start.name}` : '출발지 지정 안 됨'
               }
               accessibilityHint={
-                start ? '눌러서 출발지를 변경' : '눌러서 출발지를 지정'
+                start
+                  ? '두 번 탭하여 출발지를 변경'
+                  : '두 번 탭하여 출발지를 지정'
               }>
               <Text style={styles.circle}>●</Text>
               <Text style={styles.label}>출발지 :</Text>
@@ -2382,7 +2384,9 @@ export default function SafeRouteScreen() {
                 end ? `도착지 ${end.name}` : '도착지 지정 안 됨'
               }
               accessibilityHint={
-                end ? '눌러서 도착지를 변경' : '눌러서 도착지를 지정'
+                end
+                  ? '두 번 탭하여 도착지를 변경'
+                  : '두 번 탭하여 도착지를 지정'
               }>
               <Text style={styles.circle}>●</Text>
               <Text style={styles.label}>도착지 :</Text>

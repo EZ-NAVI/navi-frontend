@@ -311,7 +311,7 @@ export default function ReportDetailScreen() {
                           accessibilityLabel={`좋음 ${Number(
                             report?.badCount ?? 0,
                           )}개`}
-                          accessibilityHint="자녀만 선택 가능"
+                          accessibilityHint="자녀만 선택 가능합니다"
                           accessibilityState={{
                             selected: report?.userEvaluation === 'bad',
                           }}>
@@ -343,7 +343,7 @@ export default function ReportDetailScreen() {
                           accessibilityLabel={`보통 ${Number(
                             report?.badCount ?? 0,
                           )}개`}
-                          accessibilityHint="자녀만 선택 가능"
+                          accessibilityHint="자녀만 선택 가능합니다"
                           accessibilityState={{
                             selected: report?.userEvaluation === 'normal',
                           }}>
@@ -375,7 +375,7 @@ export default function ReportDetailScreen() {
                           accessibilityLabel={`아쉬움 ${Number(
                             report?.badCount ?? 0,
                           )}개`}
-                          accessibilityHint="자녀만 선택 가능"
+                          accessibilityHint="자녀만 선택 가능합니다"
                           accessibilityState={{
                             selected: report?.userEvaluation === 'good',
                           }}>

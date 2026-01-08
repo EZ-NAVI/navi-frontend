@@ -433,7 +433,7 @@ export default function ClusterReportsScreen({
                         accessible={true}
                         accessibilityRole="button"
                         accessibilityLabel={`좋음 ${count}개`}
-                        accessibilityHint="자녀만 선택 가능"
+                        accessibilityHint="자녀만 선택 가능합니다"
                         accessibilityState={{selected}}>
                         <Image
                           source={require('../asset/emoji_good.png')}
@@ -489,7 +489,7 @@ export default function ClusterReportsScreen({
                         accessible={true}
                         accessibilityRole="button"
                         accessibilityLabel={`보통 ${count}개`}
-                        accessibilityHint="자녀만 선택 가능"
+                        accessibilityHint="자녀만 선택 가능합니다"
                         accessibilityState={{selected}}>
                         <Image
                           source={require('../asset/emoji_soso.png')}
@@ -543,7 +543,7 @@ export default function ClusterReportsScreen({
                         accessible={true}
                         accessibilityRole="button"
                         accessibilityLabel={`보통 ${count}개`}
-                        accessibilityHint="자녀만 선택 가능"
+                        accessibilityHint="자녀만 선택 가능합니다"
                         accessibilityState={{selected}}>
                         <Image
                           source={require('../asset/emoji_bad.png')}
@@ -618,8 +618,9 @@ export default function ClusterReportsScreen({
               ]}
               accessible={true}
               accessibilityRole="button"
-              accessibilityLabel={`${c} 카테고리, ${selectedCategory === c ? '선택됨' : '미선택'}`}
-              >
+              accessibilityLabel={`${c} 카테고리, ${
+                selectedCategory === c ? '선택됨' : '미선택'
+              }`}>
               <Text
                 style={[
                   styles.tabText,
