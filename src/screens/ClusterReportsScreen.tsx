@@ -657,9 +657,8 @@ export default function ClusterReportsScreen({
               ]}
               accessible={true}
               accessibilityRole="button"
-              accessibilityLabel={`${c} 카테고리, ${
-                selectedCategory === c ? '선택됨' : '미선택'
-              }`}>
+              accessibilityLabel={`${c} 카테고리, ${selectedCategory === c ? '선택됨' : '미선택됨'}`}
+              >
               <Text
                 style={[
                   styles.tabText,

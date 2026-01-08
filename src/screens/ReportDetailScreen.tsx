@@ -211,98 +211,112 @@ export default function ReportDetailScreen() {
             <Text style={{fontSize: 22, color: '#000'}}>{'<'}</Text>
           </TouchableOpacity>
 
-          <View style={styles.detailHeaderRow}>
-            <Text style={styles.title}>
-              {report.category ?? report.title ?? '제보'}
-            </Text>
-            <TouchableOpacity
-              style={styles.resolvedBtnInline}
-              onPress={() => {
-                const fromCluster = (route.params as any)?.fromCluster;
-                const clusterId = (route.params as any)?.clusterId;
-                (async () => {
-                  // 토큰 체크: 없으면 CustomAlert 사용
-                  let tokenCheck: string | null = null;
-                  try {
-                    tokenCheck = await AsyncStorage.getItem('access_token');
-                  } catch (e) {
-                    console.warn('token read failed', e);
-                  }
-                  if (!tokenCheck) {
-                    openAlert(
-                      '안내',
-                      '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
-                      {hideCancel: true},
-                    );
-                    return;
-                  }
+          {/* 1. 카테고리 */}
+          <Text
+            accessible={true}
+            accessibilityRole="text"
+            accessibilityLabel={`카테고리 ${report.category ?? report.title ?? '제보'}`}
+            style={styles.title}>
+            {report.category ?? report.title ?? '제보'}
+          </Text>
 
-                  // Use local CustomAlert confirm (consistent with community flow)
-                  setAlertTitle('이제 없어요');
-                  setAlertMsg('정말 더 이상 존재하지 않나요?');
-                  setAlertHideCancel(false);
-                  setAlertConfirm(() => async () => {
-                    try {
-                      try {
-                        console.log(
-                          '[NotThere] detail screen send for reportId=',
-                          String(reportId),
-                          'category=',
-                          report?.category ?? report?.title ?? '제보',
-                        );
-                      } catch (logErr) {}
-                      let token: string | null = null;
-                      try {
-                        token = await AsyncStorage.getItem('access_token');
-                      } catch (e) {}
-                      await postReportNotThere(
-                        String(reportId),
-                        token ?? undefined,
-                      );
-                      // On success: close alert
-                      setAlertVisible(false);
-                      setAlertConfirm(null);
-                    } catch (e: any) {
-                      console.warn('not-there failed', e);
-                      // Standardize to single dismissible message
-                      setAlertTitle('안내');
-                      setAlertMsg('이미 누른 제보입니다.');
-                      setAlertConfirm(null);
-                      setAlertHideCancel(true);
-                    }
-                  });
-                  setAlertVisible(true);
-                })();
-              }}
-              accessible={true}
-              accessibilityRole="button"
-              accessibilityLabel="이제 없어요">
-              <Text style={{fontWeight: '700', color: '#000'}}>
-                이제 없어요
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.description}>
+          {/* 2. 제보 내용 */}
+          <Text
+            accessible={true}
+            accessibilityRole="text"
+            accessibilityLabel={`제보 내용 ${report.description ?? report.content ?? '없음'}`}
+            style={styles.description}>
             {report.description ?? report.content ?? ''}
           </Text>
+
+          {/* 3. 제보 사진 */}
           {imageUrl ? (
             <Image
+              accessible={true}
+              accessibilityRole="image"
+              accessibilityLabel="제보 사진"
               source={{uri: imageUrl}}
               style={styles.image}
               resizeMode="cover"
             />
           ) : null}
 
-          {/* Header row: 댓글 title on the left, emoji evaluation UI on the right (under image) */}
+          {/* 4. 이제 없어요 버튼 */}
+          <TouchableOpacity
+            style={[styles.resolvedBtnInline, {alignSelf: 'flex-end', marginTop: 8, marginBottom: 8}]}
+            onPress={() => {
+              const fromCluster = (route.params as any)?.fromCluster;
+              const clusterId = (route.params as any)?.clusterId;
+              (async () => {
+                // 토큰 체크: 없으면 CustomAlert 사용
+                let tokenCheck: string | null = null;
+                try {
+                  tokenCheck = await AsyncStorage.getItem('access_token');
+                } catch (e) {
+                  console.warn('token read failed', e);
+                }
+                if (!tokenCheck) {
+                  openAlert(
+                    '안내',
+                    '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
+                  );
+                  return;
+                }
+
+                // Use local CustomAlert confirm (consistent with community flow)
+                setAlertTitle('이제 없어요');
+                setAlertMsg('정말 더 이상 존재하지 않나요?');
+                setAlertHideCancel(false);
+                setAlertConfirm(() => async () => {
+                  try {
+                    try {
+                      console.log(
+                        '[NotThere] detail screen send for reportId=',
+                        String(reportId),
+                        'category=',
+                        report?.category ?? report?.title ?? '제보',
+                      );
+                    } catch (logErr) {}
+                    let token: string | null = null;
+                    try {
+                      token = await AsyncStorage.getItem('access_token');
+                    } catch (e) {}
+                    await postReportNotThere(
+                      String(reportId),
+                      token ?? undefined,
+                    );
+                    // On success: close alert
+                    setAlertVisible(false);
+                    setAlertConfirm(null);
+                  } catch (e: any) {
+                    console.warn('not-there failed', e);
+                    // Standardize to single dismissible message
+                    setAlertTitle('안내');
+                    setAlertMsg('이미 누른 제보입니다.');
+                    setAlertConfirm(null);
+                    setAlertHideCancel(true);
+                  }
+                });
+                setAlertVisible(true);
+              })();
+            }}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="이제 없어요">
+            <Text style={{fontWeight: '700', color: '#000'}}>
+              이제 없어요
+            </Text>
+          </TouchableOpacity>
+
+          {/* 5. 이모지 평가 */}
           <View
             style={{
               marginTop: 8,
+              marginBottom: 12,
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              justifyContent: 'flex-end',
             }}>
-            <Text style={{fontWeight: '700', color: '#000'}}>댓글</Text>
             <View style={{paddingRight: 0}}>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 {(() => {
@@ -661,6 +675,15 @@ export default function ReportDetailScreen() {
               </View>
             </View>
           </View>
+
+          {/* 6. 댓글 */}
+          <Text
+            accessible={true}
+            accessibilityRole="text"
+            accessibilityLabel="댓글 목록"
+            style={{fontWeight: '700', color: '#000', marginBottom: 8}}>
+            댓글 목록
+          </Text>
           <View>
             {comments.length === 0 ? (
               <Text style={{color: '#666'}}>아직 댓글이 없습니다.</Text>
@@ -695,7 +718,11 @@ export default function ReportDetailScreen() {
                   if (rawDate) {
                     const d = new Date(rawDate);
                     if (!isNaN(d.getTime())) {
-                      dateOnly = d.toLocaleDateString();
+                      dateOnly = d.toLocaleDateString('ko-KR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      });
                     } else {
                       dateOnly =
                         String(rawDate).split('T')[0] || String(rawDate);
@@ -704,9 +731,15 @@ export default function ReportDetailScreen() {
                 } catch (e) {
                   dateOnly = String(rawDate || '');
                 }
+                const orderText = idx === 0 ? '첫' : idx === 1 ? '두' : idx === 2 ? '세' : `${idx + 1}`;
                 return (
                   <View key={idx} style={{marginBottom: 12}}>
-                    <Text style={styles.commentText}>{text}</Text>
+                    <Text
+                      accessible={true}
+                      accessibilityLabel={`${text}, 댓글 목록의 ${orderText} 번째 댓글입니다`}
+                      style={styles.commentText}>
+                      {text}
+                    </Text>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -714,12 +747,18 @@ export default function ReportDetailScreen() {
                         alignItems: 'center',
                         marginTop: 6,
                       }}>
-                      <Text style={{color: '#666', fontSize: 12}}>
+                      <Text
+                        accessible={true}
+                        accessibilityLabel={`${dateOnly}, 댓글 작성일`}
+                        style={{color: '#666', fontSize: 12}}>
                         {dateOnly}
                       </Text>
                       {getCurrentUserRole &&
                       getCurrentUserRole() === 'child' ? (
                         <TouchableOpacity
+                          accessible={true}
+                          accessibilityRole="button"
+                          accessibilityLabel="댓글 삭제"
                           onPress={() => {
                             // show app-styled confirmation modal before deleting
                             useAppAlertStore.getState().show({
@@ -845,7 +884,7 @@ export default function ReportDetailScreen() {
                 <TextInput
                   value={newComment}
                   onChangeText={setNewComment}
-                  placeholder="댓글을 입력하세요..."
+                  placeholder="댓글을 입력하세요"
                   placeholderTextColor="#999"
                   style={{
                     flex: 1,
@@ -929,7 +968,10 @@ export default function ReportDetailScreen() {
                     paddingVertical: 10,
                     borderRadius: 20,
                   }}
-                  disabled={posting}>
+                  disabled={posting}
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel="댓글 전송">
                   {posting ? (
                     <ActivityIndicator />
                   ) : (
