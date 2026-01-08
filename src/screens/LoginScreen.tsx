@@ -146,11 +146,6 @@ export default function LoginScreen() {
 
   // ⭐ 게스트 모드: 알림은 그대로 → CustomAlert 사용
   const handleGuestMode = async () => {
-    openAlert(
-      '안내',
-      '체험해보기 상태인 경우, 제보 기능을 확인 및 사용할 수 없어요!',
-    );
-
     await AsyncStorage.removeItem('access_token');
     await AsyncStorage.removeItem('user_id');
     await AsyncStorage.removeItem('user_role');

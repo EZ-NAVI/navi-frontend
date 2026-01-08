@@ -39,9 +39,15 @@ export default function ReportDetailScreen() {
   const [alertConfirm, setAlertConfirm] = useState<null | (() => void)>(null);
   const [alertHideCancel, setAlertHideCancel] = useState(false);
 
-  const openAlert = (title: string, msg: string) => {
+  const openAlert = (
+    title: string,
+    msg: string,
+    options?: {hideCancel?: boolean; onConfirm?: () => void},
+  ) => {
     setAlertTitle(title);
     setAlertMsg(msg);
+    setAlertHideCancel(!!options?.hideCancel);
+    setAlertConfirm(options?.onConfirm ?? null);
     setAlertVisible(true);
   };
 
@@ -226,6 +232,7 @@ export default function ReportDetailScreen() {
                     openAlert(
                       '안내',
                       '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
+                      {hideCancel: true},
                     );
                     return;
                   }
@@ -429,6 +436,7 @@ export default function ReportDetailScreen() {
                             openAlert(
                               '안내',
                               '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                              {hideCancel: true},
                             );
                             return;
                           }
@@ -507,6 +515,7 @@ export default function ReportDetailScreen() {
                             openAlert(
                               '안내',
                               '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                              {hideCancel: true},
                             );
                             return;
                           }
@@ -587,6 +596,7 @@ export default function ReportDetailScreen() {
                             openAlert(
                               '안내',
                               '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                              {hideCancel: true},
                             );
                             return;
                           }
@@ -872,6 +882,7 @@ export default function ReportDetailScreen() {
                       openAlert(
                         '알림',
                         '체험하기 상태에서는 댓글을 달 수 없습니다!',
+                        {hideCancel: true},
                       );
                     } finally {
                       setPosting(false);
@@ -906,6 +917,7 @@ export default function ReportDetailScreen() {
                       openAlert(
                         '알림',
                         '체험하기 상태에서는\n댓글을 달 수 없습니다!',
+                        {hideCancel: true},
                       );
                     } finally {
                       setPosting(false);

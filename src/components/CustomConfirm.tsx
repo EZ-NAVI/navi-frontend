@@ -7,6 +7,7 @@ export default function CustomConfirm({
   message,
   onConfirm,
   onCancel,
+  hideCancel = false,
 }) {
   if (!visible) {
     return null;
@@ -21,13 +22,15 @@ export default function CustomConfirm({
           </Text>
           <Text style={s.msg}>{message}</Text>
 
-          <View style={s.row}>
-            <TouchableOpacity
-              style={[s.btn, s.cancel]}
-              onPress={onCancel}
-              accessibilityRole="button">
-              <Text style={s.btnText}>취소</Text>
-            </TouchableOpacity>
+          <View style={[s.row, hideCancel ? s.rowCenter : null]}>
+            {!hideCancel && (
+              <TouchableOpacity
+                style={[s.btn, s.cancel]}
+                onPress={onCancel}
+                accessibilityRole="button">
+                <Text style={s.btnText}>취소</Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               style={[s.btn, s.confirm]}
@@ -59,6 +62,7 @@ const s = StyleSheet.create({
   title: {fontSize: 17, fontWeight: '700', marginBottom: 12, color: '#000'},
   msg: {color: '#333', lineHeight: 20, marginBottom: 18},
   row: {flexDirection: 'row', justifyContent: 'flex-end', gap: 12},
+  rowCenter: {justifyContent: 'center'},
   btn: {
     paddingHorizontal: 16,
     paddingVertical: 8,

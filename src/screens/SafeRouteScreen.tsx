@@ -107,6 +107,7 @@ export default function SafeRouteScreen() {
             '지도 이용 안내',
             '지도가 보이지 않을 경우, 화면 회전을 켜고 한 번 회전하면 정상 표시될 수 있어요!\n\n' +
               '경로 검색 후 마커가 잘 안 보이면 지도를 축소하거나 이동해 확인해 주세요!',
+            {hideCancel: true},
           );
         }, 300);
 
@@ -201,9 +202,15 @@ export default function SafeRouteScreen() {
   );
 
   // CustomAlert 열기 함수
-  const openAlert = (title: string, msg?: string) => {
+  const openAlert = (
+    title: string,
+    msg?: string,
+    options?: {hideCancel?: boolean; onConfirm?: () => void},
+  ) => {
     setAlertTitle(title);
     setAlertMsg(msg ?? '');
+    setAlertHideCancel(!!options?.hideCancel);
+    setAlertConfirm(options?.onConfirm ?? null);
     setAlertVisible(true);
   };
   const [alertConfirm, setAlertConfirm] = useState<null | (() => void)>(null);
@@ -1254,7 +1261,9 @@ export default function SafeRouteScreen() {
 
     const tokenCheck = await AsyncStorage.getItem('access_token');
     if (!tokenCheck) {
-      openAlert('알림', '체험해보기 상태에서는 댓글 작성이 불가능해요!');
+      openAlert('알림', '체험해보기 상태에서는 댓글 작성이 불가능해요!', {
+        hideCancel: true,
+      });
       return;
     }
 
@@ -1487,6 +1496,7 @@ export default function SafeRouteScreen() {
                   openAlert(
                     '알림',
                     '체험해보기 상태에서는 제보 기능을 사용할 수 없어요!',
+                    {hideCancel: true},
                   );
                   return;
                 }
@@ -1649,6 +1659,7 @@ export default function SafeRouteScreen() {
                       openAlert(
                         '알림',
                         '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
+                        {hideCancel: true},
                       );
                       return;
                     }
@@ -1945,6 +1956,7 @@ export default function SafeRouteScreen() {
                                       openAlert(
                                         '알림',
                                         '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                                        {hideCancel: true},
                                       );
                                       return;
                                     }
@@ -2079,6 +2091,7 @@ export default function SafeRouteScreen() {
                                       openAlert(
                                         '알림',
                                         '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                                        {hideCancel: true},
                                       );
                                       return;
                                     }
@@ -2215,6 +2228,7 @@ export default function SafeRouteScreen() {
                                       openAlert(
                                         '알림',
                                         '체험해보기 상태에서는 평가 기능을 사용할 수 없어요!',
+                                        {hideCancel: true},
                                       );
                                       return;
                                     }
@@ -2277,7 +2291,7 @@ export default function SafeRouteScreen() {
                       </View>
                     </View>
 
-                    {/* 버튼은 모달 콘텐츠 내부에서 제거하고, 아래에 절대 위치로 배치됩니다 */}
+                    {/* 버튼은 모달 콘텐츠 내부에서 제거하고,, 아래에 절대 위치로 배치됩니다 */}
                   </View>
                 ) : (
                   <Text style={{color: '#000'}}>선택된 제보가 없습니다.</Text>
