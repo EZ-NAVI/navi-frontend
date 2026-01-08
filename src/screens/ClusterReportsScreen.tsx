@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Pressable,
+  AccessibilityInfo,
+  findNodeHandle,
+  InteractionManager,
 } from 'react-native';
 import {useAppAlertStore} from '../stores/appAlertStore';
 import {useNavigation} from '@react-navigation/native';
@@ -35,7 +38,7 @@ export default function ClusterReportsScreen({
   clusterId,
   onClose,
   nearbyReports,
-  onSelect,
+  onSelect: _onSelect,
 }: Props) {
   const navigation = useNavigation<any>();
   React.useEffect(() => {
@@ -54,6 +57,10 @@ export default function ClusterReportsScreen({
     {},
   );
 
+  const headerTitleRef = useRef<Text>(null);
+  const [a11yReady, setA11yReady] = useState(false);
+  const [srEnabled, setSrEnabled] = useState(false);
+
   /** ⭐ CustomAlert 전용 state */
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMsg, setAlertMsg] = useState('');
@@ -68,6 +75,49 @@ export default function ClusterReportsScreen({
       ctaText: '확인',
     });
   };
+
+  // 기존 300ms 타이머 포커스 로직을 대체하여, 헤더에 먼저 포커스를 준 뒤 본문을 노출
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      try {
+        const enabled = await AccessibilityInfo.isScreenReaderEnabled();
+        if (mounted) {
+          setSrEnabled(enabled);
+        }
+        if (!enabled) {
+          if (mounted) {
+            setA11yReady(true);
+          }
+          return;
+        }
+        setA11yReady(false);
+        const focusNow = () => {
+          const node = findNodeHandle(headerTitleRef.current);
+          if (node) {
+            AccessibilityInfo.setAccessibilityFocus(node);
+          }
+          // 약간의 지연 후 본문 노출
+          setTimeout(() => {
+            if (mounted) {
+              setA11yReady(true);
+            }
+          }, 150);
+        };
+        InteractionManager.runAfterInteractions(focusNow);
+      } catch (e) {
+        // 실패 시에도 본문은 노출되도록 처리
+        if (mounted) {
+          setA11yReady(true);
+        }
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, [clusterId]);
 
   const applyOptimisticEvaluation = (
     rid: string,
@@ -319,9 +369,16 @@ export default function ClusterReportsScreen({
               style={styles.cardTitle}
               accessible={true}
               accessibilityRole="text"
-              accessibilityLabel={`카테고리 ${item.category ?? item.title ?? '제보'}`}
-            >
-              <Text style={{fontSize: 16, fontWeight: '800', marginBottom: 6, color: '#000'}}>
+              accessibilityLabel={`카테고리 ${
+                item.category ?? item.title ?? '제보'
+              }`}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '800',
+                  marginBottom: 6,
+                  color: '#000',
+                }}>
                 {item.category ?? item.title ?? '제보'}
               </Text>
             </Pressable>
@@ -331,8 +388,9 @@ export default function ClusterReportsScreen({
             style={styles.cardText}
             accessible={true}
             accessibilityRole="text"
-            accessibilityLabel={`제보 내용 ${item.userComment ?? item.comment ?? item.description ?? ''}`}
-          >
+            accessibilityLabel={`제보 내용 ${
+              item.userComment ?? item.comment ?? item.description ?? ''
+            }`}>
             <Text style={{color: '#000', marginBottom: 10}}>
               {item.userComment ?? item.comment ?? item.description ?? ''}
             </Text>
@@ -349,7 +407,10 @@ export default function ClusterReportsScreen({
           ) : null}
 
           <TouchableOpacity
-            style={[styles.resolvedBtnInline, {alignSelf: 'flex-end', marginTop: 4}]}
+            style={[
+              styles.resolvedBtnInline,
+              {alignSelf: 'flex-end', marginTop: 4},
+            ]}
             onPress={async () => {
               const rid = String(item.reportId ?? item.id ?? '');
               if (!rid) {
@@ -389,14 +450,17 @@ export default function ClusterReportsScreen({
             }}
             accessible={true}
             accessibilityRole="button"
-            accessibilityLabel="이제 없어요"
-          >
+            accessibilityLabel="이제 없어요">
             <Text style={{fontWeight: '700', color: '#000'}}>이제 없어요</Text>
           </TouchableOpacity>
 
           <View style={styles.cardFooter}>
             {/* 접근성 순서 6: 이모지 평가 (시각적으로는 오른쪽) */}
-            <View style={[styles.rightArea, {alignSelf: 'flex-end', marginLeft: 0}]}>
+            <View
+              style={[
+                styles.rightArea,
+                {alignSelf: 'flex-end', marginLeft: 0},
+              ]}>
               <View style={styles.emojisRow}>
                 {/* 좋음 → bad */}
                 {(() => {
@@ -566,10 +630,7 @@ export default function ClusterReportsScreen({
 
             {/* 접근성 순서 7: 댓글 (시각적으로는 왼쪽) */}
             <View style={{flex: 1}}>
-              <Pressable
-                accessible={true}
-                accessibilityLabel="댓글 목록"
-              >
+              <Pressable accessible={true} accessibilityLabel="댓글 목록">
                 <Text style={styles.commentLabel}>댓글 목록</Text>
               </Pressable>
 
@@ -601,12 +662,11 @@ export default function ClusterReportsScreen({
                       <Pressable
                         key={idx}
                         accessible={true}
-                        accessibilityLabel={`${txt}, 최신 댓글 중 ${idx === 0 ? '첫' : idx === 1 ? '두' : '세'} 번째 댓글입니다`}
-                        style={{marginBottom: 6}}
-                      >
-                        <Text style={styles.cardTextSmall}>
-                          {txt}
-                        </Text>
+                        accessibilityLabel={`${txt}, 최신 댓글 중 ${
+                          idx === 0 ? '첫' : idx === 1 ? '두' : '세'
+                        } 번째 댓글입니다`}
+                        style={{marginBottom: 6}}>
+                        <Text style={styles.cardTextSmall}>{txt}</Text>
                       </Pressable>
                     ))}
                     {commentsArr.length > 3 ? (
@@ -636,60 +696,88 @@ export default function ClusterReportsScreen({
           <MaterialIcons name="keyboard-arrow-down" size={28} color="#000" />
         </TouchableOpacity>
         <Text
+          ref={headerTitleRef}
           style={styles.headerTitle}
           accessible={true}
-          accessibilityLabel="커뮤니티 페이지"
-        >
+          onLayout={() => {
+            if (!a11yReady && srEnabled) {
+              const node = findNodeHandle(headerTitleRef.current);
+              if (node) {
+                AccessibilityInfo.setAccessibilityFocus(node);
+              }
+            }
+          }}
+          accessibilityLabel="커뮤니티 페이지">
           커뮤니티
         </Text>
         <View style={{width: 60}} />
       </View>
 
-      {categories && categories.length > 0 ? (
-        <View style={styles.tabsRow}>
-          {categories.map(c => (
-            <TouchableOpacity
-              key={c}
-              onPress={() => setSelectedCategory(c)}
-              style={[
-                styles.tabBtn,
-                selectedCategory === c ? styles.tabBtnActive : null,
-              ]}
-              accessible={true}
-              accessibilityRole="button"
-              accessibilityLabel={`${c} 카테고리, ${selectedCategory === c ? '선택됨' : '미선택됨'}`}
-              >
-              <Text
-                style={[
-                  styles.tabText,
-                  selectedCategory === c ? styles.tabTextActive : null,
-                ]}>
-                {c}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ) : null}
+      {/* 본문을 접근성에서 일시 숨김: 헤더 포커스 이후 노출 */}
+      <View
+        accessible={false}
+        importantForAccessibility={a11yReady ? 'auto' : 'no-hide-descendants'}
+        accessibilityElementsHidden={!a11yReady}
+        style={{flex: 1}}>
+        {(a11yReady || !srEnabled) && (
+          <>
+            {categories && categories.length > 0 ? (
+              <View style={styles.tabsRow}>
+                {categories.map(c => (
+                  <TouchableOpacity
+                    key={c}
+                    onPress={() => setSelectedCategory(c)}
+                    style={[
+                      styles.tabBtn,
+                      selectedCategory === c ? styles.tabBtnActive : null,
+                    ]}
+                    accessible={true}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${c} 카테고리, ${
+                      selectedCategory === c ? '선택됨' : '미선택됨'
+                    }`}>
+                    <Text
+                      style={[
+                        styles.tabText,
+                        selectedCategory === c ? styles.tabTextActive : null,
+                      ]}>
+                      {c}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : null}
 
-      {loading ? (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <ActivityIndicator />
-        </View>
-      ) : (
-        <FlatList
-          data={
-            selectedCategory === '전체'
-              ? items
-              : items.filter(
-                  it =>
-                    (it.category ?? it.type ?? '미분류') === selectedCategory,
-                )
-          }
-          keyExtractor={(i: any, idx) => String(i.reportId ?? i.id ?? idx)}
-          renderItem={renderCard}
-          contentContainerStyle={{padding: 16}}
-        />
-      )}
+            {loading ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <ActivityIndicator />
+              </View>
+            ) : (
+              <FlatList
+                data={
+                  selectedCategory === '전체'
+                    ? items
+                    : items.filter(
+                        it =>
+                          (it.category ?? it.type ?? '미분류') ===
+                          selectedCategory,
+                      )
+                }
+                keyExtractor={(i: any, idx) =>
+                  String(i.reportId ?? i.id ?? idx)
+                }
+                renderItem={renderCard}
+                contentContainerStyle={{padding: 16}}
+              />
+            )}
+          </>
+        )}
+      </View>
 
       {/* ⭐ SafeRouteScreen과 동일한 CustomAlert 적용 */}
       <CustomAlert
