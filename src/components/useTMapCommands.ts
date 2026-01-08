@@ -15,8 +15,10 @@ export function useTMapCommands() {
 
   return {
     ref,
+    // TMap native animateTo expects [lon, lat, zoom]. Keep signature (lat, lon)
+    // for caller readability but swap order when dispatching.
     animateTo: (lat: number, lon: number, zoom: number = 15) =>
-      dispatch("animateTo", [lat, lon, zoom]),
+      dispatch("animateTo", [lon, lat, zoom]),
     addMarker: (lat: number, lon: number, title: string) =>
       dispatch("addMarker", [lat, lon, title]),
     addMarkerWithIcon: (

@@ -165,6 +165,8 @@ export default function SafeRouteScreen() {
   const [currentPosition, setCurrentPosition] = useState<{
     lat: number;
     lon: number;
+    accuracy?: number;
+    timestamp?: number;
   } | null>(null);
   const routePathRef = useRef<any[]>([]);
 
@@ -911,7 +913,11 @@ export default function SafeRouteScreen() {
       return;
     }
     const latest = userPositions[userPositions.length - 1];
-    setCurrentPosition({lat: latest.lat, lon: latest.lon});
+    setCurrentPosition({
+      lat: latest.lat,
+      lon: latest.lon,
+      timestamp: latest.timestamp ?? Date.now(),
+    });
 
     if (!end) {
       return;
@@ -1401,26 +1407,69 @@ export default function SafeRouteScreen() {
         openAlert('위치 권한이 필요합니다.', '설정에서 위치 권한을 허용해 주세요.');
         return;
       }
+
+      const MAX_AGE_MS = 10000; // 10s 이내 좌표만 신뢰
+      const MAX_ACCURACY_M = 20; // 20m 이내만 신뢰(더 빡빡하게)
+
+      let settled = false;
+
       Geolocation.getCurrentPosition(
         pos => {
-          const {latitude, longitude} = pos.coords;
-          setCurrentPosition({lat: latitude, lon: longitude});
-          const nextZoom = Math.max(mapZoom, 16);
+          if (settled) {
+            return;
+          }
+          settled = true;
+
+          const {latitude, longitude, accuracy} = pos.coords || {};
+          const ts = pos.timestamp ?? Date.now();
+          const ageMs = Date.now() - ts;
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+            settled = true;
+            showToast('현재 위치를 가져올 수 없습니다.');
+            return;
+          }
+          if (ageMs > MAX_AGE_MS) {
+            settled = true;
+            showToast('위치가 오래되어 이동하지 않습니다.');
+            return;
+          }
+          if (accuracy && accuracy > MAX_ACCURACY_M) {
+            settled = true;
+            showToast('위치 정확도가 낮아 이동하지 않습니다.');
+            return;
+          }
+
+          setCurrentPosition({lat: latitude, lon: longitude, accuracy, timestamp: ts});
+          const nextZoom = Math.max(mapZoom, 17);
           map.animateTo(latitude, longitude, nextZoom);
           setMapZoom(nextZoom);
+          const accText = accuracy ? ` (±${Math.round(accuracy)}m)` : '';
+          showToast(
+            `현재 위치로 이동: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}${accText}`,
+          );
         },
         err => {
           console.warn('focusMyLocation error', err);
-          showToast('현재 위치를 가져올 수 없습니다.');
+          if (!settled) {
+            settled = true;
+            showToast('현재 위치를 가져올 수 없습니다.');
+          }
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
+          timeout: 20000,
           maximumAge: 0,
           forceRequestLocation: true,
           showLocationDialog: true,
         },
       );
+
+      setTimeout(() => {
+        if (!settled) {
+          settled = true;
+          showToast('현재 위치를 가져올 수 없습니다.');
+        }
+      }, 20000);
     } catch (e) {
       console.warn('focusMyLocation failed', e);
       showToast('현재 위치를 가져올 수 없습니다.');
