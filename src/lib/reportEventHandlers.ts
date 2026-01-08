@@ -124,10 +124,10 @@ async function handleChildEvents(data: WebSocketEventData): Promise<void> {
       if (status === 'APPROVED') {
         // ✅ 승인 시: 앱 스타일 모달로 대체
         try {
-          useAppAlertStore.getState().show({ title: '✅ 승인됨', body: '부모님이 제보를 승인했어요!', ctaText: '확인' });
+          useAppAlertStore.getState().show({ title: '승인 완료', body: '부모님이 제보를 승인했어요!', ctaText: '확인' });
         } catch (e) {
           // fallback to Alert
-          Alert.alert('✅ 승인됨', '부모님이 제보를 승인했어요!', [{ text: '확인', style: 'default' }]);
+          Alert.alert('승인 완료', '부모님이 제보를 승인했어요!', [{ text: '확인', style: 'default' }]);
         }
       } else if (status === 'REJECTED') {
         // ❌ 반려 시: 서버에서 전체 제보를 조회한 뒤 수정 모달을 표시
@@ -207,7 +207,7 @@ function handleParentEvents(data: WebSocketEventData): void {
       try {
         useAppAlertStore.getState().show({ title: '🗑️ 제보 삭제', body: '자녀가 제보를 삭제했어요.', ctaText: '확인' });
       } catch (e) {
-        Alert.alert('🗑️ 제보 삭제', '자녀가 제보를 삭제했어요.', [{ text: '확인', style: 'default' }]);
+        Alert.alert('제보 삭제', '자녀가 제보를 삭제했어요.', [{ text: '확인', style: 'default' }]);
       }
       break;
 

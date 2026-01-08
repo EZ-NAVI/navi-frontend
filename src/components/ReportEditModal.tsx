@@ -125,6 +125,9 @@ export default function ReportEditModal({
               style={[styles.cancelButton, isDeleting && styles.buttonDisabled]} 
               onPress={handleDelete}
               disabled={isDeleting}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="삭제"
             >
               <Text style={styles.cancelButtonText}>
                 {isDeleting ? '삭제 중...' : '삭제'}
@@ -135,6 +138,9 @@ export default function ReportEditModal({
               style={[styles.editButton, isDeleting && styles.buttonDisabled]} 
               onPress={onEdit}
               disabled={isDeleting}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="수정하기"
             >
               <Text style={styles.editButtonText}>수정하기</Text>
             </TouchableOpacity>

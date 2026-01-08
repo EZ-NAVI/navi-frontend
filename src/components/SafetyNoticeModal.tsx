@@ -59,9 +59,7 @@ export default function SafetyNoticeModal({
             style={s.title}
             accessible={true}
             accessibilityRole="alert"
-            accessibilityLabel={
-              title?.replace(/[❌✅]/g, '').trim() ?? '잠시만요!'
-            }>
+            accessibilityLabel={title ?? '잠시만요!'}>
             {title ?? '잠시만요!'}
           </Text>
           <View

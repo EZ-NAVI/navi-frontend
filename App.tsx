@@ -64,7 +64,7 @@ function AppWithModal({ children }: { children: React.ReactNode }) {
       const token = await AsyncStorage.getItem("access_token");
       await postReportReview(reportId, "승인", token || undefined);
       useAppAlertStore.getState().show({
-        title: "✅ 승인 완료",
+        title: "승인 완료",
         body: "제보가 승인되었습니다.",
         ctaText: "확인",
       });
@@ -80,7 +80,7 @@ function AppWithModal({ children }: { children: React.ReactNode }) {
       const token = await AsyncStorage.getItem("access_token");
       await postReportReview(reportId, "반려", token || undefined);
       useAppAlertStore.getState().show({
-        title: "❌ 반려 완료",
+        title: "반려 완료",
         body: "제보가 반려되었습니다.\n자녀가 수정할 수 있습니다.",
         ctaText: "확인",
       });
