@@ -259,6 +259,11 @@ export default function SafeRouteScreen() {
       await AsyncStorage.removeItem('map_notice_shown');
       await AsyncStorage.removeItem('session_started');
 
+      // a11y 안내: 로그아웃 완료
+      AccessibilityInfo.announceForAccessibility(
+        '로그아웃 완료, 로그인 페이지로 이동합니다.',
+      );
+
       closeMyPage();
       navigation.reset({index: 0, routes: [{name: 'Login'}]});
     };
@@ -2567,11 +2572,7 @@ export default function SafeRouteScreen() {
               accessibilityLabel={
                 start ? `출발지 ${start.name}` : '출발지 지정 안 됨'
               }
-              accessibilityHint={
-                start
-                  ? '두 번 탭하여 출발지를 변경'
-                  : '두 번 탭하여 출발지를 지정'
-              }>
+              accessibilityHint={'검색 페이지로 이동합니다'}>
               <Text style={styles.circle}>●</Text>
               <Text style={styles.label}>출발지 :</Text>
               <Text style={styles.value}>{start ? start.name : ''}</Text>
@@ -2598,11 +2599,7 @@ export default function SafeRouteScreen() {
               accessibilityLabel={
                 end ? `도착지 ${end.name}` : '도착지 지정 안 됨'
               }
-              accessibilityHint={
-                end
-                  ? '두 번 탭하여 도착지를 변경'
-                  : '두 번 탭하여 도착지를 지정'
-              }>
+              accessibilityHint={'검색 페이지로 이동합니다'}>
               <Text style={styles.circle}>●</Text>
               <Text style={styles.label}>도착지 :</Text>
               <Text style={styles.value}>{end ? end.name : ''}</Text>
@@ -2824,6 +2821,10 @@ export default function SafeRouteScreen() {
                             'user_id',
                             'fcm_token',
                           ]);
+
+                          AccessibilityInfo.announceForAccessibility(
+                            '회원탈퇴 완료, 로그인 페이지로 이동합니다.',
+                          );
 
                           closeMyPage();
                           navigation.reset({

@@ -10,6 +10,7 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
+  AccessibilityInfo,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -135,6 +136,11 @@ export default function LoginScreen() {
       await AsyncStorage.removeItem('map_notice_shown');
       await AsyncStorage.removeItem('session_started');
 
+      // a11y 안내: 로그인 완료
+      AccessibilityInfo.announceForAccessibility(
+        '로그인 완료, 홈으로 이동합니다.',
+      );
+
       navigation.reset({index: 0, routes: [{name: 'SafeRoute'}]});
     } catch (err: any) {
       // 영어 메시지 → 한글 메시지로 고정 변경
@@ -233,6 +239,8 @@ export default function LoginScreen() {
         title={alertTitle}
         message={alertMsg}
         onClose={() => setAlertVisible(false)}
+        onConfirm={() => setAlertVisible(false)}
+        hideCancel={true}
       />
     </KeyboardAvoidingView>
   );
