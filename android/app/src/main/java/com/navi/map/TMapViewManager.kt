@@ -126,10 +126,10 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
         view.setIconVisibility(true)
         view.setCompassMode(false)
         view.setSightVisible(false)
-        
+
         // 마커 리스트 초기화
         markersMap[view] = mutableListOf()
-        
+
         // 접근성 헬퍼 설정
         val helper = TMapAccessibilityHelper(
             view = view,
@@ -139,11 +139,11 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
         accessibilityHelperMap[view] = helper
         ViewCompat.setAccessibilityDelegate(view, helper)
         view.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
-        
+
         Log.d("TMapViewManager", "✅ TMapView instance created with accessibility")
         return view
     }
-    
+
     // 마커의 화면 좌표를 계산 (뷰 전체 영역으로 노출)
     private fun getMarkerScreenBounds(view: TMapView, marker: MarkerInfo): Rect {
         // TMap SDK가 좌표 변환 API를 노출하지 않아, 최소한 TalkBack이 포커스를 줄 수 있도록
@@ -154,7 +154,7 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
         val safeHeight = if (height > 0) height else 1
         return Rect(0, 0, safeWidth, safeHeight)
     }
-    
+
     override fun onDropViewInstance(view: TMapView) {
         super.onDropViewInstance(view)
         markersMap.remove(view)
@@ -233,7 +233,9 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
             "addPolyline",
             4,
             "addMarkerWithIcon",
-            5
+            5,
+            "clear",
+            6
         )
 
     override fun receiveCommand(view: TMapView, commandId: Int, args: ReadableArray?) {
@@ -271,7 +273,7 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                     setIcon(scaledBitmap)
                 }
                 view.addTMapMarkerItem(marker)
-                
+
                 // 마커 리스트에 추가
                 val markersList = markersMap[view]
                 if (markersList != null) {
@@ -279,7 +281,7 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                     // 접근성 헬퍼 업데이트
                     accessibilityHelperMap[view]?.invalidateRoot()
                 }
-                
+
                 view.setCenterPoint(lon, lat)
             }
 
@@ -427,7 +429,7 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                         setIcon(scaledBitmap)
                 }
                 view.addTMapMarkerItem(marker)
-                
+
                 // 마커 리스트에 추가 (5번째 파라미터가 접근성 레이블)
                 val markersList = markersMap[view]
                 if (markersList != null) {
@@ -437,6 +439,18 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                     // 접근성 헬퍼 업데이트
                     accessibilityHelperMap[view]?.invalidateRoot()
                 }
+            }
+
+            // clear()
+            6 -> {
+                view.removeAllTMapMarkerItem()   // 마커 제거
+                view.removeAllTMapPolyLine()     // 경로 제거
+
+                // 접근성 마커 리스트도 초기화
+                markersMap[view]?.clear()
+                accessibilityHelperMap[view]?.invalidateRoot()
+
+                Log.d("TMapViewManager", "🧹 Map cleared (markers + polylines)")
             }
         }
     }

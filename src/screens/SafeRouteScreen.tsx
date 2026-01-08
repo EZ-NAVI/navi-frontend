@@ -63,6 +63,7 @@ export default function SafeRouteScreen() {
   const [mapZoom, setMapZoom] = useState(15);
   // Persisted toggle to hide/show development-only UI (default: hidden)
   const [showDevUI, setShowDevUI] = useState<boolean>(false);
+  const {resetRoute} = useRouteData();
 
   useEffect(() => {
     let mounted = true;
@@ -398,7 +399,6 @@ export default function SafeRouteScreen() {
     });
   };
 
-  
   // Update label when selectedReport changes
   useEffect(() => {
     if (!selectedReport) {
@@ -408,7 +408,7 @@ export default function SafeRouteScreen() {
 
     // 클러스터 count 사용 (마커에서 저장한 count)
     const cnt = selectedReport._clusterCount ?? 0;
-    
+
     let status = '구역';
 
     if (cnt >= 5) {
@@ -425,7 +425,6 @@ export default function SafeRouteScreen() {
 
   const getReportDetailA11yHint = () => '';
 
-
   const handleOpenReportDetail = () => {
     if (!selectedReport) {
       return;
@@ -441,7 +440,10 @@ export default function SafeRouteScreen() {
         setClusterListOpen(true);
         modalHeight.setValue(COLLAPSED_HEIGHT);
       } else {
-        openAlert('클러스터 정보 없음', '이 제보에 대한 클러스터 정보가 없습니다.');
+        openAlert(
+          '클러스터 정보 없음',
+          '이 제보에 대한 클러스터 정보가 없습니다.',
+        );
       }
     } catch (e) {
       console.warn('Cluster navigation failed', e);
@@ -1125,12 +1127,12 @@ export default function SafeRouteScreen() {
               }
 
               const cnt = Number(rawCount) || 0;
-              
+
               // clusterId를 키로 count를 Map에 저장 (native 브릿지 거쳐도 유지됨)
               if (cid) {
                 clusterCountsMapRef.current[String(cid)] = cnt;
               }
-              
+
               // If count is zero, log the full object once for debugging so we can see available keys
               if (cnt === 0) {
                 try {
@@ -1258,11 +1260,19 @@ export default function SafeRouteScreen() {
       return;
     }
     setLoadingDetail(true);
-    
-    
+
     // clusterId로 Map에서 count 정보 가져오기 (native 브릿지 거쳐도 유지됨)
-    const initialCount = clusterId ? (clusterCountsMapRef.current[String(clusterId)] ?? 0) : 0;
-    console.log('[onMarkerPress] reportId:', reportId, 'clusterId:', clusterId, 'initialCount:', initialCount);
+    const initialCount = clusterId
+      ? clusterCountsMapRef.current[String(clusterId)] ?? 0
+      : 0;
+    console.log(
+      '[onMarkerPress] reportId:',
+      reportId,
+      'clusterId:',
+      clusterId,
+      'initialCount:',
+      initialCount,
+    );
     try {
       // try to use stored token or dev token in dev mode
       let tokenToUse: string | null = null;
@@ -1302,10 +1312,10 @@ export default function SafeRouteScreen() {
         console.warn('댓글 불러오기 실패', e);
         detail.comments = detail.comments ?? [];
       }
-      
+
       // 클러스터 count 정보를 상세 조회 결과에 병합
       detail._clusterCount = initialCount;
-      
+
       // synchronize refs immediately to avoid pan gesture races
       selectedReportRef.current = detail;
       setSelectedReport(detail);
@@ -1368,7 +1378,11 @@ export default function SafeRouteScreen() {
 
   // 확대/축소 보조 함수: 현재 지도 중심 추정 후 zoom 변경
   const getMapCenter = (): {lat: number; lon: number} => {
-    if (currentPosition && typeof currentPosition.lat === 'number' && typeof currentPosition.lon === 'number') {
+    if (
+      currentPosition &&
+      typeof currentPosition.lat === 'number' &&
+      typeof currentPosition.lon === 'number'
+    ) {
       return {lat: currentPosition.lat, lon: currentPosition.lon};
     }
     const sr: any = selectedReport as any;
@@ -1404,7 +1418,10 @@ export default function SafeRouteScreen() {
     try {
       const ok = await requestLocationPermission();
       if (!ok) {
-        openAlert('위치 권한이 필요합니다.', '설정에서 위치 권한을 허용해 주세요.');
+        openAlert(
+          '위치 권한이 필요합니다.',
+          '설정에서 위치 권한을 허용해 주세요.',
+        );
         return;
       }
 
@@ -1439,13 +1456,20 @@ export default function SafeRouteScreen() {
             return;
           }
 
-          setCurrentPosition({lat: latitude, lon: longitude, accuracy, timestamp: ts});
+          setCurrentPosition({
+            lat: latitude,
+            lon: longitude,
+            accuracy,
+            timestamp: ts,
+          });
           const nextZoom = Math.max(mapZoom, 17);
           map.animateTo(latitude, longitude, nextZoom);
           setMapZoom(nextZoom);
           const accText = accuracy ? ` (±${Math.round(accuracy)}m)` : '';
           showToast(
-            `현재 위치로 이동: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}${accText}`,
+            `현재 위치로 이동: ${latitude.toFixed(4)}, ${longitude.toFixed(
+              4,
+            )}${accText}`,
           );
         },
         err => {
@@ -1628,66 +1652,76 @@ export default function SafeRouteScreen() {
             bottom: Platform.select({android: 120, ios: 140}),
             gap: 8,
             zIndex: 20,
-            elevation: 8,
           }}
-          pointerEvents={myPageOpen ? 'none' : 'auto'}
-        >
+          pointerEvents={myPageOpen ? 'none' : 'auto'}>
           <TouchableOpacity
             onPress={zoomIn}
             style={{
               backgroundColor: '#fff',
-              borderRadius: 14,
-              width: 40,
-              height: 40,
+              borderRadius: 22,
+              width: 44,
+              height: 44,
               alignItems: 'center',
               justifyContent: 'center',
-              borderWidth: 1,
-              borderColor: '#ddd',
+              elevation: 6,
+              shadowColor: '#000',
+              shadowOpacity: 0.15,
+              shadowRadius: 6,
+              shadowOffset: {width: 0, height: 2},
             }}
             accessible={true}
             accessibilityRole="button"
             accessibilityLabel="확대"
-            accessibilityHint="지도를 확대합니다"
-          >
-            <Text style={{fontSize: 22, fontWeight: '700', color: '#000'}}>+</Text>
+            accessibilityHint="지도를 확대합니다">
+            <Text style={{fontSize: 22, fontWeight: '700', color: '#000'}}>
+              +
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={zoomOut}
             style={{
               backgroundColor: '#fff',
-              borderRadius: 14,
-              width: 40,
-              height: 40,
+              borderRadius: 22,
+              width: 44,
+              height: 44,
               alignItems: 'center',
               justifyContent: 'center',
-              borderWidth: 1,
-              borderColor: '#ddd',
+              elevation: 6,
+              shadowColor: '#000',
+              shadowOpacity: 0.15,
+              shadowRadius: 6,
+              shadowOffset: {width: 0, height: 2},
             }}
             accessible={true}
             accessibilityRole="button"
             accessibilityLabel="축소"
-            accessibilityHint="지도를 축소합니다"
-          >
-            <Text style={{fontSize: 22, fontWeight: '700', color: '#000'}}>-</Text>
+            accessibilityHint="지도를 축소합니다">
+            <Text style={{fontSize: 22, fontWeight: '700', color: '#000'}}>
+              -
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={focusMyLocation}
             style={{
               backgroundColor: '#fff',
-              borderRadius: 14,
-              width: 40,
-              height: 40,
+              borderRadius: 22,
+              width: 44,
+              height: 44,
               alignItems: 'center',
               justifyContent: 'center',
-              borderWidth: 1,
-              borderColor: '#ddd',
+              elevation: 6,
+              shadowColor: '#000',
+              shadowOpacity: 0.15,
+              shadowRadius: 6,
+              shadowOffset: {width: 0, height: 2},
             }}
             accessible={true}
             accessibilityRole="button"
             accessibilityLabel="내 위치"
-            accessibilityHint="현재 위치로 지도를 이동합니다"
-          >
-            <Text style={{fontSize: 18, fontWeight: '700', color: '#000'}}>◎</Text>
+            accessibilityHint="현재 위치로 지도를 이동합니다">
+            <Text style={{fontSize: 18, fontWeight: '700', color: '#000'}}>
+              ◎
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -1783,6 +1817,20 @@ export default function SafeRouteScreen() {
               <Text style={extraStyles.debugCircleText}>test</Text>
             </TouchableOpacity>
           )}
+
+          {/* 🔄 경로 초기화 버튼 */}
+          <TouchableOpacity
+            style={extraStyles.resetAboveReport}
+            onPress={() => {
+              resetRoute();
+              map.clear();
+            }}
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel="경로 초기화">
+            <Icon name="refresh" size={22} color="#333" />
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={extraStyles.longReportButton}
             onPress={async () => {
@@ -1924,7 +1972,14 @@ export default function SafeRouteScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={reportDetailLabel}
                   onPress={handleOpenReportDetail}
-                  style={{position: 'absolute', left: 0, right: 0, top: 0, height: 1, opacity: 0}}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    height: 1,
+                    opacity: 0,
+                  }}
                 />
                 {loadingDetail ? (
                   <Text style={{color: '#000'}}>불러오는 중...</Text>
@@ -1934,7 +1989,11 @@ export default function SafeRouteScreen() {
                       <Text
                         accessible={true}
                         accessibilityRole="text"
-                        accessibilityLabel={`카테고리 ${selectedReport.category ?? selectedReport.description ?? '제보'}`}
+                        accessibilityLabel={`카테고리 ${
+                          selectedReport.category ??
+                          selectedReport.description ??
+                          '제보'
+                        }`}
                         style={{
                           fontSize: 20,
                           fontWeight: '800',
@@ -1948,9 +2007,17 @@ export default function SafeRouteScreen() {
                       <Text
                         accessible={true}
                         accessibilityRole="text"
-                        accessibilityLabel={`${selectedReport.description ?? selectedReport.content ? '제보 내용 ' + (selectedReport.description ?? selectedReport.content) : '제보 내용 없음'}`}
+                        accessibilityLabel={`${
+                          selectedReport.description ?? selectedReport.content
+                            ? '제보 내용 ' +
+                              (selectedReport.description ??
+                                selectedReport.content)
+                            : '제보 내용 없음'
+                        }`}
                         style={{color: '#000'}}>
-                        {selectedReport.description ?? selectedReport.content ?? ''}
+                        {selectedReport.description ??
+                          selectedReport.content ??
+                          ''}
                       </Text>
                     </View>
                     {(() => {
@@ -2588,7 +2655,9 @@ export default function SafeRouteScreen() {
                                 <Text
                                   key={idx}
                                   accessible={true}
-                                  accessibilityLabel={`${txt}, 최신 댓글 중 ${idx === 0 ? '첫' : idx === 1 ? '두' : '세'} 번째 댓글입니다`}
+                                  accessibilityLabel={`${txt}, 최신 댓글 중 ${
+                                    idx === 0 ? '첫' : idx === 1 ? '두' : '세'
+                                  } 번째 댓글입니다`}
                                   style={{
                                     color: '#000',
                                     marginBottom: 8,
@@ -3052,6 +3121,19 @@ const styles = StyleSheet.create({
   value: {color: '#111', flex: 1},
   line: {height: 1, backgroundColor: '#e0e0e0', marginHorizontal: 10},
   icon: {marginLeft: 'auto'},
+
+  resetButton: {
+    position: 'absolute',
+    top: 20,
+    right: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4, // Android 그림자
+  },
 });
 
 // 하단 플로팅 버튼 스타일
@@ -3131,6 +3213,21 @@ const extraStyles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     elevation: 6,
+  },
+  resetAboveReport: {
+    alignSelf: 'flex-start',
+    marginBottom: 35,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: {width: 0, height: 2},
   },
   tutorialBtn: {
     alignSelf: 'flex-start',
