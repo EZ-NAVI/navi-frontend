@@ -129,7 +129,6 @@ export default function ReportApprovalModal({
               accessibilityRole="button"
               accessibilityLabel="반려"
             >
-              <MaterialIcons name="close" size={20} color="#fff" />
               <Text style={styles.buttonText}>반려</Text>
             </TouchableOpacity>
 
@@ -141,7 +140,6 @@ export default function ReportApprovalModal({
               accessibilityRole="button"
               accessibilityLabel="승인"
             >
-              <MaterialIcons name="check" size={20} color="#fff" />
               <Text style={styles.buttonText}>승인</Text>
             </TouchableOpacity>
           </View>
@@ -287,14 +285,14 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   rejectButton: {
-    backgroundColor: '#FF6B6B',
+      backgroundColor: '#eee',
   },
   approveButton: {
-    backgroundColor: '#51CF66',
+    backgroundColor: '#FFDE59',
   },
   buttonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: '#000',
   },
 });

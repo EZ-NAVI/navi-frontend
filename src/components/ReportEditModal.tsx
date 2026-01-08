@@ -85,7 +85,7 @@ export default function ReportEditModal({
             <MaterialIcons
               name="edit"
               size={40}
-              color="#FF6B6B"
+              color="#FFDE59"
               accessible={true}
               accessibilityRole="image"
               accessibilityLabel="수정 아이콘"
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 16,
     borderRadius: 12,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#eee',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
@@ -222,14 +222,14 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FF6B6B',
+    color: '#000',
   },
   editButton: {
     flex: 1,
     flexDirection: 'row',
     paddingVertical: 16,
     borderRadius: 12,
-    backgroundColor: '#FF6B6B',
+    backgroundColor: '#FFDE59',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   editButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: '#000',
   },
   buttonDisabled: {
     opacity: 0.5,
