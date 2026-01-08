@@ -1,6 +1,6 @@
 import * as React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StatusBar, LogBox, Platform } from "react-native";
+import { StatusBar, LogBox, Platform, AccessibilityInfo } from "react-native";
 
 // 🚫 디바이스 화면에 뜨는 모든 노란 경고/에러 UI 제거
 LogBox.ignoreAllLogs(true);
@@ -148,6 +148,18 @@ export default function App() {
 
   React.useEffect(() => {
     RNBootSplash.hide({ fade: true });
+  }, []);
+
+  // 스플래시 직후 스크린리더에 안내 문구 공지
+  React.useEffect(() => {
+    const msg =
+      "로딩화면, 이 앱은 현대오토에버와 서울사회복지공동모금회의 지원을 받아 제작되었습니다";
+    const t = setTimeout(() => {
+      try {
+        AccessibilityInfo.announceForAccessibility(msg);
+      } catch {}
+    }, 300);
+    return () => clearTimeout(t);
   }, []);
 
   // 앱 시작 시 유저 ID / 토큰 확인
