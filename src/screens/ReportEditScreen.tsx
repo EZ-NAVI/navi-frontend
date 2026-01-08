@@ -317,16 +317,20 @@ export default function ReportEditScreen() {
           <TouchableOpacity
             style={styles.dropdownHeader}
             onPress={() => setCatOpen(v => !v)}
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="카테고리 선택지 펼치기"
+            accessibilityState={{expanded: catOpen}}>
             <Text style={styles.dropdownHeaderText}>
               {category ? category : '카테고리 선택'}
             </Text>
             <MaterialIcons name="arrow-drop-down" size={25} color="#666" />
           </TouchableOpacity>
           {catOpen && (
-            <View style={styles.dropdownList}>
+            <View style={styles.dropdownList} accessible={true}>
               <ScrollView
-                style={{maxHeight: 140}}
+                style={styles.dropdownScroll}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}>
                 {CATEGORIES.map(cat => (
@@ -336,7 +340,10 @@ export default function ReportEditScreen() {
                     onPress={() => {
                       setCategory(cat.value);
                       setCatOpen(false);
-                    }}>
+                    }}
+                    accessible={true}
+                    accessibilityRole="button"
+                    accessibilityLabel={cat.label}>
                     <Text style={styles.dropdownItemText}>{cat.label}</Text>
                   </TouchableOpacity>
                 ))}
@@ -345,55 +352,72 @@ export default function ReportEditScreen() {
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>사진</Text>
-        <TouchableOpacity style={styles.uploadBox} onPress={pickImage}>
-          {photo ? (
-            <Image
-              source={{uri: photo}}
-              style={styles.photoPreview}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.uploadEmpty}>
-              <MaterialIcons name="cloud-upload" size={40} color="#888" />
-              <Text style={styles.uploadEmptyText}>사진을 선택해주세요</Text>
-            </View>
-          )}
-        </TouchableOpacity>
+        {/* 드롭다운이 열려있을 때 아래 영역을 스크린리더 탐색/터치에서 숨김 */}
+        <View
+          accessibilityElementsHidden={catOpen}
+          importantForAccessibility={catOpen ? 'no-hide-descendants' : 'auto'}
+          pointerEvents={catOpen ? 'none' : 'auto'}>
+          <Text style={styles.sectionTitle}>사진</Text>
+          <TouchableOpacity style={styles.uploadBox} onPress={pickImage}>
+            {photo ? (
+              <Image
+                source={{uri: photo}}
+                style={styles.photoPreview}
+                resizeMode="cover"
+                accessible={true}
+                accessibilityRole="image"
+                accessibilityLabel="제보 사진"
+              />
+            ) : (
+              <View style={styles.uploadEmpty}>
+                <MaterialIcons name="cloud-upload" size={40} color="#888" />
+                <Text style={styles.uploadEmptyText}>사진을 선택해주세요</Text>
+              </View>
+            )}
+          </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>제보 내용</Text>
-        <TextInput
-          placeholder="100자 이내로 입력해주세요"
-          value={description}
-          onChangeText={setDescription}
-          style={styles.input}
-          multiline
-          maxLength={100}
-          onFocus={() => setCatOpen(false)}
-          blurOnSubmit={false}
-        />
-        <Text
-          style={[
-            styles.charCount,
-            description.length > 100 && styles.charCountOver,
-          ]}>
-          {description.length}/100
-        </Text>
+          <Text style={styles.sectionTitle}>제보 내용</Text>
+          <TextInput
+            placeholder="100자 이내로 입력해주세요"
+            value={description}
+            onChangeText={setDescription}
+            style={styles.input}
+            multiline
+            maxLength={100}
+            onFocus={() => setCatOpen(false)}
+            blurOnSubmit={false}
+          />
+          <Text
+            style={[
+              styles.charCount,
+              description.length > 100 && styles.charCountOver,
+            ]}>
+            {description.length}/100
+          </Text>
+        </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      {/* 드롭다운 열림 시 하단 버튼도 접근성/터치에서 차단 */}
+      <View
+        style={styles.footer}
+        accessibilityElementsHidden={catOpen}
+        importantForAccessibility={catOpen ? 'no-hide-descendants' : 'auto'}
+        pointerEvents={catOpen ? 'none' : 'auto'}>
         <TouchableOpacity
           style={[
             styles.submitButton,
-            (isSubmitting || isUploadingImage) && styles.buttonDisabled,
+            (isSubmitting || isUploadingImage || catOpen) &&
+              styles.buttonDisabled,
           ]}
           onPress={handleSubmit}
-          disabled={isSubmitting || isUploadingImage}>
+          disabled={isSubmitting || isUploadingImage || catOpen}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="수정 완료">
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <>
-              <MaterialIcons name="check" size={20} color="#fff" />
               <Text style={styles.submitButtonText}>수정 완료</Text>
             </>
           )}
@@ -467,6 +491,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  dropdownScroll: {maxHeight: 140},
   dropdownItem: {
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -526,7 +551,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     flexDirection: 'row',
-    backgroundColor: '#FF6B6B',
+    backgroundColor: '#FFDE59',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -536,7 +561,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: '#000',
   },
   buttonDisabled: {
     opacity: 0.5,
