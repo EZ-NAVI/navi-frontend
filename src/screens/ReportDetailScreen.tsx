@@ -57,6 +57,7 @@ export default function ReportDetailScreen() {
       openAlert(
         '댓글 안내',
         '댓글은 다른 사용자에게 영향을 줄 수 있어요.\n신중하게 작성해주세요.',
+        {hideCancel: true},
       );
     }
   }, []);
