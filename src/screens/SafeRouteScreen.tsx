@@ -1696,8 +1696,7 @@ export default function SafeRouteScreen() {
           visible={detailOpen}
           transparent
           animationType="slide"
-          accessible={true}
-          accessibilityViewIsModal={true}
+          accessible={false}
           onRequestClose={() => {
             detailOpenRef.current = false;
             setDetailOpen(false);
@@ -1705,6 +1704,7 @@ export default function SafeRouteScreen() {
           <Pressable
             style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.3)'}}
             accessible={false}
+            importantForAccessibility="no"
             onPress={() => {
               detailOpenRef.current = false;
               setDetailOpen(false);
@@ -1722,97 +1722,17 @@ export default function SafeRouteScreen() {
                   },
                   {height: modalHeight},
                 ]}
-                accessible={true}
+                accessible={false}
                 accessibilityViewIsModal={true}>
-                {/* '이제 없어요' 버튼: 모달 콘텐츠 내부 오른쪽 상단(카테고리 옆)에 위치하도록 절대 배치) */}
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    right: 16,
-                    top: 16,
-                    backgroundColor: '#FFD44C',
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    borderRadius: 18,
-                    zIndex: 1000,
-                    elevation: 0,
-                    shadowColor: 'transparent',
-                    shadowOpacity: 0,
-                  }}
+                {/* 첫 포커스: 모달 안내 요소 (보이지 않음) */}
+                <Pressable
+                  ref={modalIntroRef}
                   accessible={true}
                   accessibilityRole="button"
-                  accessibilityLabel="이제 없어요"
-                  onPress={async () => {
-                    const rid = String(
-                      selectedReport?.reportId ?? selectedReport?.id ?? '',
-                    );
-                    if (!rid) {
-                      detailOpenRef.current = false;
-                      setDetailOpen(false);
-                      return;
-                    }
-
-                    // 토큰 확인: 체험 모드면 CustomAlert로 안내
-                    let token: string | null = null;
-                    try {
-                      token = await AsyncStorage.getItem('access_token');
-                    } catch (e) {
-                      console.warn('token read failed', e);
-                    }
-                    if (!token) {
-                      openAlert(
-                        '알림',
-                        '체험해보기 상태에서는 이제 없어요 기능을 사용할 수 없어요!',
-                        {hideCancel: true},
-                      );
-                      return;
-                    }
-
-                    // Use local CustomAlert confirm (consistent with Cluster behavior)
-                    setAlertTitle('이제 없어요');
-                    setAlertMsg('정말 더 이상 존재하지 않나요?');
-                    setAlertHideCancel(false);
-                    setAlertConfirm(() => async () => {
-                      try {
-                        try {
-                          console.log(
-                            '[NotThere] map modal send for reportId=',
-                            rid,
-                            'category=',
-                            selectedReport?.category ??
-                              selectedReport?.title ??
-                              '제보',
-                          );
-                        } catch (logErr) {}
-                        let tokenToUse: string | null = null;
-                        try {
-                          tokenToUse = await AsyncStorage.getItem(
-                            'access_token',
-                          );
-                        } catch (e) {}
-                        await postReportNotThere(rid, tokenToUse ?? undefined);
-                        // on success: close alert
-                        setAlertVisible(false);
-                        setAlertConfirm(null);
-                      } catch (e: any) {
-                        console.warn('not-there failed', e);
-                        // Standardize to single dismissible message
-                        setAlertTitle('안내');
-                        setAlertMsg('이미 누른 제보입니다.');
-                        setAlertConfirm(null);
-                        setAlertHideCancel(true);
-                      }
-                      // 닫기 modal
-                      detailOpenRef.current = false;
-                      setDetailOpen(false);
-                    });
-                    setAlertVisible(true);
-                  }}>
-                  <Text style={{fontWeight: '700', color: '#000'}}>
-                    이제 없어요
-                  </Text>
-                </TouchableOpacity>
-
+                  accessibilityLabel={reportDetailLabel}
+                  onPress={handleOpenReportDetail}
+                  style={{position: 'absolute', left: 0, right: 0, top: 0, height: 1, opacity: 0}}
+                />
                 {loadingDetail ? (
                   <Text style={{color: '#000'}}>불러오는 중...</Text>
                 ) : selectedReport ? (
