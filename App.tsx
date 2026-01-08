@@ -46,7 +46,7 @@ import { useAppAlertStore } from "./src/stores/appAlertStore";
 
 import messaging from "@react-native-firebase/messaging";
 import navigationRef from "./src/navigationRef";
-import { getCurrentUserRole } from "./src/lib/authState";
+import { getCurrentUserRole, setCurrentUserRole } from "./src/lib/authState";
 
 import RNBootSplash from "react-native-bootsplash";
 
@@ -156,22 +156,42 @@ export default function App() {
       try {
         const storedUserId = await AsyncStorage.getItem("user_id");
         const token = await AsyncStorage.getItem("access_token");
+        const storedRole = await AsyncStorage.getItem("user_role");
 
         if (token) {
           try {
             const me = await getMe();
             const resolvedId = me?.userId ?? me?.id ?? storedUserId ?? null;
+            const resolvedRole =
+              (me?.user_type || me?.type || me?.userType || storedRole || "")
+                .toString()
+                .toLowerCase() === "parent"
+                ? "parent"
+                : (me?.user_type || me?.type || me?.userType || storedRole || "")
+                    .toString()
+                    .toLowerCase() === "child"
+                ? "child"
+                : null;
 
             if (resolvedId) {
               setUserId(String(resolvedId));
             } else {
               await AsyncStorage.multiRemove(["access_token", "user_id"]);
             }
+
+            setCurrentUserRole(resolvedRole);
+            if (resolvedRole) {
+              await AsyncStorage.setItem("user_role", resolvedRole);
+            }
           } catch (error) {
             await AsyncStorage.multiRemove(["access_token", "user_id"]);
+            setCurrentUserRole(null);
           }
+        } else {
+          setCurrentUserRole(null);
         }
       } catch (error) {
+        setCurrentUserRole(null);
       } finally {
         setIsLoading(false);
       }
@@ -199,31 +219,33 @@ export default function App() {
         barStyle={Platform.OS === "android" ? "dark-content" : "dark-content"}
       />
       <RouteProvider>
-        <AppAlertModal />
-        <NavigationContainer ref={navigationRef}>
-          <AppWithModal>
-            <Stack.Navigator
-              initialRouteName={hasSeenOnboarding ? "Login" : "Onboarding"}
-              screenOptions={{ headerShown: false }}
-            >
-              <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+        <WebSocketProvider userId={userId || ''}>
+          <AppAlertModal />
+          <NavigationContainer ref={navigationRef}>
+            <AppWithModal>
+              <Stack.Navigator
+                initialRouteName={hasSeenOnboarding ? "Login" : "Onboarding"}
+                screenOptions={{ headerShown: false }}
+              >
+                <Stack.Screen name="Onboarding" component={OnboardingScreen} />
 
-              <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
-              <Stack.Screen name="LocationSearch" component={LocationSearchScreen} />
-              <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
-              <Stack.Screen name="ReportEdit" component={ReportEditScreen} />
+                <Stack.Screen name="SafeRoute" component={SafeRouteScreen} />
+                <Stack.Screen name="LocationSearch" component={LocationSearchScreen} />
+                <Stack.Screen name="ReportDetail" component={ReportDetailScreen} />
+                <Stack.Screen name="ReportEdit" component={ReportEditScreen} />
 
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="SignupType" component={SignupTypeScreen} />
-              <Stack.Screen name="SignupConsent" component={SignupConsentScreen} />
-              <Stack.Screen name="SignupForm" component={SignupFormScreen} />
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="SignupType" component={SignupTypeScreen} />
+                <Stack.Screen name="SignupConsent" component={SignupConsentScreen} />
+                <Stack.Screen name="SignupForm" component={SignupFormScreen} />
 
-              <Stack.Screen name="DevSettings" component={DevSettingsScreen} />
-              <Stack.Screen name="DebugNotification" component={DebugNotificationScreen} />
-            </Stack.Navigator>
-            <NavigationContent />
-          </AppWithModal>
-        </NavigationContainer>
+                <Stack.Screen name="DevSettings" component={DevSettingsScreen} />
+                <Stack.Screen name="DebugNotification" component={DebugNotificationScreen} />
+              </Stack.Navigator>
+              <NavigationContent />
+            </AppWithModal>
+          </NavigationContainer>
+        </WebSocketProvider>
       </RouteProvider>
     </GestureHandlerRootView>
   );
