@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -10,11 +10,11 @@ import {
   Keyboard,
   TouchableOpacity,
   Platform,
-} from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Ionicons";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import { useRouteData } from "../context/RouteContext";
+} from 'react-native';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useRouteData} from '../context/RouteContext';
 
 type Poi = {
   id: string;
@@ -24,17 +24,17 @@ type Poi = {
   address?: string;
 };
 
-type RouteParams = { type: "start" | "end" };
+type RouteParams = {type: 'start' | 'end'};
 
-const TMAP_APP_KEY = "JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy";
+const TMAP_APP_KEY = 'JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy';
 
 export default function LocationSearchScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute();
-  const { type } = (route.params || {}) as RouteParams;
-  const { setStart, setEnd } = useRouteData();
+  const {type} = (route.params || {}) as RouteParams;
+  const {setStart, setEnd} = useRouteData();
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [results, setResults] = useState<Poi[]>([]);
   const [loading, setLoading] = useState(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
@@ -47,10 +47,10 @@ export default function LocationSearchScreen() {
     setLoading(true);
     try {
       const url =
-        "https://apis.openapi.sk.com/tmap/pois?version=1&count=15&searchKeyword=" +
+        'https://apis.openapi.sk.com/tmap/pois?version=1&count=15&searchKeyword=' +
         encodeURIComponent(q);
 
-      const res = await fetch(url, { headers: { appKey: TMAP_APP_KEY } });
+      const res = await fetch(url, {headers: {appKey: TMAP_APP_KEY}});
       const json = await res.json();
 
       const poisRaw = json?.searchPoiInfo?.pois?.poi ?? [];
@@ -61,12 +61,14 @@ export default function LocationSearchScreen() {
         lon: Number(p.frontLon ?? p.noorLon ?? p.lon),
         address:
           p.upperAddrName && p.middleAddrName
-            ? `${p.upperAddrName} ${p.middleAddrName} ${p.roadName ?? ""}`.trim()
-            : p.roadName ?? "",
+            ? `${p.upperAddrName} ${p.middleAddrName} ${
+                p.roadName ?? ''
+              }`.trim()
+            : p.roadName ?? '',
       }));
       setResults(mapped);
     } catch (e) {
-      console.warn("TMAP search error", e);
+      console.warn('TMAP search error', e);
       setResults([]);
     } finally {
       setLoading(false);
@@ -74,36 +76,43 @@ export default function LocationSearchScreen() {
   };
 
   useEffect(() => {
-    if (timer.current) clearTimeout(timer.current);
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
     timer.current = setTimeout(() => search(query), 300);
     return () => {
-      if (timer.current) clearTimeout(timer.current);
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
     };
   }, [query]);
 
   const onSelect = (poi: Poi) => {
     Keyboard.dismiss();
-    if (type === "start") {
-      setStart({ name: poi.name, lat: poi.lat, lon: poi.lon });
+    if (type === 'start') {
+      setStart({name: poi.name, lat: poi.lat, lon: poi.lon});
     } else {
-      setEnd({ name: poi.name, lat: poi.lat, lon: poi.lon });
+      setEnd({name: poi.name, lat: poi.lat, lon: poi.lon});
     }
-    navigation.navigate("SafeRoute");
+    navigation.navigate('SafeRoute');
   };
 
-  const placeholder = type === "end" ? "도착지 검색" : "출발지 검색";
+  const placeholder = type === 'end' ? '도착지 검색' : '출발지 검색';
 
   const clearQuery = () => {
-    setQuery("");
+    setQuery('');
     setResults([]);
   };
 
   return (
     <View style={styles.container}>
-
-      {/* 🔥 뒤로가기 + 제목 헤더 */}
       <View style={styles.headerRow}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ paddingRight: 6 }}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{paddingRight: 6}}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="뒤로가기">
           <Icon name="chevron-back" size={26} color="#333" />
         </TouchableOpacity>
 
@@ -127,7 +136,7 @@ export default function LocationSearchScreen() {
         />
 
         {query.length > 0 && (
-          <TouchableOpacity onPress={clearQuery} style={{ marginRight: 8 }}>
+          <TouchableOpacity onPress={clearQuery} style={{marginRight: 8}}>
             <Icon name="close-circle" size={20} color="#777" />
           </TouchableOpacity>
         )}
@@ -144,20 +153,22 @@ export default function LocationSearchScreen() {
       {/* 검색 결과 */}
       <FlatList
         data={results}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         keyboardShouldPersistTaps="handled"
         ItemSeparatorComponent={() => <View style={styles.sep} />}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <Pressable style={styles.row} onPress={() => onSelect(item)}>
             <Icon
               name="location-outline"
               size={20}
               color="#f7d23e"
-              style={{ marginRight: 8 }}
+              style={{marginRight: 8}}
             />
             <View>
               <Text style={styles.name}>{item.name}</Text>
-              {!!item.address && <Text style={styles.addr}>{item.address}</Text>}
+              {!!item.address && (
+                <Text style={styles.addr}>{item.address}</Text>
+              )}
             </View>
           </Pressable>
         )}
@@ -173,12 +184,12 @@ export default function LocationSearchScreen() {
 
 // -------------------- 스타일 --------------------
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", paddingTop: 16 },
+  container: {flex: 1, backgroundColor: '#fff', paddingTop: 16},
 
   // 🔥 추가된 헤더
   headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 20,
     marginTop: 6,
     marginBottom: 10,
@@ -186,35 +197,34 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 16,
-    fontWeight: "700",
-    color: "#333",
+    fontWeight: '700',
+    color: '#333',
   },
 
   searchRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 20,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: '#f9f9f9',
   },
 
-  input: { flex: 1, fontSize: 15, color: "#111", paddingVertical: 0 },
+  input: {flex: 1, fontSize: 15, color: '#111', paddingVertical: 0},
 
-  loading: { padding: 12, marginHorizontal: 20 },
-  sep: { height: 1, backgroundColor: "#eee", marginLeft: 20 },
+  loading: {padding: 12, marginHorizontal: 20},
+  sep: {height: 1, backgroundColor: '#eee', marginLeft: 20},
 
   row: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 20,
   },
-  name: { fontSize: 15, color: "#111", fontWeight: "600", marginBottom: 2 },
-  addr: { fontSize: 12, color: "#666" },
-  empty: { padding: 20, color: "#777", textAlign: "center" },
+  name: {fontSize: 15, color: '#111', fontWeight: '600', marginBottom: 2},
+  addr: {fontSize: 12, color: '#666'},
+  empty: {padding: 20, color: '#777', textAlign: 'center'},
 });
-
