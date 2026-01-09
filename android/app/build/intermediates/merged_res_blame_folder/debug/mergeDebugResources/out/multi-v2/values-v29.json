@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.navi.app-mergeDebugResources-63:/values-v29/values-v29.xml",
+            "map": [
+                {
+                    "source": "/Users/ohminseok/Desktop/navi/navi-frontend/node_modules/react-native-bootsplash/android/build/intermediates/packaged_res/debug/packageDebugResources/values-v29/values-v29.xml",
+                    "from": {
+                        "startLines": "2,5",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,218",
+                        "endLines": "4,15",
+                        "endColumns": "12,12",
+                        "endOffsets": "213,858"
+                    }
+                }
+            ]
+        }
+    ]
+}

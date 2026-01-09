@@ -19,6 +19,7 @@ import { sendReport, ReportPayload, ReportResponse, getPresignedUrl } from '../a
 import { getMe } from '../api/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DEV_TOKEN } from '../config/dev';
+import { useAppAlertStore } from '../stores/appAlertStore';
 
 console.log('🔍 [ReportModal] DEV_TOKEN:', DEV_TOKEN?.substring(0, 50) + '...');
 
@@ -43,6 +44,7 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
   const [editorOpen, setEditorOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [isPicking, setIsPicking] = useState(false);
+  const [pickerOptionsOpen, setPickerOptionsOpen] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   // Do not store a manual image-url fallback in state. We avoid exposing a
   // manual "image URL" input to users — uploads are done programmatically via
@@ -123,14 +125,10 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
           console.warn('presign response lacked a final GET URL; using uploadUrl as fallback. The stored URL may be inaccessible for GET (403).');
         }
       }
-      if (Platform.OS === 'android') {
-        // eslint-disable-next-line no-undef
-        const ToastAndroid = require('react-native').ToastAndroid;
-        ToastAndroid.show('사진 업로드 완료', ToastAndroid.SHORT);
-      } else {
-        // iOS Alert briefly
-        // Alert.alert('', '사진 업로드 완료');
-      }
+      // Upload succeeded. Do not show a user-facing toast for image upload
+      // completion to avoid noisy notifications; keep a console.debug for
+      // diagnostics instead.
+      console.debug('image upload completed, finalUrl=', finalUrl);
       return finalUrl;
     } finally {
       setIsUploadingImage(false);
@@ -344,6 +342,95 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
     }
   };
 
+  const takePhoto = async () => {
+    // Request camera permission on Android
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
+          title: '카메라 권한',
+          message: '제보 사진을 촬영하려면 카메라 권한이 필요합니다.',
+          buttonPositive: '허용',
+        });
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          notify('카메라 권한이 필요합니다. 설정에서 권한을 허용해주세요.');
+          return;
+        }
+      } catch (e) {
+        console.warn('camera permission request failed', e);
+      }
+    }
+
+    // dynamic require for image picker
+    let pickerMod: any;
+    try {
+      setIsPicking(true);
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      pickerMod = require('react-native-image-picker');
+      if (!pickerMod || (typeof pickerMod === 'object' && Object.keys(pickerMod).length === 0)) {
+        notify('이미지 촬영 기능이 초기화되지 않았습니다. 패키지가 설치되어 있지 않거나 네이티브 모듈이 링크되지 않았습니다.');
+        setIsPicking(false);
+        return;
+      }
+    } catch (e) {
+      notify('이미지 촬영 기능을 사용하려면 react-native-image-picker를 설치하세요.');
+      setIsPicking(false);
+      return;
+    }
+
+    // find launchCamera
+    let launcher: any = null;
+    try {
+      if (typeof pickerMod === 'function') launcher = pickerMod;
+      else if (typeof pickerMod.launchCamera === 'function') launcher = pickerMod.launchCamera;
+      else if (pickerMod?.default && typeof pickerMod.default.launchCamera === 'function') launcher = pickerMod.default.launchCamera;
+    } catch (e) {
+      console.warn('camera launcher detection error', e);
+    }
+
+    if (typeof launcher !== 'function') {
+      notify('카메라 런처를 찾을 수 없습니다. react-native-image-picker가 정상 설치되었는지 확인하세요.');
+      setIsPicking(false);
+      return;
+    }
+
+    try {
+      const options = { mediaType: 'photo', saveToPhotos: true } as any;
+      // callback-style
+      let result: any = await new Promise((resolve) => {
+        try {
+          launcher(options, resolve);
+        } catch (err) {
+          console.warn('camera launcher threw', err);
+          resolve(undefined);
+        }
+      });
+
+      if (result && result.assets && result.assets.length > 0) {
+        const uri = result.assets[0].uri || null;
+        if (uri) {
+          setPhoto(uri);
+          Image.getSize(uri, (w, h) => setImgRatio(w && h ? w / h : null), () => setImgRatio(null));
+          uploadImageToPresigned(uri).catch((e) => {
+            console.warn('Immediate upload after camera failed', e);
+            notify('사진 업로드에 실패했습니다. 전송 시 다시 시도됩니다.');
+          });
+        }
+      } else {
+        console.log('takePhoto no assets', result);
+      }
+    } catch (e) {
+      console.warn('takePhoto error', e);
+      notify('사진 촬영 중 오류가 발생했습니다.');
+    } finally {
+      setIsPicking(false);
+    }
+  };
+
+  const showPickerOptions = () => {
+    // Present our in-app styled picker options modal instead of native Alert
+    setPickerOptionsOpen(true);
+  };
+
   const canSubmit = () => {
     return !!category && content.trim().length > 0; // 사진은 선택적으로 허용
   };
@@ -435,17 +522,31 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
       // 역할에 따라 알림 문구를 다르게 표시
       try {
         const me = await getMe();
-        const userType = (me && me.user_type) ? String(me.user_type).toLowerCase() : '';
+        const rawUserType = me && (me.user_type ?? me.type ?? me.userType ?? me.type_name ?? me.role);
+        const userType = rawUserType ? String(rawUserType).toLowerCase() : '';
+        const appAlert = useAppAlertStore.getState();
         if (userType === 'parent') {
-          notify('제보가 등록되었습니다');
+          appAlert.show({
+            title: '알림',
+            body: '제보가 등록되었습니다',
+            ctaText: '확인',
+          });
         } else {
           // child 또는 알 수 없는 경우(기본)
-          notify('제보 요청이 등록되었습니다');
+          appAlert.show({
+            title: '알림',
+            body: '제보 요청이 등록되었습니다\n부모님의 승인 후 제보가 등록됩니다.',
+            ctaText: '확인',
+          });
         }
       } catch (e) {
-        // 실패 시 기본 메시지
+        // 실패 시 기본 메시지 (앱 스타일 모달)
         console.warn('getMe 실패:', e);
-        notify('제보 요청이 등록되었습니다');
+        useAppAlertStore.getState().show({
+          title: '알림',
+          body: '제보 요청이 등록되었습니다\n부모님의 승인 후 제보가 등록됩니다.',
+          ctaText: '확인',
+        });
       }
 
       const submittedPayload = { ...payload, serverId: res?.id };
@@ -502,7 +603,7 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
                 )}
               </View>
 
-              <TouchableOpacity style={styles.uploadBox} onPress={() => { photo ? setEditorOpen(true) : pickImage(); }}>
+              <TouchableOpacity style={styles.uploadBox} onPress={() => { photo ? setEditorOpen(true) : showPickerOptions(); }}>
                 {photo ? (
                   <Image source={{ uri: photo }} style={styles.thumbnailFixed} resizeMode="cover" />
                 ) : (
@@ -549,6 +650,26 @@ export default function ReportModal({ onClose, onSubmitted, location }: Props) {
                 </View>
               </Modal>
 
+              {/* picker options presented as an in-app styled modal */}
+              <Modal visible={pickerOptionsOpen} transparent animationType="fade" onRequestClose={() => setPickerOptionsOpen(false)}>
+                <View style={styles.pickerDim}>
+                  <View style={styles.pickerModal}>
+                    <Text style={styles.pickerTitle}>사진을 추가할 방법을 선택하세요</Text>
+                    <View style={styles.pickerButtons}>
+                      <TouchableOpacity style={[styles.pickerBtn, styles.pickerBtnPrimary]} onPress={async () => { setPickerOptionsOpen(false); await pickImage(); }}>
+                        <Text style={[styles.pickerBtnText, styles.pickerBtnTextPrimary]}>갤러리에서 선택</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={[styles.pickerBtn, styles.pickerBtnPrimary]} onPress={async () => { setPickerOptionsOpen(false); await takePhoto(); }}>
+                        <Text style={[styles.pickerBtnText, styles.pickerBtnTextPrimary]}>카메라로 촬영</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity style={styles.pickerCancel} onPress={() => setPickerOptionsOpen(false)}>
+                      <Text style={styles.pickerCancelText}>취소</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
+
             </ScrollView>
           </View>
         </View>
@@ -582,4 +703,14 @@ const styles = StyleSheet.create({
   editorBtns: { marginTop: 12, flexDirection: 'row', gap: 12 },
   editorCancel: { flex: 1, backgroundColor: '#eee', height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   editorPick: { flex: 1, backgroundColor: '#FFD44C', height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  pickerDim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+  pickerModal: { width: '86%', backgroundColor: '#fff', borderRadius: 14, paddingVertical: 18, paddingHorizontal: 16, alignItems: 'center' },
+  pickerTitle: { fontSize: 16, fontWeight: '700', marginBottom: 12, textAlign: 'center', color: '#111' },
+  pickerButtons: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', gap: 12, marginBottom: 12 },
+  pickerBtn: { flex: 1, backgroundColor: '#F2F3F5', paddingVertical: 12, borderRadius: 12, alignItems: 'center', marginHorizontal: 6 },
+  pickerBtnPrimary: { backgroundColor: '#FFD44C' },
+  pickerBtnText: { color: '#111', fontWeight: '700' },
+  pickerBtnTextPrimary: { color: '#000' },
+  pickerCancel: { marginTop: 4, paddingVertical: 10 },
+  pickerCancelText: { color: '#666' },
 });

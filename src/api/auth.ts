@@ -37,3 +37,9 @@ export async function getMe() {
   const { data } = await api.get('/users/me');
   return data; // Expecting { user_type: 'child' | 'parent', ... }
 }
+
+// 회원탈퇴 추부분
+export async function deleteUser() {
+  const { data } = await api.delete("/users/");
+  return data;   // { message: "..."}
+}

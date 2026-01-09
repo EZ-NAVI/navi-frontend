@@ -26,10 +26,7 @@ import CustomAlert from '../components/CustomAlert';
 type Props = {
   clusterId: string | number;
   onClose: () => void;
-  // If provided, these reports will be shown instead of fetching by clusterId
   nearbyReports?: any[] | null;
-  // Optional callback when a report in the list is selected. If provided,
-  // callers can close the modal and show the report on the map / open detail.
   onSelect?: (report: any) => void;
 };
 
@@ -149,7 +146,7 @@ export default function ClusterReportsScreen({
       applyOptimisticEvaluation(rid, evalKey);
     } catch (e) {
       console.warn('Cluster evaluation failed', e);
-      Alert.alert('전송 실패', '피드백 전송에 실패했습니다.');
+      openAlert('전송 실패', '피드백 전송에 실패했습니다.');
     } finally {
       setEvaluatingIds(m => ({...m, [rid]: false}));
     }
@@ -170,10 +167,9 @@ export default function ClusterReportsScreen({
             const cat = (r.category ?? r.type ?? '').toString();
             return cat.trim() !== '도로폐쇄';
           });
-          setItems(filteredNearby);
-          return;
+          setItems(initialList);
         }
-        // try to use stored token if any (dev fallback handled in API too)
+
         let token: string | null = null;
         try {
           token = await AsyncStorage.getItem('access_token');
@@ -265,7 +261,7 @@ export default function ClusterReportsScreen({
         })();
       } catch (e) {
         console.warn('cluster list load failed', e);
-        Alert.alert('불러오기 실패', '클러스터 제보를 불러오지 못했습니다.');
+        openAlert('불러오기 실패', '클러스터 제보를 불러오지 못했습니다.');
       } finally {
         setLoading(false);
       }
@@ -273,7 +269,6 @@ export default function ClusterReportsScreen({
     load();
   }, [clusterId]);
 
-  // reportStore의 제보 리스트가 변경되면 items도 업데이트 (WebSocket 실시간 반영)
   useEffect(() => {
     if (reportsFromStore.length > 0 && items.length > 0) {
       const updatedItems = items.map(item => {
@@ -284,7 +279,6 @@ export default function ClusterReportsScreen({
         return updated ? {...item, ...updated} : item;
       });
       setItems(updatedItems);
-      console.log('📡 [ClusterReportsScreen] reportStore 업데이트 감지');
     }
   }, [reportsFromStore]);
 
@@ -327,7 +321,7 @@ export default function ClusterReportsScreen({
 
             <TouchableOpacity
               style={styles.resolvedBtnInline}
-              onPress={() => {
+              onPress={async () => {
                 const rid = String(item.reportId ?? item.id ?? '');
                 if (!rid) {
                   return;
@@ -386,6 +380,7 @@ export default function ClusterReportsScreen({
           <View style={styles.cardFooter}>
             <View style={{flex: 1}}>
               <Text style={styles.commentLabel}>댓글</Text>
+
               {(() => {
                 const commentsArr: any[] = Array.isArray(item.comments)
                   ? item.comments
@@ -482,7 +477,8 @@ export default function ClusterReportsScreen({
                     </TouchableOpacity>
                   );
                 })()}
-                {/* 보통 -> normal */}
+
+                {/* 보통 → normal */}
                 {(() => {
                   const rid = String(item.reportId ?? item.id ?? '');
                   const selected = (item.userEvaluation ?? null) === 'normal';
@@ -535,7 +531,8 @@ export default function ClusterReportsScreen({
                     </TouchableOpacity>
                   );
                 })()}
-                {/* 아쉬움 -> good */}
+
+                {/* 아쉬움 → good */}
                 {(() => {
                   const rid = String(item.reportId ?? item.id ?? '');
                   const selected = (item.userEvaluation ?? null) === 'good';
@@ -588,9 +585,11 @@ export default function ClusterReportsScreen({
                     </TouchableOpacity>
                   );
                 })()}
+
               </View>
             </View>
           </View>
+
         </View>
       </TouchableOpacity>
     );
@@ -610,7 +609,7 @@ export default function ClusterReportsScreen({
         <Text style={styles.headerTitle}>커뮤니티</Text>
         <View style={{width: 60}} />
       </View>
-      {/* category tabs */}
+
       {categories && categories.length > 0 ? (
         <View style={styles.tabsRow}>
           {categories.map(c => (
@@ -652,6 +651,16 @@ export default function ClusterReportsScreen({
           contentContainerStyle={{padding: 16}}
         />
       )}
+
+      {/* ⭐ SafeRouteScreen과 동일한 CustomAlert 적용 */}
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMsg}
+        onClose={() => setAlertVisible(false)}
+        onConfirm={alertConfirm || (() => setAlertVisible(false))}
+        hideCancel={alertHideCancel}
+      />
     </View>
   );
 }

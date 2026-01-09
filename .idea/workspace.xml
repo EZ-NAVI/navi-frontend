@@ -30,7 +30,7 @@
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
     &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Hyunjiiing&quot;
+    &quot;assignee&quot;: &quot;LSA31&quot;
   }
 }</component>
   <component name="GithubPullRequestsUISettings">{
@@ -38,12 +38,12 @@
     &quot;url&quot;: &quot;https://github.com/EZ-NAVI/navi-frontend.git&quot;,
     &quot;accountId&quot;: &quot;e53b4e3b-00ee-49c4-8ea8-a0e2ffa19ffd&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 1
 }</component>
-  <component name="ProjectId" id="32T7yUOKsFLlghOzYWVgsZYW1jg" />
+  <component name="ProjectId" id="366pf9jJSzivcyLOwrLd3pRNBP8" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -87,37 +87,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="9eaf7950-1208-4f06-910f-7d26a020d847" name="Changes" comment="" />
-      <created>1757432963245</created>
+      <changelist id="43939bd3-3852-4ca1-b345-dcd15614969f" name="Changes" comment="" />
+      <created>1764336978860</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1757432963245</updated>
+      <updated>1764336978860</updated>
     </task>
-    <task id="LOCAL-00001" summary="feat: 경로 검색 기능">
-      <option name="closed" value="true" />
-      <created>1760612420233</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1760612420233</updated>
-    </task>
-    <task id="LOCAL-00002" summary="feat: 경로 검색 UI">
-      <option name="closed" value="true" />
-      <created>1761017315206</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1761017315206</updated>
-    </task>
-    <task id="LOCAL-00003" summary="feat: API 연동">
-      <option name="closed" value="true" />
-      <created>1761475810305</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1761475810305</updated>
-    </task>
-    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="XDebuggerManager">

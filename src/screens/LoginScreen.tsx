@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -96,7 +95,10 @@ export default function LoginScreen() {
         me = await authGetMe();
       }
       const token = loginResp?.access_token ?? null;
-      const userType = me?.user_type ?? me?.type ?? null;
+      const userType = me?.user_type ?? me?.type ?? me?.userType ?? null;
+
+      console.log('[Login] /users/me response:', me);
+
       if (token) {
         if (String(userType).toLowerCase() === 'parent') {
           setParentToken(token);
@@ -178,13 +180,11 @@ export default function LoginScreen() {
       </TouchableOpacity>
 
       <ScrollView contentContainerStyle={styles.container}>
-        {/* 상단 로고/타이틀 */}
         <View style={styles.header}>
           <Text style={styles.logoText}>NAVI</Text>
           <Text style={styles.title}>로그인</Text>
         </View>
 
-        {/* 입력 필드 */}
         <View style={styles.form}>
           <TextInput
             placeholder="아이디(이메일)"
@@ -215,11 +215,10 @@ export default function LoginScreen() {
               <ActivityIndicator />
             ) : (
               <Text style={styles.loginBtnText}>로그인하기</Text>
-            )}
+            }
           </TouchableOpacity>
         </View>
 
-        {/* 하단 링크 */}
         <View style={styles.footer}>
           <TouchableOpacity
             onPress={() => navigation.navigate('SignupType')}
@@ -233,6 +232,13 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMsg}
+        onClose={() => setAlertVisible(false)}
+      />
     </KeyboardAvoidingView>
   );
 }

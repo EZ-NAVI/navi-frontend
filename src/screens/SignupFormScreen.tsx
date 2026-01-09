@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -113,6 +112,9 @@ export default function SignupFormScreen() {
     return true;
   };
 
+  // ----------------------------
+  //   🚀 회원가입 요청
+  // ----------------------------
   const onSubmit = async () => {
     if (!validateForm()) {
       return;
@@ -146,7 +148,7 @@ export default function SignupFormScreen() {
     try {
       setSubmitting(true);
 
-      // ✅ 서버 응답에서 matched 필드를 직접 받음
+      // 🟡 서버 응답
       const res = await api.register(payload);
 
       if (res.matched) {
@@ -173,6 +175,9 @@ export default function SignupFormScreen() {
     }
   };
 
+  // ----------------------------
+  //   UI
+  // ----------------------------
   return (
     <KeyboardAvoidingView
       style={{flex: 1, backgroundColor: '#FFFFFF'}}
@@ -190,14 +195,14 @@ export default function SignupFormScreen() {
           <Icon name="chevron-back" size={26} color="#333" />
         </TouchableOpacity>
 
-        {/* 중앙 로고 */}
+        {/* ⭐ 로고 영역 */}
         <View style={styles.header}>
           <Text style={styles.logoText}>NAVI</Text>
           <Text style={styles.title}>회원 정보 입력</Text>
         </View>
 
+        {/* 입력 폼 */}
         <View style={styles.form}>
-          {/* 본인 정보 */}
           <TextInput
             placeholder="이름"
             placeholderTextColor="#A0A0A0"
@@ -243,7 +248,6 @@ export default function SignupFormScreen() {
           {/* 구분선 */}
           <View style={styles.divider} />
 
-          {/* 부모/자녀 정보 */}
           <Text style={styles.sectionTitle}>
             {isParent
               ? '매칭될 자녀 정보를 입력해 주세요!'
@@ -288,7 +292,7 @@ export default function SignupFormScreen() {
             onChangeText={setRelEmail}
           />
 
-          {/* 가입 완료 */}
+          {/* 가입 버튼 */}
           <TouchableOpacity
             style={[styles.primaryBtn, submitting && styles.primaryBtnDisabled]}
             disabled={submitting}
@@ -299,6 +303,14 @@ export default function SignupFormScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* ⭐ CustomAlert 표시 */}
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMsg}
+        onClose={() => setAlertVisible(false)}
+      />
     </KeyboardAvoidingView>
   );
 }

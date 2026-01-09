@@ -11,6 +11,7 @@ anim abc_slide_out_bottom
 anim abc_slide_out_top
 anim abc_tooltip_enter
 anim abc_tooltip_exit
+anim bootsplash_fade_out
 anim btn_checkbox_to_checked_box_inner_merged_animation
 anim btn_checkbox_to_checked_box_outer_merged_animation
 anim btn_checkbox_to_checked_icon_null_animation
@@ -230,6 +231,9 @@ attr behavior_peekHeight
 attr behavior_saveFlags
 attr behavior_significantVelocityThreshold
 attr behavior_skipCollapsed
+attr bootSplashBackground
+attr bootSplashBrand
+attr bootSplashLogo
 attr borderWidth
 attr borderlessButtonStyle
 attr bottomAppBarStyle
@@ -461,6 +465,7 @@ attr customIntegerValue
 attr customNavigationLayout
 attr customPixelDimension
 attr customStringValue
+attr darkContentBarsStyle
 attr dayInvalidStyle
 attr daySelectedStyle
 attr dayStyle
@@ -978,6 +983,7 @@ attr popupMenuBackground
 attr popupMenuStyle
 attr popupTheme
 attr popupWindowStyle
+attr postBootSplashTheme
 attr prefixText
 attr prefixTextAppearance
 attr prefixTextColor
@@ -1365,6 +1371,7 @@ color black
 color blanchedalmond
 color blue
 color blueviolet
+color bootsplash_background
 color bright_foreground_disabled_material_dark
 color bright_foreground_disabled_material_light
 color bright_foreground_inverse_material_dark
@@ -2237,6 +2244,8 @@ color switch_thumb_material_dark
 color switch_thumb_material_light
 color switch_thumb_normal_material_dark
 color switch_thumb_normal_material_light
+color systemBarDarkScrim
+color systemBarLightScrim
 color tan
 color teal
 color teal_200
@@ -3139,6 +3148,7 @@ drawable autofill_inline_suggestion_chip_background
 drawable avd_hide_password
 drawable avd_show_password
 drawable blue_dot
+drawable bootsplash
 drawable btn_checkbox_checked_mtrl
 drawable btn_checkbox_checked_to_unchecked_mtrl_animation
 drawable btn_checkbox_unchecked_mtrl
@@ -3167,6 +3177,8 @@ drawable common_google_signin_btn_text_light
 drawable common_google_signin_btn_text_light_focused
 drawable common_google_signin_btn_text_light_normal
 drawable common_google_signin_btn_text_light_normal_background
+drawable compat_splash_screen
+drawable compat_splash_screen_oneui_4
 drawable danger
 drawable design_fab_background
 drawable design_ic_visibility
@@ -3293,6 +3305,7 @@ drawable test_marker
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 drawable tracking_dot
+drawable transparent_pixel
 id ALT
 id BOTTOM_END
 id BOTTOM_START
@@ -4540,6 +4553,9 @@ style Base_Widget_MaterialComponents_Snackbar
 style Base_Widget_MaterialComponents_TextInputEditText
 style Base_Widget_MaterialComponents_TextInputLayout
 style Base_Widget_MaterialComponents_TextView
+style BootSplashFadeOutAnimation
+style BootSplashNoAnimation
+style BootSplashTheme
 style CalendarDatePickerDialog
 style CalendarDatePickerStyle
 style CardView
@@ -4806,6 +4822,13 @@ style Theme_AppCompat_Light_DialogWhenLarge
 style Theme_AppCompat_Light_NoActionBar
 style Theme_AppCompat_NoActionBar
 style Theme_AutofillInlineSuggestion
+style Theme_BootSplash
+style Theme_BootSplash_Base
+style Theme_BootSplash_Common
+style Theme_BootSplash_DayNight
+style Theme_BootSplash_EdgeToEdge
+style Theme_BootSplash_EdgeToEdge_Common
+style Theme_BootSplash_TransparentStatus
 style Theme_Catalyst
 style Theme_Catalyst_LogBox
 style Theme_Catalyst_RedBox

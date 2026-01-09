@@ -1,12 +1,14 @@
 R_DEF: Internal format may change without notice
 local
 color black
+color bootsplash_background
 color purple_200
 color purple_500
 color purple_700
 color teal_200
 color teal_700
 color white
+drawable bootsplash
 drawable danger
 drawable good_ping
 drawable marker_end
@@ -23,3 +25,4 @@ string google_crash_reporting_api_key
 string google_storage_bucket
 string project_id
 style AppTheme
+style BootSplashTheme

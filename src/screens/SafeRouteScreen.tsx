@@ -145,7 +145,7 @@ export default function SafeRouteScreen() {
     'unknown' | 'ok' | 'error' | 'no-url'
   >('unknown');
 
-  // 🔥 승아 기능용 상태 추가
+  // 기능용 상태 추가
   const [routeId, setRouteId] = useState<string | null>(null);
   const [userPositions, setUserPositions] = useState<any[]>([]);
   const reachedRef = useRef(false);
@@ -711,7 +711,7 @@ export default function SafeRouteScreen() {
     }),
   ).current;
 
-  // ✅ 출발/도착 + preview 경로 + GPS 추적 (승아 기능 merge)
+  // 출발/도착 + preview 경로 + GPS 추적 (기능 merge)
   useEffect(() => {
     if (!isReady || !map.ref.current) {
       return;
@@ -762,7 +762,7 @@ export default function SafeRouteScreen() {
           const middle = pathCoords[Math.floor(pathCoords.length / 2)];
           map.animateTo(middle.lat, middle.lon, 15);
 
-          // ⭐ GPS 추적 시작
+          // GPS 추적 시작
           startTracking(setUserPositions);
         } else {
           openAlert('경로를 찾을 수 없습니다.');
@@ -795,7 +795,7 @@ export default function SafeRouteScreen() {
       return;
     }
 
-    // ✅ 30m 이내 도착으로 판단
+    // 30m 이내 도착으로 판단
     if (distToDest <= 30) {
       console.log('🎉 목적지 도착!(<=30m)');
       reachedRef.current = true;
@@ -1157,7 +1157,7 @@ export default function SafeRouteScreen() {
       setDetailOpen(true);
     } catch (e) {
       console.warn('/reports/{id} 조회 실패', e);
-      Alert.alert('제보 불러오기 실패', '서버에서 제보를 불러오지 못했습니다.');
+      openAlert('제보 불러오기 실패', '서버에서 제보를 불러오지 못했습니다.');
     } finally {
       setLoadingDetail(false);
     }
@@ -1261,14 +1261,14 @@ export default function SafeRouteScreen() {
               JSON.stringify(serverBody);
         openAlert('댓글 추가 실패', String(maybeMsg).slice(0, 200));
       } else {
-        Alert.alert('댓글 추가 실패', String(e?.message || '서버 오류'));
+        openAlert('댓글 추가 실패', String(e?.message || '서버 오류'));
       }
     } finally {
       setPostingComment(false);
     }
   };
 
-  // 🔥 경로 저장 → 평가 모달 열기
+  // 경로 저장 → 평가 모달 열기
   const saveRouteToServer = async () => {
     if (!start || !end || userPositions.length < 2) {
       console.log('⚠ route 저장 불가');
@@ -1325,7 +1325,7 @@ export default function SafeRouteScreen() {
     }
   };
 
-  // ⭐ 평가 제출
+  // 평가 제출
   const handleSubmitRating = (rating: number) => {
     if (!routeId) {
       console.log('❌ routeId 없음 → 평가 불가');
@@ -1341,7 +1341,7 @@ export default function SafeRouteScreen() {
 
   return (
     <View style={styles.container}>
-      {/* ⭐ 승아 별점 모달 */}
+      {/* ⭐ 별점 모달 */}
       <RouteRatingModal
         visible={showRating}
         onClose={() => setShowRating(false)}

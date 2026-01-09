@@ -924,6 +924,15 @@ export default function ReportDetailScreen() {
           );
         })()}
       </KeyboardAvoidingView>
+
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMsg}
+        onClose={() => setAlertVisible(false)}
+        onConfirm={alertConfirm || undefined}
+        hideCancel={alertHideCancel}
+      />
     </View>
   );
 }

@@ -7,27 +7,50 @@ interface Props {
   visible: boolean;
   onConfirm: () => void;
   onClose: () => void;
+  title?: string;
+  body?: React.ReactNode | string;
+  ctaText?: string;
+  cancelText?: string;
+  onCancel?: () => void;
 }
+export default function SafetyNoticeModal({ visible, onConfirm, onClose, title, body, ctaText, cancelText, onCancel }: Props) {
+  const renderBody = () => {
+    if (body) return typeof body === 'string' ? <Text style={s.body}>{body}</Text> : <View style={{ alignSelf: 'stretch' }}>{body}</View>;
 
-export default function SafetyNoticeModal({ visible, onConfirm, onClose }: Props) {
+    return (
+      <Text style={s.body}>
+        주변을 먼저 확인하고 <Text style={{ color: '#d32f2f', fontWeight: '700' }}>위험 구역</Text>
+        으로부터{"\n"}
+        <Text style={{ color: '#d32f2f', fontWeight: '700' }}>멀리 떨어져서</Text> 촬영해주세요
+      </Text>
+    );
+  };
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={s.dim}>
         <View style={s.card} accessibilityViewIsModal>
-          <Text style={s.title}>잠시만요!</Text>
-          <Text style={s.body}>
-            주변을 먼저 확인하고 <Text style={{ color: '#d32f2f', fontWeight: '700' }}>위험 구역</Text>
-            으로부터{'\n'}
-            <Text style={{ color: '#d32f2f', fontWeight: '700' }}>멀리 떨어져서</Text> 촬영해주세요
-          </Text>
+          <Text style={s.title}>{title ?? '잠시만요!'}</Text>
+          {renderBody()}
 
           <View style={s.illust}>
             <MaterialIcons name="warning-amber" size={64} color="#f5a623" />
           </View>
 
-          <TouchableOpacity style={s.cta} onPress={onConfirm} accessibilityLabel="확인했어요">
-            <Text style={s.ctaText}>확인했어요</Text>
-          </TouchableOpacity>
+          {onCancel ? (
+            <View style={s.rowButtons}>
+              <TouchableOpacity style={[s.cta, s.cancelBtn]} onPress={onCancel} accessibilityLabel={cancelText ?? '취소'}>
+                <Text style={s.cancelText}>{cancelText ?? '취소'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[s.cta, s.confirmBtn]} onPress={onConfirm} accessibilityLabel={ctaText ?? '확인'}>
+                <Text style={s.ctaText}>{ctaText ?? '확인'}</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity style={s.cta} onPress={onConfirm} accessibilityLabel={ctaText ?? '확인했어요'}>
+              <Text style={s.ctaText}>{ctaText ?? '확인했어요'}</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </Modal>
@@ -71,4 +94,8 @@ const s = StyleSheet.create({
     marginTop: 4,
   },
   ctaText: { fontWeight: '800', color: '#000' },
+  rowButtons: { flexDirection: 'row', alignSelf: 'stretch', marginTop: 8, gap: 8 },
+  cancelBtn: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd' },
+  confirmBtn: { backgroundColor: '#FFD44C' },
+  cancelText: { color: '#333', fontWeight: '700' },
 });

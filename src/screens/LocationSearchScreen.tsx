@@ -39,8 +39,6 @@ export default function LocationSearchScreen() {
   const [loading, setLoading] = useState(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
 
-  // LocationSearch에서는 하단 제보 버튼을 표시하지 않습니다.
-
   const search = async (q: string) => {
     if (!q.trim()) {
       setResults([]);
@@ -89,8 +87,6 @@ export default function LocationSearchScreen() {
     };
   }, [query]);
 
-  // (제거) 제보 버튼 관련 애니메이션은 더 이상 사용하지 않습니다.
-
   const onSelect = (poi: Poi) => {
     Keyboard.dismiss();
     if (type === 'start') {
@@ -123,7 +119,7 @@ export default function LocationSearchScreen() {
         <Text style={styles.title}>{placeholder}하세요</Text>
       </View>
 
-      {/* ✅ 검색창 (돋보기 + X 포함) */}
+      {/* 검색창 */}
       <View style={styles.searchRow}>
         <TextInput
           style={styles.input}
@@ -138,11 +134,13 @@ export default function LocationSearchScreen() {
           onSubmitEditing={() => search(query)}
           placeholderTextColor="#aaa"
         />
+
         {query.length > 0 && (
           <TouchableOpacity onPress={clearQuery} style={{marginRight: 8}}>
             <Icon name="close-circle" size={20} color="#777" />
           </TouchableOpacity>
         )}
+
         <Icon name="search-outline" size={20} color="#444" />
       </View>
 
@@ -152,7 +150,7 @@ export default function LocationSearchScreen() {
         </View>
       )}
 
-      {/* ✅ 검색 결과 리스트 */}
+      {/* 검색 결과 */}
       <FlatList
         data={results}
         keyExtractor={item => item.id}
@@ -180,12 +178,11 @@ export default function LocationSearchScreen() {
           ) : null
         }
       />
-
-      {/* LocationSearch 화면에서는 하단 제보(FAB) UI를 제거했습니다. 필요하면 다른 화면에서 제보 기능을 사용하세요. */}
     </View>
   );
 }
 
+// -------------------- 스타일 --------------------
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#fff', paddingTop: 16},
 
@@ -204,7 +201,6 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 
-  // ✅ 아이콘 포함 검색창
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -222,7 +218,6 @@ const styles = StyleSheet.create({
   loading: {padding: 12, marginHorizontal: 20},
   sep: {height: 1, backgroundColor: '#eee', marginLeft: 20},
 
-  // ✅ 결과 리스트
   row: {
     flexDirection: 'row',
     alignItems: 'center',
