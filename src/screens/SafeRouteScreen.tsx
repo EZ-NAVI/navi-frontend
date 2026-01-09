@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   AccessibilityInfo,
   findNodeHandle,
+  ToastAndroid,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -1251,7 +1252,7 @@ export default function SafeRouteScreen() {
     if (!reportId) {
       return;
     }
-    
+
     // 미니 팝업 표시
     setMiniPopupData(report);
     setMiniPopupOpen(true);
@@ -1259,12 +1260,14 @@ export default function SafeRouteScreen() {
 
   // 미니 팝업에서 상세 보기 클릭: reportId로 상세 조회 후 하단 모달을 연다
   const openDetailFromMiniPopup = async () => {
-    if (!miniPopupData) return;
-    
+    if (!miniPopupData) {
+      return;
+    }
+
     const report = miniPopupData;
     const reportId = report.reportId ?? report.id;
     const clusterId = report.clusterId ?? report.cluster_id;
-    
+
     setMiniPopupOpen(false);
     setLoadingDetail(true);
 
@@ -1638,10 +1641,8 @@ export default function SafeRouteScreen() {
       return;
     }
 
-    resetRoute();
-    map.clear();
-
-    setIsRated(false); // 한 번만 실행
+    resetRouteWithNotice();
+    setIsRated(false);
   }, [isRated]);
 
   const handleSubmitRatingAndReset = (rating: number) => {
@@ -1652,6 +1653,28 @@ export default function SafeRouteScreen() {
 
     // 평가 완료 플래그 ON
     setIsRated(true);
+  };
+
+  const resetRouteWithNotice = async () => {
+    // 1. 실제 초기화 로직
+    resetRoute();
+    map.clear();
+
+    // 2. 사용자 안내
+    const message = '경로가 초기화되었습니다';
+
+    const isScreenReaderEnabled =
+      await AccessibilityInfo.isScreenReaderEnabled();
+
+    if (isScreenReaderEnabled) {
+      // TalkBack 켜진 경우
+      AccessibilityInfo.announceForAccessibility(message);
+    } else {
+      // 일반 사용자 → 토스트
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+      }
+    }
   };
 
   // (더이상 애니메이션 토글 필요 없음)
@@ -1744,9 +1767,7 @@ export default function SafeRouteScreen() {
             accessibilityRole="button"
             accessibilityLabel="내 위치"
             accessibilityHint="현재 위치로 지도를 이동합니다">
-            <Text style={{fontSize: 18, fontWeight: '700', color: '#000'}}>
-              ◎
-            </Text>
+            <Icon name="locate" size={22} color="#333" accessible={false} />
           </TouchableOpacity>
         </View>
 
@@ -1839,7 +1860,9 @@ export default function SafeRouteScreen() {
               onPress={openDetailFromMiniPopup}
               accessible={true}
               accessibilityRole="button"
-              accessibilityLabel={`${miniPopupData.category || '제보'}, 두 번 탭하여 상세 보기`}>
+              accessibilityLabel={`${
+                miniPopupData.category || '제보'
+              }, 두 번 탭하여 상세 보기`}>
               <TouchableOpacity
                 style={{
                   position: 'absolute',
@@ -1848,7 +1871,7 @@ export default function SafeRouteScreen() {
                   padding: 4,
                   zIndex: 1000,
                 }}
-                onPress={(e) => {
+                onPress={e => {
                   e.stopPropagation();
                   setMiniPopupOpen(false);
                 }}
@@ -1857,7 +1880,7 @@ export default function SafeRouteScreen() {
                 accessibilityLabel="닫기">
                 <Text style={{fontSize: 24, color: '#999'}}>×</Text>
               </TouchableOpacity>
-              
+
               <Text
                 style={{
                   fontSize: 18,
@@ -1867,7 +1890,7 @@ export default function SafeRouteScreen() {
                 }}>
                 {miniPopupData.category || '제보'}
               </Text>
-              
+
               {miniPopupData.description && (
                 <Text
                   style={{
@@ -1879,7 +1902,7 @@ export default function SafeRouteScreen() {
                   {miniPopupData.description}
                 </Text>
               )}
-              
+
               <Text
                 style={{
                   fontSize: 12,
@@ -1934,8 +1957,7 @@ export default function SafeRouteScreen() {
           <TouchableOpacity
             style={extraStyles.resetAboveReport}
             onPress={() => {
-              resetRoute();
-              map.clear();
+              resetRouteWithNotice();
             }}
             accessible
             accessibilityRole="button"
