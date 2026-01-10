@@ -214,7 +214,7 @@ export default function LoginScreen() {
             {loading ? (
               <ActivityIndicator />
             ) : (
-              <Text style={styles.loginBtnText}>로그인하기</Text>
+              <Text style={styles.loginBtnText}>로그인하기</Text>)
             }
           </TouchableOpacity>
         </View>
