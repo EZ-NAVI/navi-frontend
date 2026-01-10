@@ -68,6 +68,15 @@ export default function ClusterReportsScreen({
   const [alertConfirm, setAlertConfirm] = useState<null | (() => void)>(null);
   const [alertHideCancel, setAlertHideCancel] = useState(false);
 
+  // 상세 페이지와 동일한 커스텀 알림 사용을 위해 부모 계정 안내 헬퍼 추가
+  const showParentBlocked = () => {
+    setAlertTitle('안내');
+    setAlertMsg('부모 계정은 사용할 수 없는 기능입니다.');
+    setAlertHideCancel(true);
+    setAlertConfirm(null);
+    setAlertVisible(true);
+  };
+
   const openAlert = (title: string, body: string) => {
     useAppAlertStore.getState().show({
       title,
@@ -470,8 +479,9 @@ export default function ClusterReportsScreen({
                   const role = getCurrentUserRole();
                   if (role === 'parent') {
                     return (
-                      <View
+                      <TouchableOpacity
                         style={[styles.emojiBtn, {opacity: 1, marginRight: 6}]}
+                        onPress={showParentBlocked}
                         accessible={true}
                         accessibilityRole="button"
                         accessibilityLabel={`좋음 ${count}개`}
@@ -490,7 +500,7 @@ export default function ClusterReportsScreen({
                           accessible={false}>
                           좋음 {count}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     );
                   }
                   return (
@@ -526,8 +536,9 @@ export default function ClusterReportsScreen({
                   const role = getCurrentUserRole();
                   if (role === 'parent') {
                     return (
-                      <View
+                      <TouchableOpacity
                         style={[styles.emojiBtn, {opacity: 1}]}
+                        onPress={showParentBlocked}
                         accessible={true}
                         accessibilityRole="button"
                         accessibilityLabel={`보통 ${count}개`}
@@ -544,7 +555,7 @@ export default function ClusterReportsScreen({
                           ]}>
                           보통 {count}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     );
                   }
                   return (
@@ -580,11 +591,12 @@ export default function ClusterReportsScreen({
                   const role = getCurrentUserRole();
                   if (role === 'parent') {
                     return (
-                      <View
+                      <TouchableOpacity
                         style={[styles.emojiBtn, {opacity: 1}]}
+                        onPress={showParentBlocked}
                         accessible={true}
                         accessibilityRole="button"
-                        accessibilityLabel={`보통 ${count}개`}
+                        accessibilityLabel={`아쉬움 ${count}개`}
                         accessibilityHint="자녀만 선택 가능합니다"
                         accessibilityState={{selected}}>
                         <Image
@@ -598,7 +610,7 @@ export default function ClusterReportsScreen({
                           ]}>
                           아쉬움 {count}
                         </Text>
-                      </View>
+                      </TouchableOpacity>
                     );
                   }
                   return (

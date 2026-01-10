@@ -69,6 +69,13 @@ export default function ReportDetailScreen() {
   const [posting, setPosting] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
 
+  // 부모 계정 안내 헬퍼
+  const showParentBlocked = () => {
+    openAlert('안내', '부모 계정은 사용할 수 없는 기능입니다.', {
+      hideCancel: true,
+    });
+  };
+
   const applyOptimisticEvaluation = (evalKey: 'good' | 'normal' | 'bad') => {
     setReport((prev: any) => {
       if (!prev) {
@@ -331,8 +338,9 @@ export default function ReportDetailScreen() {
                   if (!renderInteractive) {
                     return (
                       <>
-                        <View
+                        <TouchableOpacity
                           style={{alignItems: 'center', marginHorizontal: 2}}
+                          onPress={showParentBlocked}
                           accessible={true}
                           accessibilityRole="button"
                           accessibilityLabel={`좋음 ${Number(
@@ -362,9 +370,10 @@ export default function ReportDetailScreen() {
                             }}>
                             좋음 {Number(report?.badCount ?? 0)}
                           </Text>
-                        </View>
-                        <View
+                        </TouchableOpacity>
+                        <TouchableOpacity
                           style={{alignItems: 'center', marginHorizontal: 2}}
+                          onPress={showParentBlocked}
                           accessible={true}
                           accessibilityRole="button"
                           accessibilityLabel={`보통 ${Number(
@@ -394,9 +403,10 @@ export default function ReportDetailScreen() {
                             }}>
                             보통 {Number(report?.normalCount ?? 0)}
                           </Text>
-                        </View>
-                        <View
+                        </TouchableOpacity>
+                        <TouchableOpacity
                           style={{alignItems: 'center', marginHorizontal: 2}}
+                          onPress={showParentBlocked}
                           accessible={true}
                           accessibilityRole="button"
                           accessibilityLabel={`아쉬움 ${Number(
@@ -426,7 +436,7 @@ export default function ReportDetailScreen() {
                             }}>
                             아쉬움 {Number(report?.goodCount ?? 0)}
                           </Text>
-                        </View>
+                        </TouchableOpacity>
                       </>
                     );
                   }
