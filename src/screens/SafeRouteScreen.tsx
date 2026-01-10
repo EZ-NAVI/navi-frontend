@@ -56,6 +56,18 @@ export default function SafeRouteScreen() {
   // Persisted toggle to hide/show development-only UI (default: hidden)
   const [showDevUI, setShowDevUI] = useState<boolean>(false);
 
+  // [Fix] Android에서 지도가 처음에 로드되지 않는 문제 해결 (강제 레이아웃 갱신)
+  const [mapMargin, setMapMargin] = useState(Platform.OS === 'android' ? 1 : 0);
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      const timer = setTimeout(() => {
+        setMapMargin(0);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -1350,7 +1362,7 @@ export default function SafeRouteScreen() {
 
       <TMapView
         ref={map.ref}
-        style={styles.map}
+        style={[styles.map, {marginBottom: mapMargin}]}
         apiKey="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy"
         zoomLevel={15}
         centerLat={37.5665}
