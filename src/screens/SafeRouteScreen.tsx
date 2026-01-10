@@ -89,50 +89,50 @@ export default function SafeRouteScreen() {
   }, []);
 
   // SafeRouteScreen 진입 시 1회만 안내 띄우기
-  useEffect(() => {
-    let mounted = true;
-
-    (async () => {
-      try {
-        const hasSeen = await AsyncStorage.getItem('map_notice_shown');
-        const session = await AsyncStorage.getItem('session_started');
-
-        // 🔥 session_started가 없다면 "새 로그인 or 체험해보기" 상태로 판단
-        if (!session) {
-          await AsyncStorage.setItem('map_notice_shown', 'false');
-          await AsyncStorage.setItem('session_started', 'true');
-        }
-
-        const seen = await AsyncStorage.getItem('map_notice_shown');
-        if (seen === 'true') {
-          return;
-        }
-
-        // 아직 본 적 없는 경우 → 안내 띄우기
-        const timer = setTimeout(() => {
-          if (!mounted) {
-            return;
-          }
-          openAlert(
-            '지도 이용 안내',
-            '지도가 보이지 않을 경우, 화면 회전을 켜고 한 번 회전하면 정상 표시될 수 있어요!\n\n' +
-              '경로 검색 후 마커가 잘 안 보이면 지도를 축소하거나 이동해 확인해 주세요!',
-          );
-        }, 300);
-
-        // 본 것으로 저장
-        await AsyncStorage.setItem('map_notice_shown', 'true');
-
-        return () => clearTimeout(timer);
-      } catch (e) {
-        console.warn('map notice error', e);
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  // useEffect(() => {
+  //   let mounted = true;
+  //
+  //   (async () => {
+  //     try {
+  //       const hasSeen = await AsyncStorage.getItem('map_notice_shown');
+  //       const session = await AsyncStorage.getItem('session_started');
+  //
+  //       // 🔥 session_started가 없다면 "새 로그인 or 체험해보기" 상태로 판단
+  //       if (!session) {
+  //         await AsyncStorage.setItem('map_notice_shown', 'false');
+  //         await AsyncStorage.setItem('session_started', 'true');
+  //       }
+  //
+  //       const seen = await AsyncStorage.getItem('map_notice_shown');
+  //       if (seen === 'true') {
+  //         return;
+  //       }
+  //
+  //       // 아직 본 적 없는 경우 → 안내 띄우기
+  //       const timer = setTimeout(() => {
+  //         if (!mounted) {
+  //           return;
+  //         }
+  //         openAlert(
+  //           '지도 이용 안내',
+  //           '지도가 보이지 않을 경우, 화면 회전을 켜고 한 번 회전하면 정상 표시될 수 있어요!\n\n' +
+  //             '경로 검색 후 마커가 잘 안 보이면 지도를 축소하거나 이동해 확인해 주세요!',
+  //         );
+  //       }, 300);
+  //
+  //       // 본 것으로 저장
+  //       await AsyncStorage.setItem('map_notice_shown', 'true');
+  //
+  //       return () => clearTimeout(timer);
+  //     } catch (e) {
+  //       console.warn('map notice error', e);
+  //     }
+  //   })();
+  //
+  //   return () => {
+  //     mounted = false;
+  //   };
+  // }, []);
 
   // reportStore에서 제보 리스트 가져오기 (WebSocket 실시간 갱신 반영)
   const reportsFromStore = useReportStore(state => state.reports);
