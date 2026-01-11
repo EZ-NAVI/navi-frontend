@@ -10,6 +10,7 @@ import {
   Keyboard,
   TouchableOpacity,
   Platform,
+  AccessibilityInfo,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -38,6 +39,8 @@ export default function LocationSearchScreen() {
   const [results, setResults] = useState<Poi[]>([]);
   const [loading, setLoading] = useState(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
+
+  const [selecting, setSelecting] = useState(false);
 
   const search = async (q: string) => {
     if (!q.trim()) {
@@ -89,12 +92,21 @@ export default function LocationSearchScreen() {
 
   const onSelect = (poi: Poi) => {
     Keyboard.dismiss();
-    if (type === 'start') {
-      setStart({name: poi.name, lat: poi.lat, lon: poi.lon});
-    } else {
-      setEnd({name: poi.name, lat: poi.lat, lon: poi.lon});
-    }
-    navigation.navigate('SafeRoute');
+
+    setSelecting(true); // 🔥 선택 로딩 시작
+
+    AccessibilityInfo.announceForAccessibility('장소를 선택하고 있습니다');
+
+    // state 반영을 한 프레임 밀어줌 (체감 개선 핵심)
+    requestAnimationFrame(() => {
+      if (type === 'start') {
+        setStart({name: poi.name, lat: poi.lat, lon: poi.lon});
+      } else {
+        setEnd({name: poi.name, lat: poi.lat, lon: poi.lon});
+      }
+
+      navigation.navigate('SafeRoute');
+    });
   };
 
   const placeholder = type === 'end' ? '도착지 검색' : '출발지 검색';
@@ -170,7 +182,10 @@ export default function LocationSearchScreen() {
         keyboardShouldPersistTaps="handled"
         ItemSeparatorComponent={() => <View style={styles.sep} />}
         renderItem={({item}) => (
-          <Pressable style={styles.row} onPress={() => onSelect(item)}>
+          <Pressable
+            style={styles.row}
+            onPress={() => onSelect(item)}
+            accessibilityRole="button">
             <Icon
               name="location-outline"
               size={20}
@@ -193,6 +208,18 @@ export default function LocationSearchScreen() {
           ) : null
         }
       />
+      {selecting && (
+        <View
+          style={styles.selectLoadingOverlay}
+          accessible={true}
+          accessibilityRole="progressbar"
+          accessibilityLabel="장소 선택중">
+          <ActivityIndicator size="large" color="#000" />
+          <Text style={styles.selectLoadingText}>
+            장소를 선택하는 중이에요…
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -242,4 +269,22 @@ const styles = StyleSheet.create({
   name: {fontSize: 15, color: '#111', fontWeight: '600', marginBottom: 2},
   addr: {fontSize: 12, color: '#666'},
   empty: {padding: 20, color: '#777', textAlign: 'center'},
+  selectLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+
+  selectLoadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+  },
 });

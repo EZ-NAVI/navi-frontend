@@ -70,6 +70,8 @@ export default function SafeRouteScreen() {
   // [Fix] Android에서 지도가 처음에 로드되지 않는 문제 해결 (강제 레이아웃 갱신)
   const [mapMargin, setMapMargin] = useState(Platform.OS === 'android' ? 1 : 0);
 
+  const [routeLoading, setRouteLoading] = useState(false);
+
   useEffect(() => {
     if (Platform.OS === 'android') {
       const timer = setTimeout(() => {
@@ -847,6 +849,9 @@ export default function SafeRouteScreen() {
         return;
       }
 
+      setRouteLoading(true); // 🔥 로딩 시작
+      AccessibilityInfo.announceForAccessibility('경로를 불러오는 중입니다');
+
       try {
         console.log('🚀 API 요청:', start, '→', end);
         const route = await fetchPreviewRoute({
@@ -864,7 +869,7 @@ export default function SafeRouteScreen() {
             lon: p.lon,
           }));
 
-          // 경로 좌표 저장 (나중에 필요하면 사용)
+          // 경로 좌표 저장
           routePathRef.current = pathCoords;
 
           // 이전 경로 평가 정보 초기화
@@ -886,6 +891,8 @@ export default function SafeRouteScreen() {
       } catch (err) {
         console.error('❌ 경로 요청 실패:', err);
         openAlert('서버 연결 실패', '잠시 후 다시 시도해주세요.');
+      } finally {
+        setRouteLoading(false); // 🔥 성공/실패 상관없이 종료
       }
     };
 
@@ -2924,6 +2931,13 @@ export default function SafeRouteScreen() {
         </View>
       </View>
 
+      {routeLoading && (
+        <View style={styles.routeLoadingOverlay}>
+          <ActivityIndicator size="large" color="#000" />
+          <Text style={styles.routeLoadingText}>경로를 불러오는 중이에요…</Text>
+        </View>
+      )}
+
       {/* ⭐ 오른쪽 슬라이드 패널 */}
       {myPageOpen && (
         <Pressable
@@ -3268,6 +3282,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4, // Android 그림자
+  },
+  routeLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+
+  routeLoadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
   },
 });
 
