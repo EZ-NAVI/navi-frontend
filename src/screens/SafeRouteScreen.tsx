@@ -53,6 +53,7 @@ export default function SafeRouteScreen() {
   const {start, end} = useRouteData();
   const map = useTMapCommands();
   const [isReady, setIsReady] = useState(false);
+  const mapReadyOnce = useRef(false);
   // Persisted toggle to hide/show development-only UI (default: hidden)
   const [showDevUI, setShowDevUI] = useState<boolean>(false);
 
@@ -64,7 +65,20 @@ export default function SafeRouteScreen() {
       const timer = setTimeout(() => {
         setMapMargin(0);
       }, 500);
-      return () => clearTimeout(timer);
+
+      // 2차 시도: 1.5초 후에도 로드가 안 되었다면(이벤트 미발생 시) 다시 한 번 갱신
+      const retryTimer = setTimeout(() => {
+        if (!mapReadyOnce.current) {
+          console.log('♻️ 지도 로드 재시도 (레이아웃 갱신)');
+          setMapMargin(1);
+          setTimeout(() => setMapMargin(0), 100);
+        }
+      }, 1500);
+
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(retryTimer);
+      };
     }
   }, []);
 
@@ -1368,6 +1382,8 @@ export default function SafeRouteScreen() {
         centerLat={37.5665}
         centerLon={126.978}
         onMapReady={() => {
+          if (mapReadyOnce.current) return;
+          mapReadyOnce.current = true;
           console.log('🗺️ 지도 로드 완료!');
           setIsReady(true);
         }}
