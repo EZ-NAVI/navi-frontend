@@ -60,14 +60,41 @@ export default function SafeRouteScreen() {
 
   const {start, end} = useRouteData();
   const map = useTMapCommands();
+  const mapReadyOnce = useRef(false);
   const [isReady, setIsReady] = useState(false);
   const [mapZoom, setMapZoom] = useState(15);
   // Persisted toggle to hide/show development-only UI (default: hidden)
   const [showDevUI, setShowDevUI] = useState<boolean>(false);
   const {resetRoute} = useRouteData();
 
+  // [Fix] Android에서 지도가 처음에 로드되지 않는 문제 해결 (강제 레이아웃 갱신)
+  const [mapMargin, setMapMargin] = useState(Platform.OS === 'android' ? 1 : 0);
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      const timer = setTimeout(() => {
+        setMapMargin(0);
+      }, 500);
+
+      // 2차 시도: 1.5초 후에도 로드가 안 되었다면(이벤트 미발생 시) 다시 한 번 갱신
+      const retryTimer = setTimeout(() => {
+        if (!mapReadyOnce.current) {
+          console.log('♻️ 지도 로드 재시도 (레이아웃 갱신)');
+          setMapMargin(1);
+          setTimeout(() => setMapMargin(0), 100);
+        }
+      }, 1500);
+
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(retryTimer);
+      };
+    }
+  }, []);
+
   useEffect(() => {
     let mounted = true;
+
     (async () => {
       try {
         const v = await AsyncStorage.getItem('show_dev_ui');
@@ -81,53 +108,6 @@ export default function SafeRouteScreen() {
         console.warn('show_dev_ui read failed', e);
       }
     })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  // SafeRouteScreen 진입 시 1회만 안내 띄우기
-  useEffect(() => {
-    let mounted = true;
-
-    (async () => {
-      try {
-        const hasSeen = await AsyncStorage.getItem('map_notice_shown');
-        const session = await AsyncStorage.getItem('session_started');
-
-        // 🔥 session_started가 없다면 "새 로그인 or 체험해보기" 상태로 판단
-        if (!session) {
-          await AsyncStorage.setItem('map_notice_shown', 'false');
-          await AsyncStorage.setItem('session_started', 'true');
-        }
-
-        const seen = await AsyncStorage.getItem('map_notice_shown');
-        if (seen === 'true') {
-          return;
-        }
-
-        // 아직 본 적 없는 경우 → 안내 띄우기
-        const timer = setTimeout(() => {
-          if (!mounted) {
-            return;
-          }
-          openAlert(
-            '지도 이용 안내',
-            '지도가 보이지 않을 경우, 화면 회전을 켜고 한 번 회전하면 정상 표시될 수 있어요!\n\n' +
-              '경로 검색 후 마커가 잘 안 보이면 지도를 축소하거나 이동해 확인해 주세요!',
-            {hideCancel: true},
-          );
-        }, 300);
-
-        // 본 것으로 저장
-        await AsyncStorage.setItem('map_notice_shown', 'true');
-
-        return () => clearTimeout(timer);
-      } catch (e) {
-        console.warn('map notice error', e);
-      }
-    })();
-
     return () => {
       mounted = false;
     };
@@ -1773,7 +1753,7 @@ export default function SafeRouteScreen() {
 
         <TMapView
           ref={map.ref}
-          style={styles.map}
+          style={[styles.map, {marginBottom: mapMargin}]}
           apiKey="JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy"
           accessible={true}
           accessibilityRole="image"
@@ -1782,6 +1762,11 @@ export default function SafeRouteScreen() {
           centerLat={37.5665}
           centerLon={126.978}
           onMapReady={() => {
+            if (mapReadyOnce.current) {
+              return;
+            }
+            mapReadyOnce.current = true;
+            console.log('🗺️ 지도 로드 완료!');
             setIsReady(true);
           }}
           onPress={e => {
