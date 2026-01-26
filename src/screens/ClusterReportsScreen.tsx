@@ -381,15 +381,29 @@ export default function ClusterReportsScreen({
               accessibilityLabel={`카테고리 ${
                 item.category ?? item.title ?? '제보'
               }`}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: '800',
-                  marginBottom: 6,
-                  color: '#000',
-                }}>
-                {item.category ?? item.title ?? '제보'}
-              </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '800',
+                    color: '#000',
+                  }}>
+                  {item.category ?? item.title ?? '제보'}
+                </Text>
+                {item.reporterType === 'parent' && (
+                  <View 
+                    style={{flexDirection: 'row', alignItems: 'center', marginLeft: 6}}
+                    accessible={true}
+                    accessibilityLabel="부모제보, 인증 마크">
+                    <MaterialIcons
+                      name="check-circle"
+                      size={18}
+                      color="#FFC000"
+                    />
+                    <Text style={{fontSize: 10, color: '#FFC000', marginLeft: 2}}>부모제보</Text>
+                  </View>
+                )}
+              </View>
             </Pressable>
           </View>
 

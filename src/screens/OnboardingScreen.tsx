@@ -35,7 +35,7 @@ export default function OnboardingScreen({navigation, route}: any) {
       title: '모두의 제보를 함께\n살펴봐요!',
       image: require('../asset/tutorial/tutorial_step3.png'),
       imageAlt: 'NAVI 앱을 사용하는 아이',
-      desc: '다른 사람들이 올린 제보를 보고,\n댓글과 평가로 함께 이야기 나눠요.',
+      desc: '지도 확대 또는 마커 클릭 시\n 해당 위치에 제보를 볼 수 있어요.\n다른 사람들이 올린 제보를 보고,\n댓글과 평가로 함께 이야기 나눠요.',
     },
     {
       title: 'NAVI',

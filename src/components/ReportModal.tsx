@@ -750,7 +750,7 @@ export default function ReportModal({onClose, onSubmitted, location}: Props) {
             <ScrollView
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={{paddingBottom: 12}}>
-              <Text style={styles.title}>제보하기</Text>
+              <Text style={[styles.title, {color: '#000'}]}>제보하기</Text>
 
               <View style={{marginBottom: 12, position: 'relative'}}>
                 <TouchableOpacity

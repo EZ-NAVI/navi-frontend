@@ -19,6 +19,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TMapView from '../components/TMapView';
 import {useTMapCommands} from '../components/useTMapCommands';
 import Geolocation from 'react-native-geolocation-service';
@@ -1873,15 +1874,16 @@ export default function SafeRouteScreen() {
                 <Text style={{fontSize: 24, color: '#999'}}>×</Text>
               </TouchableOpacity>
 
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  color: '#333',
-                  marginBottom: 8,
-                }}>
-                {miniPopupData.category || '제보'}
-              </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 8}}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    color: '#333',
+                  }}>
+                  {miniPopupData.category || '제보'}
+                </Text>
+              </View>
 
               {miniPopupData.description && (
                 <Text
@@ -2112,24 +2114,39 @@ export default function SafeRouteScreen() {
                 ) : selectedReport ? (
                   <View>
                     <View style={{marginBottom: 12}}>
-                      <Text
-                        accessible={true}
-                        accessibilityRole="text"
-                        accessibilityLabel={`카테고리 ${
-                          selectedReport.category ??
-                          selectedReport.description ??
-                          '제보'
-                        }`}
-                        style={{
-                          fontSize: 20,
-                          fontWeight: '800',
-                          marginBottom: 6,
-                          color: '#000',
-                        }}>
-                        {selectedReport.category ??
-                          selectedReport.description ??
-                          '제보'}
-                      </Text>
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text
+                          accessible={true}
+                          accessibilityRole="text"
+                          accessibilityLabel={`카테고리 ${
+                            selectedReport.category ??
+                            selectedReport.description ??
+                            '제보'
+                          }`}
+                          style={{
+                            fontSize: 20,
+                            fontWeight: '800',
+                            color: '#000',
+                          }}>
+                          {selectedReport.category ??
+                            selectedReport.description ??
+                            '제보'}
+                        </Text>
+                        {selectedReport.reporterType === 'parent' && (
+                          <View 
+                            style={{flexDirection: 'row', alignItems: 'center', marginLeft: 8}}
+                            accessible={true}
+                            accessibilityLabel="부모제보, 인증마크">
+                            <MaterialIcons
+                              name="check-circle"
+                              size={22}
+                              color="#FFC000"
+                            />
+                            <Text style={{fontSize: 11, color: '#FFC000', marginLeft: 2}}>부모제보</Text>
+                          </View>
+                        )}
+                      </View>
+                      <View style={{height: 6}} />
                       <Text
                         accessible={true}
                         accessibilityRole="text"

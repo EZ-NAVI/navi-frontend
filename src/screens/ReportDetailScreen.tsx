@@ -220,15 +220,30 @@ export default function ReportDetailScreen() {
           </TouchableOpacity>
 
           {/* 1. 카테고리 */}
-          <Text
-            accessible={true}
-            accessibilityRole="text"
-            accessibilityLabel={`카테고리 ${
-              report.category ?? report.title ?? '제보'
-            }`}
-            style={styles.title}>
-            {report.category ?? report.title ?? '제보'}
-          </Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text
+              accessible={true}
+              accessibilityRole="text"
+              accessibilityLabel={`카테고리 ${
+                report.category ?? report.title ?? '제보'
+              }`}
+              style={[styles.title, {marginBottom: 0}]}>
+              {report.category ?? report.title ?? '제보'}
+            </Text>
+            {report.reporterType === 'parent' && (
+              <View 
+                style={{flexDirection: 'row', alignItems: 'center', marginLeft: 8}}
+                accessible={true}
+                accessibilityLabel="부모제보, 인증 마크">
+                <MaterialIcons
+                  name="check-circle"
+                  size={20}
+                  color="#FFC000"
+                />
+                <Text style={{fontSize: 11, color: '#FFC000', marginLeft: 2}}>부모제보</Text>
+              </View>
+            )}
+          </View>
 
           {/* 2. 제보 내용 */}
           <Text
