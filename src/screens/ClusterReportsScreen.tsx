@@ -462,6 +462,9 @@ export default function ClusterReportsScreen({
                     token = await AsyncStorage.getItem('access_token');
                   } catch (e) {}
                   await postReportNotThere(rid, token ?? undefined);
+                  // 성공 시 모달 닫기
+                  setAlertVisible(false);
+                  setAlertConfirm(null);
                 } catch (e: any) {
                   setAlertTitle('안내');
                   setAlertMsg('이미 누른 제보입니다.');
