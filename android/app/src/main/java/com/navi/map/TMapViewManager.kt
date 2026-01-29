@@ -118,6 +118,12 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
 
     override fun getName() = "SKTTMapView"
 
+    private fun scaleBitmapKeepRatio(bitmap: Bitmap, targetWidth: Int): Bitmap {
+        val scale = targetWidth.toFloat() / bitmap.width
+        val targetHeight = (bitmap.height * scale).toInt()
+        return Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true)
+    }
+
     override fun createViewInstance(ctx: ThemedReactContext): TMapView {
         val view = TMapView(ctx)
         view.setSKTMapApiKey("JT4qeFOp7e438Wx4rsj419607dvmdw3X3SOhcBKy")
@@ -269,7 +275,7 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                         R.drawable.marker_end
                     }
                     val originalBitmap = BitmapFactory.decodeResource(view.resources, iconResId)
-                    val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 150, 150, true)
+                    val scaledBitmap = scaleBitmapKeepRatio(originalBitmap, 150)
                     setIcon(scaledBitmap)
                 }
                 view.addTMapMarkerItem(marker)
@@ -353,7 +359,7 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                                                                 id = "marker_${lat}_${lon}"
                                                                 setTMapPoint(point)
                                                                 setName(title)
-                                                                val scaledBitmap = Bitmap.createScaledBitmap(urlBitmap, 150, 150, true)
+                                                                val scaledBitmap = scaleBitmapKeepRatio(urlBitmap, 150)
                                                                 setIcon(scaledBitmap)
                                                             }
                                                             view.addTMapMarkerItem(marker)
@@ -425,7 +431,7 @@ class TMapViewManager : SimpleViewManager<TMapView>() {
                             }
                         }
 
-                        val scaledBitmap = Bitmap.createScaledBitmap(bitmap!!, 150, 150, true)
+                        val scaledBitmap = scaleBitmapKeepRatio(bitmap!!, 150)
                         setIcon(scaledBitmap)
                 }
                 view.addTMapMarkerItem(marker)
