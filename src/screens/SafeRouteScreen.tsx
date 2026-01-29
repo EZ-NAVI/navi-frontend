@@ -934,272 +934,152 @@ export default function SafeRouteScreen() {
 
   // 지도가 준비되면 전체 제보를 불러와서 마커로 표시합니다.
   // 롱 폴링: 30초마다 제보 목록을 갱신합니다.
-  useEffect(() => {
-    if (!isReady || !map.ref.current) {
-      return;
-    }
-
-    const loadReports = async () => {
+  const loadReports = async () => {
+    try {
+      let tokenToUse: string | null = null;
       try {
-        // 우선 AsyncStorage에 토큰이 있는지 확인하고, 없으면 개발용 토큰을 사용합니다.
-        let tokenToUse: string | null = null;
-        try {
-          tokenToUse = await AsyncStorage.getItem('access_token');
-        } catch (e) {
-          console.warn('AsyncStorage read failed', e);
+        tokenToUse = await AsyncStorage.getItem('access_token');
+      } catch (e) {
+        console.warn('AsyncStorage read failed', e);
+      }
+
+      const reports = await fetchReports(tokenToUse ?? undefined);
+      if (!Array.isArray(reports)) {
+        return;
+      }
+
+      setReportsData(reports);
+      setReportsInStore(reports);
+
+      // ===== 유효 좌표 정리 =====
+      const validReports: any[] = [];
+      reports.forEach((r: any) => {
+        const lat =
+          r.locationLat ?? r.location_lat ?? r.lat ?? r.latitude ?? null;
+        const lon =
+          r.locationLng ?? r.location_lng ?? r.lon ?? r.longitude ?? null;
+        if (!lat || !lon || (lat === 0 && lon === 0)) {
+          return;
         }
+        validReports.push({...r, __lat: Number(lat), __lon: Number(lon)});
+      });
 
-        const reports = await fetchReports(tokenToUse ?? undefined);
-        console.log('📍 전체 제보 불러옴:', reports);
-
-        if (Array.isArray(reports)) {
-          setReportsData(reports);
-          // reportStore에도 저장 (WebSocket 실시간 갱신 반영용)
-          setReportsInStore(reports);
-
-          const validReports: any[] = [];
-          reports.forEach((r: any) => {
-            // 응답 샘플에 따르면 필드명이 camelCase로 제공됩니다.
-            const lat =
-              r.locationLat ?? r.location_lat ?? r.lat ?? r.latitude ?? null;
-            const lon =
-              r.locationLng ?? r.location_lng ?? r.lon ?? r.longitude ?? null;
-
-            // 0,0 좌표는 무시
-            if (!lat || !lon || (lat === 0 && lon === 0)) {
-              return;
-            }
-
-            validReports.push({...r, __lat: Number(lat), __lon: Number(lon)});
-          });
-
-          // 디버그 로그: 불러온 유효 제보
-          console.log(
-            `🔎 유효 제보 수: ${validReports.length}`,
-            validReports.map(p => ({
-              id: p.reportId ?? p.id,
-              lat: p.__lat,
-              lon: p.__lon,
-            })),
-          );
-
-          // ===== 마커 추가 =====
-          // 간단한 보완: 각 클러스터의 aggregated `total_count`를 얻기 위해
-          // `/reports/filter?cluster_id=...` 를 호출해 클러스터별 카운트를 가져옵니다.
-          // (간단 버전: 실패한 요청은 0으로 간주)
-          const clusterCounts: Record<string, number> = {};
-          try {
-            const clusterIds = new Set<string>();
-            validReports.forEach((r: any) => {
-              const cid =
-                r.clusterId ??
-                r.cluster_id ??
-                (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ??
-                null;
-              if (cid) {
-                clusterIds.add(String(cid));
-              }
-            });
-
-            if (clusterIds.size > 0) {
-              // 병렬로 요청하되 모든 요청이 실패해도 흐름을 멈추지 않습니다.
-              await Promise.all(
-                Array.from(clusterIds).map(async cid => {
-                  try {
-                    const clusterResp: any = await fetchReportsByCluster(
-                      cid,
-                      tokenToUse ?? undefined,
-                    );
-                    let cnt = 0;
-                    if (clusterResp && typeof clusterResp === 'object') {
-                      if (typeof clusterResp.total_count === 'number') {
-                        cnt = clusterResp.total_count;
-                      } else if (typeof clusterResp.totalCount === 'number') {
-                        cnt = clusterResp.totalCount;
-                      } else if (Array.isArray(clusterResp)) {
-                        cnt = clusterResp.length;
-                      } else if (Array.isArray(clusterResp.reports)) {
-                        cnt = clusterResp.reports.length;
-                      } else if (Array.isArray(clusterResp.results)) {
-                        cnt = clusterResp.results.length;
-                      } else if (Array.isArray(clusterResp.data)) {
-                        cnt = clusterResp.data.length;
-                      }
-                    }
-                    clusterCounts[String(cid)] = Number(cnt) || 0;
-                    try {
-                      console.log(
-                        '[SafeRoute] cluster total_count',
-                        cid,
-                        clusterCounts[String(cid)],
-                      );
-                    } catch (e) {}
-                  } catch (e) {
-                    console.warn(
-                      '[SafeRoute] fetchReportsByCluster failed for',
-                      cid,
-                      e,
-                    );
-                    clusterCounts[String(cid)] = 0;
-                  }
-                }),
-              );
-            }
-          } catch (e) {
-            console.warn('[SafeRoute] cluster count aggregation failed', e);
+      // ===== cluster count 집계 =====
+      const clusterCounts: Record<string, number> = {};
+      try {
+        const clusterIds = new Set<string>();
+        validReports.forEach(r => {
+          const cid =
+            r.clusterId ??
+            r.cluster_id ??
+            (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ??
+            null;
+          if (cid) {
+            clusterIds.add(String(cid));
           }
+        });
 
-          // 마커 추가
-          // 준비된 로컬 에셋을 resolve해서 네이티브로 전달
-          let defaultAssetUri: string | undefined;
-          let badPingUri: string | undefined;
-          let sosoPingUri: string | undefined;
-          let goodPingUri: string | undefined;
-          try {
-            const resolvedDefault = Image.resolveAssetSource(
-              require('../asset/good_ping.png'),
-            );
-            defaultAssetUri = resolvedDefault?.uri;
-          } catch (e) {
-            console.warn('에셋 resolve 실패 (default good_ping):', e);
-          }
-          try {
-            const resolvedBad = Image.resolveAssetSource(
-              require('../asset/bad_ping.png'),
-            );
-            badPingUri = resolvedBad?.uri;
-          } catch (e) {
-            console.warn('에셋 resolve 실패 (bad_ping):', e);
-          }
-          try {
-            const resolvedSoso = Image.resolveAssetSource(
-              require('../asset/soso_ping.png'),
-            );
-            sosoPingUri = resolvedSoso?.uri;
-          } catch (e) {
-            console.warn('에셋 resolve 실패 (soso_ping):', e);
-          }
-          try {
-            const resolvedGood = Image.resolveAssetSource(
-              require('../asset/good_ping.png'),
-            );
-            goodPingUri = resolvedGood?.uri;
-          } catch (e) {
-            console.warn('에셋 resolve 실패 (good_ping):', e);
-          }
-
-          validReports.forEach((r: any) => {
-            const title = r.category ?? r.description ?? '제보';
+        await Promise.all(
+          Array.from(clusterIds).map(async cid => {
             try {
-              // Prefer cluster-level aggregated count if we fetched it above
-              const cid =
-                r.clusterId ??
-                r.cluster_id ??
-                (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ??
-                null;
-              let usedCountSource = 'item';
-              let rawCount: any = 0;
-              if (cid && typeof clusterCounts[String(cid)] !== 'undefined') {
-                rawCount = clusterCounts[String(cid)];
-                usedCountSource = 'cluster';
-              } else {
-                // fallback: try multiple possible locations/names for an aggregated count on the item
-                rawCount =
-                  r.total_count ??
+              const resp: any = await fetchReportsByCluster(
+                cid,
+                tokenToUse ?? undefined,
+              );
+              let cnt = 0;
+              if (resp) {
+                if (typeof resp.total_count === 'number') {
+                  cnt = resp.total_count;
+                } else if (typeof resp.totalCount === 'number') {
+                  cnt = resp.totalCount;
+                } else if (Array.isArray(resp)) {
+                  cnt = resp.length;
+                } else if (Array.isArray(resp.reports)) {
+                  cnt = resp.reports.length;
+                }
+              }
+              clusterCounts[String(cid)] = cnt;
+            } catch {
+              clusterCounts[String(cid)] = 0;
+            }
+          }),
+        );
+      } catch (e) {
+        console.warn('[SafeRoute] cluster aggregation failed', e);
+      }
+
+      // ===== 에셋 resolve =====
+      const resolve = (p: any) => Image.resolveAssetSource(p)?.uri ?? undefined;
+
+      const badPingUri = resolve(require('../asset/bad_ping.png'));
+      const sosoPingUri = resolve(require('../asset/soso_ping.png'));
+      const goodPingUri = resolve(require('../asset/good_ping.png'));
+      const defaultAssetUri = goodPingUri;
+
+      // ===== 마커 추가 =====
+      validReports.forEach(r => {
+        const title = r.category ?? r.description ?? '제보';
+
+        const cid =
+          r.clusterId ??
+          r.cluster_id ??
+          (r.cluster && (r.cluster.id ?? r.cluster.cluster_id)) ??
+          null;
+
+        const cnt =
+          cid && clusterCounts[String(cid)] !== undefined
+            ? clusterCounts[String(cid)]
+            : Number(
+                r.total_count ??
                   r.totalCount ??
                   r.count ??
                   r.cluster_count ??
-                  (r.cluster &&
-                    (r.cluster.total_count ??
-                      r.cluster.totalCount ??
-                      r.cluster.count)) ??
-                  0;
-                usedCountSource = 'item';
-              }
+                  0,
+              ) || 0;
 
-              const cnt = Number(rawCount) || 0;
+        let iconUri = defaultAssetUri;
+        let accessibilityLabel = '제보 핀';
 
-              // clusterId를 키로 count를 Map에 저장 (native 브릿지 거쳐도 유지됨)
-              if (cid) {
-                clusterCountsMapRef.current[String(cid)] = cnt;
-              }
-
-              // If count is zero, log the full object once for debugging so we can see available keys
-              if (cnt === 0) {
-                try {
-                  console.debug(
-                    'SafeRoute: report item (no count):',
-                    JSON.stringify(r),
-                  );
-                } catch (e) {
-                  console.debug(
-                    'SafeRoute: report item (no count, non-serializable)',
-                    r,
-                  );
-                }
-              }
-              let iconUri: string | undefined;
-              let accessibilityLabel: string;
-              if (cnt >= 5) {
-                iconUri = badPingUri ?? defaultAssetUri;
-                accessibilityLabel = '상태 불량 핀';
-              } else if (cnt >= 3) {
-                iconUri = sosoPingUri ?? defaultAssetUri;
-                accessibilityLabel = '상태 보통 핀';
-              } else if (cnt >= 1) {
-                iconUri = goodPingUri ?? defaultAssetUri;
-                accessibilityLabel = '상태 양호 핀';
-              } else {
-                iconUri = defaultAssetUri;
-                accessibilityLabel = '제보 핀';
-              }
-
-              console.log(
-                '➕ 마커 추가 시도:',
-                r.__lat,
-                r.__lon,
-                title,
-                'count=',
-                cnt,
-                'source=',
-                usedCountSource,
-                'icon=',
-                iconUri ? '(asset)' : '(default)',
-                'a11y=',
-                accessibilityLabel,
-              );
-              if (iconUri && (map as any).addMarkerWithIcon) {
-                (map as any).addMarkerWithIcon(
-                  r.__lat,
-                  r.__lon,
-                  title,
-                  iconUri,
-                  accessibilityLabel,
-                );
-              } else {
-                // fall back to default marker provided by the native map
-                map.addMarker(r.__lat, r.__lon, title);
-              }
-            } catch (e) {
-              console.warn('마커 추가 실패', e);
-            }
-          });
+        if (cnt >= 5) {
+          iconUri = badPingUri ?? defaultAssetUri;
+          accessibilityLabel = '상태 불량 핀';
+        } else if (cnt >= 3) {
+          iconUri = sosoPingUri ?? defaultAssetUri;
+          accessibilityLabel = '상태 보통 핀';
+        } else if (cnt >= 1) {
+          iconUri = goodPingUri ?? defaultAssetUri;
+          accessibilityLabel = '상태 양호 핀';
         }
-      } catch (err) {
-        console.warn('/reports 조회 실패:', err);
-      }
-    };
 
-    // 최초 로딩
+        if ((map as any).addMarkerWithIcon && iconUri) {
+          (map as any).addMarkerWithIcon(
+            r.__lat,
+            r.__lon,
+            title,
+            iconUri,
+            accessibilityLabel,
+          );
+        } else {
+          map.addMarker(r.__lat, r.__lon, title);
+        }
+      });
+    } catch (e) {
+      console.warn('loadReports 실패', e);
+    }
+  };
+
+  useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+
     loadReports();
 
-    // 롱 폴링: 30초마다 제보 목록 갱신
     const pollingInterval = setInterval(() => {
-      console.log('🔄 [Long Polling] 제보 목록 갱신 중...');
+      console.log('🔄 [Long Polling] 제보 목록 갱신');
       loadReports();
-    }, 30000); // 30초
+    }, 30000);
 
-    // 클린업: 컴포넌트 언마운트 시 인터벌 정리
     return () => {
       clearInterval(pollingInterval);
       console.log('🛑 [Long Polling] 종료');
@@ -1644,24 +1524,22 @@ export default function SafeRouteScreen() {
   };
 
   const resetRouteWithNotice = async () => {
-    // 1. 실제 초기화 로직
+    // 1. 경로 + 지도 초기화
     resetRoute();
     map.clear();
 
-    // 2. 사용자 안내
-    const message = '경로가 초기화되었습니다';
+    // 2. 제보 다시 불러오기 (중복 로직 ❌)
+    await loadReports();
 
+    // 3. 사용자 안내
+    const message = '경로가 초기화되었습니다';
     const isScreenReaderEnabled =
       await AccessibilityInfo.isScreenReaderEnabled();
 
     if (isScreenReaderEnabled) {
-      // TalkBack 켜진 경우
       AccessibilityInfo.announceForAccessibility(message);
-    } else {
-      // 일반 사용자 → 토스트
-      if (Platform.OS === 'android') {
-        ToastAndroid.show(message, ToastAndroid.SHORT);
-      }
+    } else if (Platform.OS === 'android') {
+      ToastAndroid.show(message, ToastAndroid.SHORT);
     }
   };
 
@@ -1874,7 +1752,12 @@ export default function SafeRouteScreen() {
                 <Text style={{fontSize: 24, color: '#999'}}>×</Text>
               </TouchableOpacity>
 
-              <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 8}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginBottom: 8,
+                }}>
                 <Text
                   style={{
                     fontSize: 18,
@@ -2114,7 +1997,8 @@ export default function SafeRouteScreen() {
                 ) : selectedReport ? (
                   <View>
                     <View style={{marginBottom: 12}}>
-                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Text
                           accessible={true}
                           accessibilityRole="text"
@@ -2133,8 +2017,12 @@ export default function SafeRouteScreen() {
                             '제보'}
                         </Text>
                         {selectedReport.reporterType === 'parent' && (
-                          <View 
-                            style={{flexDirection: 'row', alignItems: 'center', marginLeft: 8}}
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              marginLeft: 8,
+                            }}
                             accessible={true}
                             accessibilityLabel="부모제보, 인증마크">
                             <MaterialIcons
@@ -2142,7 +2030,14 @@ export default function SafeRouteScreen() {
                               size={22}
                               color="#FFC000"
                             />
-                            <Text style={{fontSize: 11, color: '#FFC000', marginLeft: 2}}>부모제보</Text>
+                            <Text
+                              style={{
+                                fontSize: 11,
+                                color: '#FFC000',
+                                marginLeft: 2,
+                              }}>
+                              부모제보
+                            </Text>
                           </View>
                         )}
                       </View>
